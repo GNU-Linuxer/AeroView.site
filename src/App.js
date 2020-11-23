@@ -1,8 +1,8 @@
 import React, {useState} from 'react';
-import {toolbar} from './toolbar.js';
+import IndexToolbar from './IndexToolbar.js';
 
 export default function App() {
     return (
-        <toolbar/>
+        <IndexToolbar/>
     )
 }
