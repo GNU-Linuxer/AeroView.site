@@ -1,0 +1,74 @@
+/*
+ * This file contains styles for elements that present on the grid view of
+ * home page
+ */
+
+/* Apply to all text in span elements */
+span {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+/* Airplane table */
+
+/* The CSS styling for plane table is adapted from Problem 2 Problem C */
+
+.plane-list {
+    /* This table always take the entire page width */
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 2em;
+}
+
+.plane-list th {
+    height: 3.5em;
+    text-align: left;
+    color: white;
+    /* Match the site heading's color */
+    background-color: #444;
+}
+
+.plane-list .tile-image {
+    width: 100px;
+    height: 75px;
+    /* The replaced content is sized to maintain its aspect ratio while filling the element's entire content box. The object will be clipped to fit */
+    object-fit: cover;
+}
+
+@media (min-width: 1024px) {
+    .plane-list .tile-image {
+        width: 250px;
+    }
+}
+
+.plane-list th,
+.plane-list td {
+    padding: 0.5em;
+    border-bottom: 1px solid #c6c6c6;
+}
+
+/* every other row in the table's body (starting with the second row of content) has a background color of #eee (very light gray) */
+.plane-list tr:nth-of-type(even) {
+    background-color: #eee;
+}
+
+.plane-list tbody tr:hover {
+    background-color: hsl(205, 100%, 35%);
+    color: white;
+}
+
+/* Extra data that will only be shown when space is enough */
+.dashboard-list-extra-data {
+    display: none;
+}
+
+@media (min-width: 768px) {
+    .dashboard-list-extra-data {
+        display: table-cell;
+    }
+}
+
+/* Style for too many metadata alert */
+.alert-heading {
+    font-weight: bold;
+    font-size: 2em;
+}

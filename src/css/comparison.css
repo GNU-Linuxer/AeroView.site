@@ -1,0 +1,73 @@
+/*
+ * This file contains styling rules for the comparison chart page of the site
+ */
+
+/* Chart */
+
+.chart-content {
+    display: grid;
+
+    /* 7 means 7 rows of data (this is a hard-coded value that must be modified when number of metadata differs) */
+    grid-template-rows: repeat(18, auto);
+    grid-auto-flow: column;
+
+    border: 3px solid;
+}
+
+.dropdown {
+    display: flex;
+    margin-left: 22%;
+    flex-direction: row;
+    padding-bottom: 2rem;
+    justify-content: space-evenly;
+}
+
+.btn.btn-secondary.dropdown-toggle {
+    position: relative;
+    padding-left: 8px;
+    padding-right: 8px;
+}
+
+@media (min-width: 768px) {
+    .dropdown {
+        /* The first column in the table occupies 173.31 of space*/
+        margin-left: 173px;
+    }
+    .btn.btn-secondary.dropdown-toggle {
+        padding-left: 16px;
+        padding-right: 16px;
+        /*margin: 0% 10%;*/
+    }
+}
+
+/* Columns */
+
+.header-column {
+    background-color: lightgray;
+}
+
+/* Cells */
+
+.chart-cell {
+    margin: 0;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+}
+
+p.chart-cell {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+}
+
+
+.comparison-tile-image {
+    width: 100%;
+    height: 100px;
+    object-fit: cover;
+}
+
+@media (min-width: 1024px) {
+    .comparison-tile-image {
+        height: 150px;
+    }
+}
