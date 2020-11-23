@@ -47,6 +47,7 @@ function IndexViewSelectors(props) {
 function ListButton(props) {
     /* Props:
         selected: Boolean value that denote whether List view is selected
+        selectListCallback: the callback function when user clicks on List view button
      */
     let selectedClass = "";
     if (props.selected) {
@@ -54,8 +55,15 @@ function ListButton(props) {
     } else {
         selectedClass = "";
     }
+
+    const handleListClick = (event) => {
+        event.preventDefault();
+        console.log('checkpoint!');
+        //props.selectListCallback();
+    }
+
     return (
-        <button id="list-view-btn" aria-label="switch to list view" className={selectedClass}>
+        <button onClick={handleListClick} id="list-view-btn" aria-label="switch to list view" className={selectedClass}>
             <FontAwesomeIcon icon={['fas', 'list-ul']} />
             <span className="button-description">&nbsp;<u>L</u>ist</span>
         </button>
@@ -66,6 +74,7 @@ function ListButton(props) {
 function GridButton(props) {
     /* Props:
         selected: Boolean value that denote whether List view is selected
+        selectGridCallback: the callback function when user clicks on Grid view button
      */
     let selectedClass = "";
     if (props.selected) {
@@ -73,15 +82,27 @@ function GridButton(props) {
     } else {
         selectedClass = "";
     }
+
+    const handleGridClick = (event) => {
+        event.preventDefault();
+       // console.log('checkpoint!');
+        //props.selectGridCallback();
+    }
+
     return (
-        <button id="grid-view-btn" aria-label="switch to grid view" className={selectedClass}>
+        <button onClick={handleGridClick} id="grid-view-btn" aria-label="switch to grid view" className={selectedClass}>
             <FontAwesomeIcon icon={['fas', 'th-large']} />
             <span className="button-description">&nbsp;<u>G</u>rid</span>
         </button>
     )
 }
 
-function SearchBoxAndBtn() {
+function SearchBoxAndBtn(props) {
+    /* Props:
+        searchCallBack: the callback function when user submit search input content
+            This function takes the search input string as the only argument
+     */
+
     // Interactions about handle input text is adapted from course textbook and INFO 340's demo video
     const [inputValue, setInputValue] = useState('')//initialize as empty string
 
@@ -96,15 +117,15 @@ function SearchBoxAndBtn() {
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        //console.log(inputValue);
-
+        console.log(inputValue);
+        //props.searchCallBack(inputValue);
     }
     return(
         <div className="search-form-container" id="search-form-stub-desktop">
             <form role="search" onSubmit={handleSubmit}>
                 <div className="search-bar-container">
                     <input type="text" placeholder="Type to search" onChange={handleChange} value={inputValue} className="search-textbox" id="search-textbox" required=""/>
-                    <button onClick={handleSubmit} aria-label="search" id="search-button"><FontAwesomeIcon icon={['fas', 'search']} /></button>
+                    <button type="submit" aria-label="search" id="search-button"><FontAwesomeIcon icon={['fas', 'search']} /></button>
                 </div>
             </form>
         </div>
