@@ -157,21 +157,33 @@ function ContentViewSelectors(props) {
 }
 
 // A filter button and its dropdown content
+// Code regarding multi-select checkbox handling is adapted from https://medium.com/@tariqul.islam.rony/multiple-checkbox-handling-by-react-js-84b1d49a46c6
+// With modification to suit the new React coding style
 function FilterButton() {
     const [dropdownOpen, setDropdownOpen] = useState(false);
 
     const toggle = () => setDropdownOpen(prevState => !prevState);
 
-    const types = ['Narrow-Body Jet', 'Wide-body Jet'];
-    let typeElems = [];
-    for (let oneType of types) {
-        typeElems.push(<li key={oneType}><label><input type="checkbox" defaultChecked/><span>{oneType}</span></label></li>);
+    const [type, setType] = useState([
+            {id: 1, value: "banana", isChecked: false},
+            {id: 2, value: "apple", isChecked: false},
+            {id: 3, value: "mango", isChecked: false},
+            {id: 4, value: "grap", isChecked: true}
+            ])
+
+    const handleCheckChildElement = (event) => {
+        let updatedType = [...type];
+        for (let oneType of updatedType) {
+            if (oneType.value === event.target.value) {
+                oneType.isChecked = event.target.checked;
+            }
+        }
+        console.log(updatedType);
+        setType(updatedType);
     }
-    const brands = ['Airbus', 'Boeing'];
-    let brandElems = [];
-    for (let oneBrand of brands) {
-        brandElems.push(<li key={oneBrand}><label><input type="checkbox" defaultChecked/><span>{oneBrand}</span></label></li>);
-    }
+
+    let TypeCheckBoxElem = type.map((oneObj) => oneCheckboxElem(oneObj, handleCheckChildElement));
+
     return (
         <Dropdown isOpen={dropdownOpen} toggle={toggle} direction="down">
             <DropdownToggle id="filter-button" aria-label="filter" aria-expanded={false} aria-haspopup={true}>
@@ -179,11 +191,19 @@ function FilterButton() {
             </DropdownToggle>
             <DropdownMenu right={true} flip={false}>
                 <ul className="filter-dropdown-menu checkbox-menu">
-                    {typeElems}
-                    <DropdownItem divider/>
-                    {brandElems}
+                    {TypeCheckBoxElem}
                 </ul>
             </DropdownMenu>
         </Dropdown>
     );
+}
+
+// This function will return an element, taking an object with id, value, and isChecked properties
+// This function is useful for the Array.map operation
+// Code adapted from https://medium.com/@tariqul.islam.rony/multiple-checkbox-handling-by-react-js-84b1d49a46c6
+function oneCheckboxElem(oneObj, changeCallBack) {
+    return (
+        <li key={oneObj.id}>
+            <input type="checkbox" checked={oneObj.isChecked} value={oneObj.value} onChange={changeCallBack} /> {oneObj.value}
+        </li>);
 }
