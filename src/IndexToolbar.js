@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { library } from '@fortawesome/fontawesome-svg-core'
-import {faListUl, faThLarge, faSearch} from '@fortawesome/free-solid-svg-icons'
+import {faListUl, faThLarge, faSearch, faFilter, faEllipsisV} from '@fortawesome/free-solid-svg-icons'
 // Load custom style sheet
 import './css/dashboard-filter.css';
 import './css/site-elements.css';
@@ -10,37 +10,30 @@ import './css/site-grid.css';
 import './css/site-list.css';
 import './css/style.css';
 // Load font awesome icon, MUST add everything if defined in import {***, ***} from '@fortawesome/free-solid-svg-icons'
-library.add(faListUl, faThLarge, faSearch);
+library.add(faListUl, faThLarge, faSearch, faFilter, faEllipsisV);
 
-export default function IndexToolbar() {
+export default function IndexToolbar(props) {
     /* props:
-        selection: accept "List" and "Grid" string that denote current view selection
+        viewSelection: accept "List" and "Grid" string that denote current view selection
      */
     //props.selection = "List";
     return (
         <div className="dashboard-widgets">
             {/* Mobile search goes here*/}
             <div className="options">
-                <IndexViewSelectors selection ="List"/>
+                <div className="selector-group view-selector-group">
+                    <ListButton selected={props.viewSelection === "List"}/>
+                    <span aria-hidden="true" className="separator">/</span>
+                    <GridButton selected={props.viewSelection === "Grid"}/>
+                </div>
                 {/*Desktop search bar that will display when width >= 768*/}
                 {window.outerWidth>=768 ? <SearchBoxAndBtn/> : ''}
+                <div className="selector-group content-selector-group">
+                    <FilterButton/>
+                </div>
             </div>
         </div>
     );
-}
-
-// This element holds list view and grid view toggle switches
-function IndexViewSelectors(props) {
-    /* props:
-        selection: accept "List" and "Grid" string that denote current view selection
-     */
-    return(
-        <div className="selector-group view-selector-group">
-            <ListButton selected={props.selection === "List"}/>
-            <span aria-hidden="true" className="separator">/</span>
-            <GridButton selected={props.selection === "Grid"}/>
-        </div>
-    )
 }
 
 // This element defines a list button and the List text
@@ -130,4 +123,79 @@ function SearchBoxAndBtn(props) {
             </form>
         </div>
     )
+}
+
+// this element will render the filter and option button
+function ContentViewSelectors(props) {
+    /*
+        allPlane: an array of objects, where 1 object describe 1 airplane
+     */
+    return (
+        <div className="selector-group content-selector-group">
+        <div>
+            {/*Prevent the dropdown menu from flipping up when no enough space below remains*/}
+            {/*see https://getbootstrap.com/docs/4.1/components/dropdowns/#options*/}
+            <button id="filter-button" aria-label="filter" data-toggle="dropdown" data-flip="false"
+                    aria-expanded="false" aria-haspopup="true">
+                <FontAwesomeIcon icon={['fas', 'filter']} />
+            </button>
+        </div>
+
+        <div>
+            <button id="edit-button" aria-label="edit" data-toggle="dropdown" data-flip="false" aria-expanded="false"
+                    aria-haspopup="true">
+                <FontAwesomeIcon icon={['fas', 'ellipsis-v']} />
+            </button>
+        </div>
+        </div>
+    )
+}
+
+// A filter button and its dropdown content
+ function FilterButton() {
+     const [dropdownOpen, setDropdownOpen] = useState(false);
+
+     const toggle = () => setDropdownOpen(prevState => !prevState);
+
+     return (
+         <Dropdown isOpen={dropdownOpen} toggle={toggle}>
+             <DropdownToggle id="filter-button" aria-label="filter" aria-expanded={false} aria-haspopup={true}>
+                 <FontAwesomeIcon icon={['fas', 'filter']} />
+             </DropdownToggle>
+             <DropdownMenu flip={false}>
+                 <DropdownItem header>Header</DropdownItem>
+                 <DropdownItem>Some Action</DropdownItem>
+                 <DropdownItem text>Dropdown Item Text</DropdownItem>
+                 <DropdownItem disabled>Action (disabled)</DropdownItem>
+                 <DropdownItem divider />
+                 <DropdownItem>Foo Action</DropdownItem>
+                 <DropdownItem>Bar Action</DropdownItem>
+                 <DropdownItem>Quo Action</DropdownItem>
+             </DropdownMenu>
+         </Dropdown>
+     );
+ }
+
+export function Example() {
+    const [dropdownOpen, setDropdownOpen] = useState(false);
+
+    const toggle = () => setDropdownOpen(prevState => !prevState);
+
+    return (
+        <Dropdown isOpen={dropdownOpen} toggle={toggle}>
+            <DropdownToggle caret>
+                Dropdown
+            </DropdownToggle>
+            <DropdownMenu>
+                <DropdownItem header>Header</DropdownItem>
+                <DropdownItem>Some Action</DropdownItem>
+                <DropdownItem text>Dropdown Item Text</DropdownItem>
+                <DropdownItem disabled>Action (disabled)</DropdownItem>
+                <DropdownItem divider />
+                <DropdownItem>Foo Action</DropdownItem>
+                <DropdownItem>Bar Action</DropdownItem>
+                <DropdownItem>Quo Action</DropdownItem>
+            </DropdownMenu>
+        </Dropdown>
+    );
 }
