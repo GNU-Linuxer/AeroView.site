@@ -165,22 +165,24 @@ function FilterButton() {
     const types = ['Narrow-Body Jet', 'Wide-body Jet'];
     let typeElems = [];
     for (let oneType of types) {
-        typeElems.push(<DropdownItem key={oneType}><label><input type="checkbox" defaultChecked/><span>{oneType}</span></label></DropdownItem>);
+        typeElems.push(<li key={oneType}><label><input type="checkbox" defaultChecked/><span>{oneType}</span></label></li>);
     }
     const brands = ['Airbus', 'Boeing'];
     let brandElems = [];
     for (let oneBrand of brands) {
-        brandElems.push(<DropdownItem key={oneBrand}><label><input type="checkbox" defaultChecked/><span>{oneBrand}</span></label></DropdownItem>);
+        brandElems.push(<li key={oneBrand}><label><input type="checkbox" defaultChecked/><span>{oneBrand}</span></label></li>);
     }
     return (
         <Dropdown isOpen={dropdownOpen} toggle={toggle} direction="down">
             <DropdownToggle id="filter-button" aria-label="filter" aria-expanded={false} aria-haspopup={true}>
                 <FontAwesomeIcon icon={['fas', 'filter']}/>
             </DropdownToggle>
-            <DropdownMenu right={true} flip={false} className="filter-dropdown-menu checkbox-menu">
-                {typeElems}
-                <DropdownItem divider/>
-                {brandElems}
+            <DropdownMenu right={true} flip={false}>
+                <ul className="filter-dropdown-menu checkbox-menu">
+                    {typeElems}
+                    <DropdownItem divider/>
+                    {brandElems}
+                </ul>
             </DropdownMenu>
         </Dropdown>
     );
