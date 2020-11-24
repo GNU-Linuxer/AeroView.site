@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
-import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { library } from '@fortawesome/fontawesome-svg-core'
+import {Dropdown, DropdownToggle, DropdownMenu, DropdownItem} from 'reactstrap';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
+import {library} from '@fortawesome/fontawesome-svg-core'
 import {faListUl, faThLarge, faSearch, faFilter, faEllipsisV} from '@fortawesome/free-solid-svg-icons'
 // Load custom style sheet
 import './css/dashboard-filter.css';
@@ -9,6 +9,8 @@ import './css/site-elements.css';
 import './css/site-grid.css';
 import './css/site-list.css';
 import './css/style.css';
+// Reactstrap depends on bootstrap
+import 'bootstrap/dist/css/bootstrap.min.css';
 // Load font awesome icon, MUST add everything if defined in import {***, ***} from '@fortawesome/free-solid-svg-icons'
 library.add(faListUl, faThLarge, faSearch, faFilter, faEllipsisV);
 
@@ -27,7 +29,7 @@ export default function IndexToolbar(props) {
                     <GridButton selected={props.viewSelection === "Grid"}/>
                 </div>
                 {/*Desktop search bar that will display when width >= 768*/}
-                {window.outerWidth>=768 ? <SearchBoxAndBtn/> : ''}
+                {window.outerWidth >= 768 ? <SearchBoxAndBtn/> : ''}
                 <div className="selector-group content-selector-group">
                     <FilterButton/>
                 </div>
@@ -57,7 +59,7 @@ function ListButton(props) {
 
     return (
         <button onClick={handleListClick} id="list-view-btn" aria-label="switch to list view" className={selectedClass}>
-            <FontAwesomeIcon icon={['fas', 'list-ul']} />
+            <FontAwesomeIcon icon={['fas', 'list-ul']}/>
             <span className="button-description">&nbsp;<u>L</u>ist</span>
         </button>
     )
@@ -78,13 +80,13 @@ function GridButton(props) {
 
     const handleGridClick = (event) => {
         event.preventDefault();
-       // console.log('checkpoint!');
+        // console.log('checkpoint!');
         //props.selectGridCallback();
     }
 
     return (
         <button onClick={handleGridClick} id="grid-view-btn" aria-label="switch to grid view" className={selectedClass}>
-            <FontAwesomeIcon icon={['fas', 'th-large']} />
+            <FontAwesomeIcon icon={['fas', 'th-large']}/>
             <span className="button-description">&nbsp;<u>G</u>rid</span>
         </button>
     )
@@ -113,12 +115,14 @@ function SearchBoxAndBtn(props) {
         console.log(inputValue);
         //props.searchCallBack(inputValue);
     }
-    return(
+    return (
         <div className="search-form-container" id="search-form-stub-desktop">
             <form role="search" onSubmit={handleSubmit}>
                 <div className="search-bar-container">
-                    <input type="text" placeholder="Type to search" onChange={handleChange} value={inputValue} className="search-textbox" id="search-textbox" required=""/>
-                    <button type="submit" aria-label="search" id="search-button"><FontAwesomeIcon icon={['fas', 'search']} /></button>
+                    <input type="text" placeholder="Type to search" onChange={handleChange} value={inputValue}
+                           className="search-textbox" id="search-textbox" required=""/>
+                    <button type="submit" aria-label="search" id="search-button"><FontAwesomeIcon
+                        icon={['fas', 'search']}/></button>
                 </div>
             </form>
         </div>
@@ -132,69 +136,51 @@ function ContentViewSelectors(props) {
      */
     return (
         <div className="selector-group content-selector-group">
-        <div>
-            {/*Prevent the dropdown menu from flipping up when no enough space below remains*/}
-            {/*see https://getbootstrap.com/docs/4.1/components/dropdowns/#options*/}
-            <button id="filter-button" aria-label="filter" data-toggle="dropdown" data-flip="false"
-                    aria-expanded="false" aria-haspopup="true">
-                <FontAwesomeIcon icon={['fas', 'filter']} />
-            </button>
-        </div>
+            <div>
+                {/*Prevent the dropdown menu from flipping up when no enough space below remains*/}
+                {/*see https://getbootstrap.com/docs/4.1/components/dropdowns/#options*/}
+                <button id="filter-button" aria-label="filter" data-toggle="dropdown" data-flip="false"
+                        aria-expanded="false" aria-haspopup="true">
+                    <FontAwesomeIcon icon={['fas', 'filter']}/>
+                </button>
+            </div>
 
-        <div>
-            <button id="edit-button" aria-label="edit" data-toggle="dropdown" data-flip="false" aria-expanded="false"
-                    aria-haspopup="true">
-                <FontAwesomeIcon icon={['fas', 'ellipsis-v']} />
-            </button>
-        </div>
+            <div>
+                <button id="edit-button" aria-label="edit" data-toggle="dropdown" data-flip="false"
+                        aria-expanded="false"
+                        aria-haspopup="true">
+                    <FontAwesomeIcon icon={['fas', 'ellipsis-v']}/>
+                </button>
+            </div>
         </div>
     )
 }
 
 // A filter button and its dropdown content
- function FilterButton() {
-     const [dropdownOpen, setDropdownOpen] = useState(false);
-
-     const toggle = () => setDropdownOpen(prevState => !prevState);
-
-     return (
-         <Dropdown isOpen={dropdownOpen} toggle={toggle}>
-             <DropdownToggle id="filter-button" aria-label="filter" aria-expanded={false} aria-haspopup={true}>
-                 <FontAwesomeIcon icon={['fas', 'filter']} />
-             </DropdownToggle>
-             <DropdownMenu flip={false}>
-                 <DropdownItem header>Header</DropdownItem>
-                 <DropdownItem>Some Action</DropdownItem>
-                 <DropdownItem text>Dropdown Item Text</DropdownItem>
-                 <DropdownItem disabled>Action (disabled)</DropdownItem>
-                 <DropdownItem divider />
-                 <DropdownItem>Foo Action</DropdownItem>
-                 <DropdownItem>Bar Action</DropdownItem>
-                 <DropdownItem>Quo Action</DropdownItem>
-             </DropdownMenu>
-         </Dropdown>
-     );
- }
-
-export function Example() {
+function FilterButton() {
     const [dropdownOpen, setDropdownOpen] = useState(false);
 
     const toggle = () => setDropdownOpen(prevState => !prevState);
 
+    const types = ['Narrow-Body Jet', 'Wide-body Jet'];
+    let typeElems = [];
+    for (let oneType of types) {
+        typeElems.push(<DropdownItem key={oneType}><label><input type="checkbox" defaultChecked/><span>{oneType}</span></label></DropdownItem>);
+    }
+    const brands = ['Airbus', 'Boeing'];
+    let brandElems = [];
+    for (let oneBrand of brands) {
+        brandElems.push(<DropdownItem key={oneBrand}><label><input type="checkbox" defaultChecked/><span>{oneBrand}</span></label></DropdownItem>);
+    }
     return (
-        <Dropdown isOpen={dropdownOpen} toggle={toggle}>
-            <DropdownToggle caret>
-                Dropdown
+        <Dropdown isOpen={dropdownOpen} toggle={toggle} direction="down">
+            <DropdownToggle id="filter-button" aria-label="filter" aria-expanded={false} aria-haspopup={true}>
+                <FontAwesomeIcon icon={['fas', 'filter']}/>
             </DropdownToggle>
-            <DropdownMenu>
-                <DropdownItem header>Header</DropdownItem>
-                <DropdownItem>Some Action</DropdownItem>
-                <DropdownItem text>Dropdown Item Text</DropdownItem>
-                <DropdownItem disabled>Action (disabled)</DropdownItem>
-                <DropdownItem divider />
-                <DropdownItem>Foo Action</DropdownItem>
-                <DropdownItem>Bar Action</DropdownItem>
-                <DropdownItem>Quo Action</DropdownItem>
+            <DropdownMenu right={true} flip={false} className="filter-dropdown-menu checkbox-menu">
+                {typeElems}
+                <DropdownItem divider/>
+                {brandElems}
             </DropdownMenu>
         </Dropdown>
     );
