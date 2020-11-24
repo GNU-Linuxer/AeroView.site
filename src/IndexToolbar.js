@@ -160,29 +160,45 @@ function ContentViewSelectors(props) {
 // Code regarding multi-select checkbox handling is adapted from https://medium.com/@tariqul.islam.rony/multiple-checkbox-handling-by-react-js-84b1d49a46c6
 // With modification to suit the new React coding style
 function FilterButton() {
-    const [dropdownOpen, setDropdownOpen] = useState(false);
-
+    // States for ReactStrap dropdown management
+    const [dropdownOpen, setDropdownOpen] = useState(false); // whether the dropdown intially open when page loades
     const toggle = () => setDropdownOpen(prevState => !prevState);
 
+    //States for Type selection (when checkbox changes, isChecked in type variable will also change appropriately
     const [type, setType] = useState([
-            {id: 1, value: "banana", isChecked: false},
-            {id: 2, value: "apple", isChecked: false},
-            {id: 3, value: "mango", isChecked: false},
-            {id: 4, value: "grap", isChecked: true}
+            {id: 1, value: "Narrow-body Jet", isChecked: true},
+            {id: 2, value: "Wide-body Jet", isChecked: true},
+            {id: 3, value: "Double-Decker", isChecked: true},
             ])
-
-    const handleCheckChildElement = (event) => {
+    const handleTypeSelection = (event) => {
         let updatedType = [...type];
         for (let oneType of updatedType) {
             if (oneType.value === event.target.value) {
                 oneType.isChecked = event.target.checked;
             }
         }
-        console.log(updatedType);
+        //console.log(updatedType);
         setType(updatedType);
     }
+    let TypeCheckBoxElem = type.map((oneObj) => oneCheckboxElem(oneObj, handleTypeSelection));
 
-    let TypeCheckBoxElem = type.map((oneObj) => oneCheckboxElem(oneObj, handleCheckChildElement));
+    //States for Manufacture selection
+    const [make, setMake] = useState([
+        {id: 1, value: "Boeing", isChecked: true},
+        {id: 2, value: "Airbus", isChecked: true},
+        {id: 3, value: "Irkut", isChecked: false}
+    ])
+    const handleMakeSelection = (event) => {
+        let updatedType = [...make];
+        for (let oneType of updatedType) {
+            if (oneType.value === event.target.value) {
+                oneType.isChecked = event.target.checked;
+            }
+        }
+        //console.log(updatedType);
+        setMake(updatedType);
+    }
+    let MakeCheckBoxElem = make.map((oneObj) => oneCheckboxElem(oneObj, handleMakeSelection));
 
     return (
         <Dropdown isOpen={dropdownOpen} toggle={toggle} direction="down">
@@ -192,6 +208,8 @@ function FilterButton() {
             <DropdownMenu right={true} flip={false}>
                 <ul className="filter-dropdown-menu checkbox-menu">
                     {TypeCheckBoxElem}
+                    <DropdownItem divider />
+                    {MakeCheckBoxElem}
                 </ul>
             </DropdownMenu>
         </Dropdown>

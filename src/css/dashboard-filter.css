@@ -76,7 +76,13 @@ button.selected-view {
 
 /* Dropdown menu of filter and option button adapted from https://stackoverflow.com/a/52517790 */
 
-.checkbox-menu label {
+ul.checkbox-menu {
+    list-style-type: none;
+    margin-bottom: 0;
+    padding-left: 0;
+}
+
+.checkbox-menu li {
     display: block;
     padding: 3px 20px 3px 10px;
     clear: both;
@@ -91,7 +97,7 @@ button.selected-view {
 
 @media (min-width: 768px) {
     /* Use smaller line height for mouse users */
-    .checkbox-menu label {
+    .checkbox-menu li {
         line-height: 1.5em;
     }
 
@@ -106,15 +112,16 @@ button.selected-view {
     position: relative;
 }
 
-.checkbox-menu label:hover,
-.checkbox-menu label:focus {
-    background-color: hsl(205, 100%, 35%);
-    color: white;
-}
 
 /* every other row has a background color of #eee (very light gray) */
 .checkbox-menu li:nth-of-type(even) {
     background-color: #eee;
+}
+
+.checkbox-menu li:hover,
+.checkbox-menu li:focus {
+    background-color: hsl(205, 100%, 35%);
+    color: white;
 }
 
 
