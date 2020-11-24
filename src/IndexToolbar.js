@@ -22,6 +22,7 @@ export default function IndexToolbar(props) {
     return (
         <div className="dashboard-widgets">
             {/* Mobile search goes here*/}
+            {window.outerWidth < 768 ? <SearchBoxAndBtn/> : ''}
             <div className="options">
                 <div className="selector-group view-selector-group">
                     <ListButton selected={props.viewSelection === "List"}/>
@@ -31,7 +32,9 @@ export default function IndexToolbar(props) {
                 {/*Desktop search bar that will display when width >= 768*/}
                 {window.outerWidth >= 768 ? <SearchBoxAndBtn/> : ''}
                 <div className="selector-group content-selector-group">
+                    {/*TODO BUG: don't know how to remove the bootstrap button hover effect*/}
                     <FilterButton/>
+                    <OptionButton/>
                 </div>
             </div>
         </div>
@@ -53,7 +56,7 @@ function ListButton(props) {
 
     const handleListClick = (event) => {
         event.preventDefault();
-        console.log('checkpoint!');
+        //console.log('checkpoint!');
         //props.selectListCallback();
     }
 
@@ -112,12 +115,12 @@ function SearchBoxAndBtn(props) {
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        console.log(inputValue);
+        //console.log(inputValue);
         //props.searchCallBack(inputValue);
     }
     return (
         <div className="search-form-container" id="search-form-stub-desktop">
-            <form role="search" onSubmit={handleSubmit}>
+            <form role="search" onSubmit={handleSubmit} autoComplete="off">
                 <div className="search-bar-container">
                     <input type="text" placeholder="Type to search" onChange={handleChange} value={inputValue}
                            className="search-textbox" id="search-textbox" required=""/>
@@ -125,33 +128,6 @@ function SearchBoxAndBtn(props) {
                         icon={['fas', 'search']}/></button>
                 </div>
             </form>
-        </div>
-    )
-}
-
-// this element will render the filter and option button
-function ContentViewSelectors(props) {
-    /*
-        allPlane: an array of objects, where 1 object describe 1 airplane
-     */
-    return (
-        <div className="selector-group content-selector-group">
-            <div>
-                {/*Prevent the dropdown menu from flipping up when no enough space below remains*/}
-                {/*see https://getbootstrap.com/docs/4.1/components/dropdowns/#options*/}
-                <button id="filter-button" aria-label="filter" data-toggle="dropdown" data-flip="false"
-                        aria-expanded="false" aria-haspopup="true">
-                    <FontAwesomeIcon icon={['fas', 'filter']}/>
-                </button>
-            </div>
-
-            <div>
-                <button id="edit-button" aria-label="edit" data-toggle="dropdown" data-flip="false"
-                        aria-expanded="false"
-                        aria-haspopup="true">
-                    <FontAwesomeIcon icon={['fas', 'ellipsis-v']}/>
-                </button>
-            </div>
         </div>
     )
 }
@@ -204,12 +180,50 @@ function FilterButton() {
         <Dropdown isOpen={dropdownOpen} toggle={toggle} direction="down">
             <DropdownToggle id="filter-button" aria-label="filter" aria-expanded={false} aria-haspopup={true}>
                 <FontAwesomeIcon icon={['fas', 'filter']}/>
+                <span className="button-description">&nbsp;Type</span>
             </DropdownToggle>
             <DropdownMenu right={true} flip={false}>
                 <ul className="filter-dropdown-menu checkbox-menu">
                     {TypeCheckBoxElem}
                     <DropdownItem divider />
                     {MakeCheckBoxElem}
+                </ul>
+            </DropdownMenu>
+        </Dropdown>
+    );
+}
+
+function OptionButton() {
+    // States for ReactStrap dropdown management
+    const [dropdownOpen, setDropdownOpen] = useState(false); // whether the dropdown intially open when page loades
+    const toggle = () => setDropdownOpen(prevState => !prevState);
+
+    //States for Type selection (when checkbox changes, isChecked in type variable will also change appropriately
+    const [type, setType] = useState([
+        {id: 1, value: "ICAO Code", isChecked: true},
+        {id: 2, value: "MTOW", isChecked: false},
+    ])
+    const handleTypeSelection = (event) => {
+        let updatedType = [...type];
+        for (let oneType of updatedType) {
+            if (oneType.value === event.target.value) {
+                oneType.isChecked = event.target.checked;
+            }
+        }
+        //console.log(updatedType);
+        setType(updatedType);
+    }
+    let TypeCheckBoxElem = type.map((oneObj) => oneCheckboxElem(oneObj, handleTypeSelection));
+
+    return (
+        <Dropdown isOpen={dropdownOpen} toggle={toggle} direction="down">
+            <DropdownToggle id="filter-button" aria-label="filter" aria-expanded={false} aria-haspopup={true}>
+                <FontAwesomeIcon icon={['fas', 'ellipsis-v']}/>
+                <span className="button-description">&nbsp;Info</span>
+            </DropdownToggle>
+            <DropdownMenu right={true} flip={false}>
+                <ul className="option-dropdown-menu checkbox-menu">
+                    {TypeCheckBoxElem}
                 </ul>
             </DropdownMenu>
         </Dropdown>
