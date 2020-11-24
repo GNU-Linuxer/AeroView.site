@@ -1,8 +1,11 @@
 import React, {useState} from 'react';
-import IndexToolbar from './IndexToolbar.js';
+import ListGridView from './ListGridView.js';
 
-export default function App() {
+export default function App(props) {
+    /*  airplaneDisplayMetaName: An object that maps the shorthand metadata key to display-friendly full name
+        airplaneData: An array of objects: 1 object represent 1 airplane whose metadata key has the metadata value
+     */
     return (
-        <IndexToolbar/>
+        <ListGridView/>
     )
 }
