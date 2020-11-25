@@ -94,7 +94,7 @@ function calculateNumMeta(widthInput) {
     //console.log(widthInput);
     // large desktop screen
     if (widthInput >=768) {
-        let availableSpace = widthInput - 56 - 65 - 96 - 278;
+        let availableSpace = widthInput - 56 - 65 - 96 - 300;
         // ECMAScript 6 feature; use Math.floor(decimal); for old browser
         // 120 means reserving up to 120px width for all metadata column (except make, model, and picture)
         return(Math.trunc(availableSpace / 130));
@@ -130,10 +130,7 @@ function DashboardTableHead(props) {
         <thead>
         <tr>
             <th>&nbsp;</th>
-            {/* Render Make column only on tablet and large desktop*/}
-            {window.innerWidth >= 768 ? <th>Make</th> : ''}
-            {window.innerWidth >= 768 ? <th>Model</th> : ''}
-            {window.innerWidth < 768 ? <th>Name</th> : ''}
+            <th>Name</th>
             <th>Picture</th>
             {filteredFullMetaElem}
         </tr>
@@ -206,10 +203,7 @@ function OnePlaneTableRow(props) {
                     <FontAwesomeIcon icon={['far', 'heart']}/>
                 </button>
             </td>
-            {/* Render separate make and model column only on tablet and larger*/}
-            {window.innerWidth >= 768 ? <td key='make'>{props.onePlane["make"]}</td> : ''}
-            {window.innerWidth >= 768 ? <td key='model'>{props.onePlane["model"]}</td> : ''}
-            {window.innerWidth < 768 ? <td key='name'>{props.onePlane["make"] + ' ' + props.onePlane["model"]}</td> : ''}
+            <td key='name' className="airplane-name">{props.onePlane["make"] + ' ' + props.onePlane["model"]}</td>
             <td key='picture'><img className="tile-image"
                      src={"./plane-thumbnail/" + props.onePlane["icao-pic"].toLowerCase() + ".jpg"}
                      alt={"Picture of" + props.onePlane["make"] + props["model"] + "in" + props.onePlane["make"] + "livery"}/>

@@ -56,15 +56,11 @@ span {
     color: white;
 }
 
-/* Extra data that will only be shown when space is enough */
-.dashboard-list-extra-data {
-    display: none;
-}
 
-@media (min-width: 768px) {
-    .dashboard-list-extra-data {
-        display: table-cell;
-    }
+/* Ensure airplane's name does not wrap to second line*/
+/* Useful to implement 1-5 star rating under the plane name*/
+td.airplane-name {
+    width: 147px;
 }
 
 /* Style for too many metadata alert */
