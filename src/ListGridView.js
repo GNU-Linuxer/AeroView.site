@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {Dropdown, DropdownToggle, DropdownMenu, DropdownItem} from 'reactstrap';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {library} from '@fortawesome/fontawesome-svg-core'
@@ -21,14 +21,11 @@ export default function ListGridView(props) {
         airplaneDisplayMetaName: An object that maps the shorthand metadata key to display-friendly full name
         airplaneData: An array of objects: 1 object represent 1 airplane whose metadata key has the metadata value
     */
-    // Will not automatically generate elements to show information in these metadata
-    let excludedMeta = ['make', 'model', 'icao-pic'];
 
     return (
         <div className="dashboard-content">
             <DashboardTable airplaneDisplayMetaName={props.airplaneDisplayMetaName}
-                            airplaneData={props.airplaneData}
-                            excludedMeta={excludedMeta}/>
+                            airplaneData={props.airplaneData}/>
         </div>
     )
 }
@@ -42,22 +39,71 @@ function DashboardTable(props) {
     // Initial values to display, customize 3 arrays below to customize index.html's initial view; checkbox toggle will overwrite the content
     let brandsToDisplay = ['Airbus', 'Irkut'];
     let typesToDisplay = ['Narrow-Body Jet', 'Wide-Body Jet', 'Double-Decker'];
-    let filteredMeta = ['cruise_speed', 'mtow', 'psng_cap', 'series', 'psng_cap', 'serv_cell'];
+    let filteredMeta = ['cruise_speed', 'mtow', 'psng_cap', 'series', 'psng_cap', 'serv_cell', 'aisle_wid', 'takeoff_dis', 'wing_span', 'cab_alt'];
 
-    let numOfMeta = 20;
+
+    // When window's width change, number of displaying columns need to change
+    // Code is adapted from https://www.pluralsight.com/guides/re-render-react-component-on-window-resize
+    const [numCol, setNumCol] = React.useState(calculateNumMeta(window.innerWidth))
+    useEffect(() => {
+        const debouncedHandleResize = debounce(function handleResize() {
+            setNumCol(calculateNumMeta(window.innerWidth))
+        }, 5) // 10 in mili-second unit means re-render components with a maximum frequency of once per 10ms
+        // Recommend to set to 100 or 1000 for production release
+
+        window.addEventListener('resize', debouncedHandleResize)
+
+        return _ => {
+            window.removeEventListener('resize', debouncedHandleResize)
+
+        }
+    })
+    console.log(numCol);
+    let numOfMeta = 4;
     return (
         <table className="plane-list">
             <DashboardTableHead airplaneDisplayMetaName={props.airplaneDisplayMetaName}
                                 airplaneData={props.airplaneData}
                                 filteredMeta={filteredMeta}
-                                numOfMeta={numOfMeta}/>
+                                numOfMeta={numCol}/>
             <DashboardTableBody airplaneData={props.airplaneData}
                                 brandsToDisplay={brandsToDisplay}
                                 filteredMeta={filteredMeta}
-                                numOfMeta={numOfMeta}
+                                numOfMeta={numCol}
                                 typesToDisplay={typesToDisplay}/>
         </table>
     )
+}
+
+// The helper function that limits number of window resizing event frequency
+// Code is adapted from https://www.pluralsight.com/guides/re-render-react-component-on-window-resize
+function debounce(fn, ms) {
+    let timer
+    return _ => {
+        clearTimeout(timer)
+        timer = setTimeout(_ => {
+            timer = null
+            fn.apply(this, arguments)
+        }, ms)
+    };
+}
+
+// This helper function will return an integer representing number of displaying metadata column
+// using the widthInput parameter that denotes the width of screen
+function calculateNumMeta(widthInput) {
+    console.log(widthInput);
+    // large desktop screen
+    if (widthInput >=768) {
+        let availableSpace = widthInput - 56 - 65 - 96 - 278;
+        // ECMAScript 6 feature; use Math.floor(decimal); for old browser
+        // 120 means reserving up to 120px width for all metadata column (except make, model, and picture)
+        return(Math.trunc(availableSpace / 130));
+    }
+    // mobile and small desktop screen (the everything else)
+    else {
+        let availableSpace = widthInput - 55 - 63 - 83 - 116;
+        return(Math.trunc(availableSpace / 110));
+    }
 }
 
 function DashboardTableHead(props) {
@@ -84,8 +130,10 @@ function DashboardTableHead(props) {
         <thead>
         <tr>
             <th>&nbsp;</th>
-            <th>Make</th>
-            <th>Model</th>
+            {/* Render Make column only on tablet and large desktop*/}
+            {window.innerWidth >= 768 ? <th>Make</th> : ''}
+            {window.innerWidth >= 768 ? <th>Model</th> : ''}
+            {window.innerWidth < 768 ? <th>Name</th> : ''}
             <th>Picture</th>
             {filteredFullMetaElem}
         </tr>
@@ -157,8 +205,10 @@ function OnePlaneTableRow(props) {
                     <FontAwesomeIcon icon={['far', 'star']}/>
                 </button>
             </td>
-            <td key='make'>{props.onePlane["make"]}</td>
-            <td key='model'>{props.onePlane["model"]}</td>
+            {/* Render separate make and model column only on tablet and larger*/}
+            {window.innerWidth >= 768 ? <td key='make'>{props.onePlane["make"]}</td> : ''}
+            {window.innerWidth >= 768 ? <td key='model'>{props.onePlane["model"]}</td> : ''}
+            {window.innerWidth < 768 ? <td key='name'>{props.onePlane["make"] + ' ' + props.onePlane["model"]}</td> : ''}
             <td key='picture'><img className="tile-image"
                      src={"./plane-thumbnail/" + props.onePlane["icao-pic"].toLowerCase() + ".jpg"}
                      alt={"Picture of" + props.onePlane["make"] + props["model"] + "in" + props.onePlane["make"] + "livery"}/>
