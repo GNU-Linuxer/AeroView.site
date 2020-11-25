@@ -6,6 +6,8 @@ export default function App(props) {
         airplaneData: An array of objects: 1 object represent 1 airplane whose metadata key has the metadata value
      */
     return (
-        <ListGridView/>
+        // Continue passing data down to child components
+        <ListGridView airplaneDisplayMetaName={props.airplaneDisplayMetaName}
+                      airplaneData={props.airplaneData}/>
     )
 }
