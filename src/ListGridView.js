@@ -2,8 +2,8 @@ import React, {useState, useEffect} from 'react';
 import {Dropdown, DropdownToggle, DropdownMenu, DropdownItem} from 'reactstrap';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {library} from '@fortawesome/fontawesome-svg-core'
-import {faStar} from '@fortawesome/free-solid-svg-icons'
-import {faStar as regularStar} from '@fortawesome/free-regular-svg-icons'
+import {faHeart, faStar} from '@fortawesome/free-solid-svg-icons'
+import {faHeart as regularHeart, faStar as regularStar} from '@fortawesome/free-regular-svg-icons'
 // Load custom style sheet
 import './css/dashboard-filter.css';
 import './css/site-elements.css';
@@ -13,7 +13,7 @@ import './css/style.css';
 // Reactstrap depends on bootstrap
 import 'bootstrap/dist/css/bootstrap.min.css';
 // Load font awesome icon, MUST add everything if defined in import {***, ***} from '@fortawesome/free-solid-svg-icons'
-library.add(faStar, regularStar);
+library.add(faHeart, faStar, regularHeart, regularStar);
 
 
 export default function ListGridView(props) {
@@ -58,7 +58,7 @@ function DashboardTable(props) {
 
         }
     })
-    console.log(numCol);
+    //console.log(numCol);
     let numOfMeta = 4;
     return (
         <table className="plane-list">
@@ -91,7 +91,7 @@ function debounce(fn, ms) {
 // This helper function will return an integer representing number of displaying metadata column
 // using the widthInput parameter that denotes the width of screen
 function calculateNumMeta(widthInput) {
-    console.log(widthInput);
+    //console.log(widthInput);
     // large desktop screen
     if (widthInput >=768) {
         let availableSpace = widthInput - 56 - 65 - 96 - 278;
@@ -191,6 +191,7 @@ function OnePlaneTableRow(props) {
         excludedMeta: an array of strings: describe metadata that will be manually added to the table (will not be automatically generated)
         onePlane: 1 object represent 1 airplane with filtered metadata selection
      */
+
     let tdElems = [];
     for (let oneMeta of Object.keys(props.onePlane)) {
         if (!props.excludedMeta.includes(oneMeta)) {
@@ -200,9 +201,9 @@ function OnePlaneTableRow(props) {
     return (
         <tr>
             <td key='favoriteBtn'>
-                <button className="star-button">
+                <button className="favorite-heart-button">
                     {/* Switch between 'far' and 'fas' to select outlined star or solid star*/}
-                    <FontAwesomeIcon icon={['far', 'star']}/>
+                    <FontAwesomeIcon icon={['far', 'heart']}/>
                 </button>
             </td>
             {/* Render separate make and model column only on tablet and larger*/}

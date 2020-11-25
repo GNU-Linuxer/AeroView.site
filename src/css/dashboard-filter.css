@@ -172,10 +172,11 @@ ul.checkbox-menu {
 }
 
 
-/* Star button */
-.star-button {
+/* Favorite heart button (Star button is used for rating) */
+.favorite-heart-button {
     border: none;
     background-color: transparent;
-    color: #D29D00;
+    /*color: #D29D00;*/
+    color: #FF7E79;
     font-size: 1.5em;
 }
