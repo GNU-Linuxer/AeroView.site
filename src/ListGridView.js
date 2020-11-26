@@ -166,20 +166,35 @@ function DashboardTableBody(props) {
             selectedAirplanesFilteredMeta.push(filteredMetaPlane);
         }
     }
-
-    let planeRating={}
+    // Handle change of star rating (rating is an integer from 0-totalStars, inclusive)
+    const [planeRating, setRating] = useState({
+        bcs3: 0,
+        a20n: 0,
+        a339: 0,
+        a343: 0,
+        a359: 0,
+        a388: 0,
+    });
     const updatePlaneRating=(icao, rating)=>{
-        //console.log(icao + ' ' + rating);
-        planeRating[icao]=rating;
+        let updatedPlaneRating = {...planeRating} // object copy
+        console.log(icao + ' ' + rating);
+        // User can remove rating (0 star) by clicking on the same rating star again
+        if (rating === updatedPlaneRating[icao]) {
+            updatedPlaneRating[icao]=0;
+        } else {
+            updatedPlaneRating[icao]=rating;
+        }
+        console.log(updatedPlaneRating);
+        setRating(updatedPlaneRating);
     }
-    console.log(planeRating);
 
     // Create All Table Rows for every displaying airplane
     let selectedAirplanesElems = [];
     for (let onePlane of selectedAirplanesFilteredMeta) {
-        selectedAirplanesElems.push(<OnePlaneTableRow key={onePlane["icao_pic"]}
+        selectedAirplanesElems.push(<OnePlaneTableRow key={onePlane["icao-pic"]}
                                                       excludedMeta={excludedMeta}
                                                       onePlane={onePlane}
+                                                      currRating={planeRating[onePlane['icao-pic'].toLowerCase()]}
                                                       updateRatingFn={updatePlaneRating}/>)
     }
 
@@ -194,6 +209,7 @@ function OnePlaneTableRow(props) {
     /*
         excludedMeta: an array of strings: describe metadata that will be manually added to the table (will not be automatically generated)
         onePlane: 1 object represent 1 airplane with filtered metadata selection
+        currRating: an integer that describe prop.onePlane's current rating (initial value)
         updateRatingFn: a callback function that feeds props.onePlane rating
             The function takes 2 parameters (all_lowercase-icao, rating-integer)
      */
@@ -218,7 +234,7 @@ function OnePlaneTableRow(props) {
             </td>
             <td key='name' className="airplane-name">
                 <div>{props.onePlane["make"] + ' ' + props.onePlane["model"]}</div>
-                <div><StarRating initial={0} totalStars={5} callBack={(newRating) => props.updateRatingFn(props.onePlane['icao-pic'].toLowerCase(), newRating)}/></div>
+                <div><StarRating initial={props.currRating} totalStars={5} callBack={(newRating) => props.updateRatingFn(props.onePlane['icao-pic'].toLowerCase(), newRating)}/></div>
             </td>
             <td key='picture'><img className="tile-image"
                      src={"./plane-thumbnail/" + props.onePlane["icao-pic"].toLowerCase() + ".jpg"}
@@ -236,22 +252,10 @@ function StarRating(props) {
         callBack: An callback function that takes the plane's icao and updated rating as the parameter, passing the rating upwards
         totalStars: Number of possible ratings (recommend 5 star rating)
      */
-    // Handle change of star rating (rating is an integer from 0-totalStars, inclusive)
-    const [rating, setRating] = useState(props.initial);
-    const updateRating = (id) => {
-        // User can remove rating (0 star) by clicking on the same rating star again
-        if (id === rating) {
-            props.callBack(0);
-            setRating(0);
-        } else {
-            props.callBack(id);
-            setRating(id);
-        }
-    }
 
     let StarElems = [];
     for (let i=1; i <= props.totalStars; i = i + 1) {
-        StarElems.push(<Star key={i} starId={i} isSelected={rating >= i} callBack={updateRating}/>);
+        StarElems.push(<Star key={i} starId={i} isSelected={props.initial >= i} callBack={(i) => props.callBack(i)}/>);
     }
 
     return(
