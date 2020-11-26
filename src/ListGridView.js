@@ -21,7 +21,13 @@ export default function ListGridView(props) {
         airplaneData: An array of objects: 1 object represent 1 airplane whose metadata key has the metadata value
     */
 
+    // Initial values to display, customize 3 arrays below to customize index.html's initial view; checkbox toggle will overwrite the content
+    let brandsToDisplay = ['Boeing', 'Irkut'];
+    let typesToDisplay = ['Narrow-Body Jet', 'Wide-Body Jet', 'Double-Decker'];
+    let filteredMeta = ['cruise_speed', 'mtow', 'psng_cap', 'series', 'psng_cap', 'serv_cell', 'aisle_wid', 'takeoff_dis', 'wing_span', 'cab_alt'];
+
     // Temporary: set the initial rating of all plane to 0 (if the value changes, the star-rendering will change)
+    // This should read from user data to re-load previously saved rating
     let initialRating = {};
     for (let onePlane of props.airplaneData) {
         initialRating[onePlane["icao-pic"].toLowerCase()]=0;
@@ -45,6 +51,8 @@ export default function ListGridView(props) {
 
 
     // Handle change of 1 airplane's favorite toggle (all favorite airplanes' all-lowercase icao code is stored in this array)
+    // Temporary: all planes are not favorite
+    // This should read from user data to re-load previously saved rating
     const [favoritePlanes, setFavoritePlanes] = useState([]);
     // Value is a boolean value that denote whether a plane (with this icao code) is a favorite (true when is favorite)
     const updateFavoritePlane=(icao, value)=>{
@@ -70,6 +78,10 @@ export default function ListGridView(props) {
             <DashboardTable airplaneDisplayMetaName={props.airplaneDisplayMetaName}
                             airplaneData={props.airplaneData}
 
+                            brandsToDisplay={brandsToDisplay}
+                            typesToDisplay={typesToDisplay}
+                            filteredMeta={filteredMeta}
+
                             planeRating={planeRating}
                             updateRatingFn={updatePlaneRating}
 
@@ -84,6 +96,10 @@ function DashboardTable(props) {
         airplaneDisplayMetaName: An object that maps the shorthand metadata key to display-friendly full name
         airplaneData: An array of objects: 1 object represent 1 airplane whose metadata key has the metadata value
 
+        brandsToDisplay: An array of strings: brands of airplane showing in table body
+        typesToDisplay: An array of strings: type of airplane showing in the table body
+        filteredMeta: An array of strings: metadata that are selected to display
+
         planeRating: An object that represent the rating of each plane (icao code) has
         updateRatingFn: a callback function that feeds props.onePlane rating
 
@@ -92,9 +108,9 @@ function DashboardTable(props) {
     */
 
     // Initial values to display, customize 3 arrays below to customize index.html's initial view; checkbox toggle will overwrite the content
-    let brandsToDisplay = ['Airbus', 'Irkut'];
-    let typesToDisplay = ['Narrow-Body Jet', 'Wide-Body Jet', 'Double-Decker'];
-    let filteredMeta = ['cruise_speed', 'mtow', 'psng_cap', 'series', 'psng_cap', 'serv_cell', 'aisle_wid', 'takeoff_dis', 'wing_span', 'cab_alt'];
+    // let brandsToDisplay = ['Airbus', 'Irkut'];
+    // let typesToDisplay = ['Narrow-Body Jet', 'Wide-Body Jet', 'Double-Decker'];
+    // let filteredMeta = ['cruise_speed', 'mtow', 'psng_cap', 'series', 'psng_cap', 'serv_cell', 'aisle_wid', 'takeoff_dis', 'wing_span', 'cab_alt'];
 
 
     // When window's width change, number of displaying columns need to change
@@ -114,18 +130,21 @@ function DashboardTable(props) {
         }
     })
     //console.log(numCol);
-    let numOfMeta = 4;
+
     return (
         <table className="plane-list">
             <DashboardTableHead airplaneDisplayMetaName={props.airplaneDisplayMetaName}
                                 airplaneData={props.airplaneData}
-                                filteredMeta={filteredMeta}
+                                filteredMeta={props.filteredMeta}
+
                                 numOfMeta={numCol}/>
             <DashboardTableBody airplaneData={props.airplaneData}
-                                brandsToDisplay={brandsToDisplay}
-                                filteredMeta={filteredMeta}
+                                brandsToDisplay={props.brandsToDisplay}
+                                typesToDisplay={props.typesToDisplay}
+                                filteredMeta={props.filteredMeta}
+
                                 numOfMeta={numCol}
-                                typesToDisplay={typesToDisplay}
+
                                 planeRating={props.planeRating}
                                 updateRatingFn={props.updateRatingFn}
 
@@ -202,9 +221,10 @@ function DashboardTableBody(props) {
     /*  props:
     airplaneData: An array of objects: 1 object represent 1 airplane whose metadata key has the metadata value
     brandsToDisplay: An array of strings: brands of airplane showing in table body
-    filteredMeta: An array of strings: metadata that are selected to display
-    numOfMeta: An integer that represents maximum number of filteredMeta that will display (determined by window width)
     typesToDisplay: An array of strings: type of airplane showing in the table body
+    filteredMeta: An array of strings: metadata that are selected to display
+
+    numOfMeta: An integer that represents maximum number of filteredMeta that will display (determined by window width)
 
     planeRating: An object that represent the rating of each plane (icao code) has
     updateRatingFn: a callback function that feeds props.onePlane rating

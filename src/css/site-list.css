@@ -60,7 +60,7 @@ span {
 /* Ensure airplane's name does not wrap to second line*/
 /* Useful to implement 1-5 star rating under the plane name*/
 td.airplane-name {
-    width: 147px;
+    width: 154px; /* The widest text is Boeing 777-300ER */
 }
 
 /* Style for too many metadata alert */
