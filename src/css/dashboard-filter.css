@@ -176,7 +176,16 @@ ul.checkbox-menu {
 .favorite-heart-button {
     border: none;
     background-color: transparent;
-    /*color: #D29D00;*/
     color: #FF7E79;
     font-size: 1.5em;
+}
+
+/* Star rating button */
+.star-rating-button {
+    border: none;
+    background-color: transparent;
+    /* 5px padding to the right; otherwise none*/
+    padding: 0 5px 0 0;
+    color: #D29D00;
+    font-size: 1em;
 }

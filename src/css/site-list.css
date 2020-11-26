@@ -68,3 +68,8 @@ td.airplane-name {
     font-weight: bold;
     font-size: 2em;
 }
+
+.favorite-heart-list {
+    /* Only set 1px of padding to the left; all other side will be 0*/
+    padding: 0 0 0 1px;
+}

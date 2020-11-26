@@ -1,5 +1,4 @@
-import React, {useState, useEffect} from 'react';
-import {Dropdown, DropdownToggle, DropdownMenu, DropdownItem} from 'reactstrap';
+import React, {useEffect, useState} from 'react';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {library} from '@fortawesome/fontawesome-svg-core'
 import {faHeart, faStar} from '@fortawesome/free-solid-svg-icons'
@@ -188,6 +187,11 @@ function OnePlaneTableRow(props) {
         excludedMeta: an array of strings: describe metadata that will be manually added to the table (will not be automatically generated)
         onePlane: 1 object represent 1 airplane with filtered metadata selection
      */
+    // Handle change favorite heart button change
+    const [favorite, setFavorite] = useState(false); // whether the favorite heart is initially selected
+    const toggleFavIcon = () => setFavorite(prevState => !prevState);
+
+
 
     let tdElems = [];
     for (let oneMeta of Object.keys(props.onePlane)) {
@@ -198,17 +202,64 @@ function OnePlaneTableRow(props) {
     return (
         <tr>
             <td key='favoriteBtn'>
-                <button className="favorite-heart-button">
+                <button className="favorite-heart-button favorite-heart-list" onClick={toggleFavIcon}>
                     {/* Switch between 'far' and 'fas' to select outlined star or solid star*/}
-                    <FontAwesomeIcon icon={['far', 'heart']}/>
+                    <FontAwesomeIcon icon={favorite ? ['fas', 'heart'] : ['far', 'heart']}/>
                 </button>
             </td>
-            <td key='name' className="airplane-name">{props.onePlane["make"] + ' ' + props.onePlane["model"]}</td>
+            <td key='name' className="airplane-name">
+                <div>{props.onePlane["make"] + ' ' + props.onePlane["model"]}</div>
+                <div><StarRating initial={0} totalStars={5} /></div>
+            </td>
             <td key='picture'><img className="tile-image"
                      src={"./plane-thumbnail/" + props.onePlane["icao-pic"].toLowerCase() + ".jpg"}
                      alt={"Picture of" + props.onePlane["make"] + props["model"] + "in" + props.onePlane["make"] + "livery"}/>
             </td>
             {tdElems}
         </tr>
+    )
+}
+
+// This function will return a <span> element that contains a set of star rating
+function StarRating(props) {
+    /*
+        initial: An integer describe the initial rating once this component is loaded
+        (NOT USED) callBack: An callback function that takes the updated rating as the parameter
+        totalStars: Number of possible ratings (recommend 5 star rating)
+     */
+    // Handle change of star rating (rating is an integer from 0-totalStars, inclusive)
+    const [rating, setRating] = useState(props.initial);
+    const updateRating = (id) => {
+        // User can remove rating (0 star) by clicking on the same rating star again
+        if (id === rating) {
+            setRating(0);
+        } else {
+            setRating(id);
+        }
+    }
+
+    let StarElems = [];
+    for (let i=1; i <= props.totalStars; i = i + 1) {
+        StarElems.push(<Star key={i} starId={i} isSelected={rating >= i} callBack={updateRating}/>);
+    }
+
+    return(
+        <span>
+            {StarElems}
+        </span>
+    )
+}
+
+function Star(props) {
+    /*
+        starId: an integer representing the *-st number of star (such as 1, 2, 3)
+        isSelected: a boolean value that denote whether the star is selected
+        callBack: a callback function that takes the star's id as parameter when star is updated
+     */
+    return (
+        <button onClick={() => props.callBack(props.starId)} className='star-rating-button'>
+            <FontAwesomeIcon icon={props.isSelected ? ['fas', 'star'] : ['far', 'star']}/>
+        </button>
+
     )
 }
