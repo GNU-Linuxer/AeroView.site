@@ -167,12 +167,20 @@ function DashboardTableBody(props) {
         }
     }
 
+    let planeRating={}
+    const updatePlaneRating=(icao, rating)=>{
+        //console.log(icao + ' ' + rating);
+        planeRating[icao]=rating;
+    }
+    console.log(planeRating);
+
     // Create All Table Rows for every displaying airplane
     let selectedAirplanesElems = [];
     for (let onePlane of selectedAirplanesFilteredMeta) {
         selectedAirplanesElems.push(<OnePlaneTableRow key={onePlane["icao_pic"]}
                                                       excludedMeta={excludedMeta}
-                                                      onePlane={onePlane}/>)
+                                                      onePlane={onePlane}
+                                                      updateRatingFn={updatePlaneRating}/>)
     }
 
     return (
@@ -186,12 +194,12 @@ function OnePlaneTableRow(props) {
     /*
         excludedMeta: an array of strings: describe metadata that will be manually added to the table (will not be automatically generated)
         onePlane: 1 object represent 1 airplane with filtered metadata selection
+        updateRatingFn: a callback function that feeds props.onePlane rating
+            The function takes 2 parameters (all_lowercase-icao, rating-integer)
      */
     // Handle change favorite heart button change
     const [favorite, setFavorite] = useState(false); // whether the favorite heart is initially selected
     const toggleFavIcon = () => setFavorite(prevState => !prevState);
-
-
 
     let tdElems = [];
     for (let oneMeta of Object.keys(props.onePlane)) {
@@ -199,6 +207,7 @@ function OnePlaneTableRow(props) {
             tdElems.push(<td key={oneMeta}>{props.onePlane[oneMeta]}</td>)
         }
     }
+
     return (
         <tr>
             <td key='favoriteBtn'>
@@ -209,7 +218,7 @@ function OnePlaneTableRow(props) {
             </td>
             <td key='name' className="airplane-name">
                 <div>{props.onePlane["make"] + ' ' + props.onePlane["model"]}</div>
-                <div><StarRating initial={0} totalStars={5} /></div>
+                <div><StarRating initial={0} totalStars={5} callBack={(newRating) => props.updateRatingFn(props.onePlane['icao-pic'].toLowerCase(), newRating)}/></div>
             </td>
             <td key='picture'><img className="tile-image"
                      src={"./plane-thumbnail/" + props.onePlane["icao-pic"].toLowerCase() + ".jpg"}
@@ -224,7 +233,7 @@ function OnePlaneTableRow(props) {
 function StarRating(props) {
     /*
         initial: An integer describe the initial rating once this component is loaded
-        (NOT USED) callBack: An callback function that takes the updated rating as the parameter
+        callBack: An callback function that takes the plane's icao and updated rating as the parameter, passing the rating upwards
         totalStars: Number of possible ratings (recommend 5 star rating)
      */
     // Handle change of star rating (rating is an integer from 0-totalStars, inclusive)
@@ -232,8 +241,10 @@ function StarRating(props) {
     const updateRating = (id) => {
         // User can remove rating (0 star) by clicking on the same rating star again
         if (id === rating) {
+            props.callBack(0);
             setRating(0);
         } else {
+            props.callBack(id);
             setRating(id);
         }
     }
