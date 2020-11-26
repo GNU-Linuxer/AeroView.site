@@ -21,6 +21,29 @@ export default function ListGridView(props) {
         airplaneData: An array of objects: 1 object represent 1 airplane whose metadata key has the metadata value
     */
 
+    // Temporary: set the initial rating of all plane to 0 (if the value changes, the star-rendering will change)
+    let initialRating = {};
+    for (let onePlane of props.airplaneData) {
+        initialRating[onePlane["icao-pic"].toLowerCase()]=0;
+    }
+
+    // Handle change of 1 airplane's star rating
+    const [planeRating, setRating] = useState(initialRating);
+    //console.log(initialRating);
+    const updatePlaneRating=(icao, rating)=>{
+        let updatedPlaneRating = {...planeRating} // object copy
+        //console.log(icao + ' ' + rating);
+        // User can remove rating (0 star) by clicking on the same rating star again
+        if (rating === updatedPlaneRating[icao]) {
+            updatedPlaneRating[icao]=0;
+        } else {
+            updatedPlaneRating[icao]=rating;
+        }
+        console.log(updatedPlaneRating);
+        setRating(updatedPlaneRating);
+    }
+
+
     // Handle change of 1 airplane's favorite toggle (all favorite airplanes' all-lowercase icao code is stored in this array)
     const [favoritePlanes, setFavoritePlanes] = useState([]);
     // Value is a boolean value that denote whether a plane (with this icao code) is a favorite (true when is favorite)
@@ -47,6 +70,9 @@ export default function ListGridView(props) {
             <DashboardTable airplaneDisplayMetaName={props.airplaneDisplayMetaName}
                             airplaneData={props.airplaneData}
 
+                            planeRating={planeRating}
+                            updateRatingFn={updatePlaneRating}
+
                             favoritePlanes={favoritePlanes}
                             updateFavoriteFn={updateFavoritePlane}/>
         </div>
@@ -57,6 +83,10 @@ function DashboardTable(props) {
     /*  props:
         airplaneDisplayMetaName: An object that maps the shorthand metadata key to display-friendly full name
         airplaneData: An array of objects: 1 object represent 1 airplane whose metadata key has the metadata value
+
+        planeRating: An object that represent the rating of each plane (icao code) has
+        updateRatingFn: a callback function that feeds props.onePlane rating
+
         favoritePlanes: An array of boolean value that describe whether prop.onePlane is a favorite
         updateFavoriteFn: a callback function that feeds whether props.onePlane has become (or no longer is) a favorite
     */
@@ -96,6 +126,8 @@ function DashboardTable(props) {
                                 filteredMeta={filteredMeta}
                                 numOfMeta={numCol}
                                 typesToDisplay={typesToDisplay}
+                                planeRating={props.planeRating}
+                                updateRatingFn={props.updateRatingFn}
 
                                 favoritePlanes={props.favoritePlanes}
                                 updateFavoriteFn={props.updateFavoriteFn}/>
@@ -173,6 +205,10 @@ function DashboardTableBody(props) {
     filteredMeta: An array of strings: metadata that are selected to display
     numOfMeta: An integer that represents maximum number of filteredMeta that will display (determined by window width)
     typesToDisplay: An array of strings: type of airplane showing in the table body
+
+    planeRating: An object that represent the rating of each plane (icao code) has
+    updateRatingFn: a callback function that feeds props.onePlane rating
+
     favoritePlanes: An array of boolean value that describe whether prop.onePlane is a favorite
     updateFavoriteFn: a callback function that feeds whether props.onePlane has become (or no longer is) a favorite
     */
@@ -198,53 +234,6 @@ function DashboardTableBody(props) {
         }
     }
 
-    // TODO: lift the state of favorite and star-rating all the way up to ListGridView Component
-    // Temporary: set the initial rating of all plane to 0 (if the value changes, the star-rendering will change)
-    let initialRating = {};
-    for (let onePlane of props.airplaneData) {
-        // Filter planes to display
-        if (props.brandsToDisplay.includes(onePlane.make) && props.typesToDisplay.includes(onePlane.type)) {
-            initialRating[onePlane["icao-pic"].toLowerCase()]=0;
-        }
-    }
-
-    // Handle change of 1 airplane's star rating
-    const [planeRating, setRating] = useState({initialRating});
-    //console.log(initialRating);
-    const updatePlaneRating=(icao, rating)=>{
-        let updatedPlaneRating = {...planeRating} // object copy
-        //console.log(icao + ' ' + rating);
-        // User can remove rating (0 star) by clicking on the same rating star again
-        if (rating === updatedPlaneRating[icao]) {
-            updatedPlaneRating[icao]=0;
-        } else {
-            updatedPlaneRating[icao]=rating;
-        }
-        //console.log(updatedPlaneRating);
-        setRating(updatedPlaneRating);
-    }
-
-    // // Handle change of 1 airplane's favorite toggle (all favorite airplanes' all-lowercase icao code is stored in this array)
-    // const [favoritePlanes, setFavoritePlanes] = useState([]);
-    // // Value is a boolean value that denote whether a plane (with this icao code) is a favorite (true when is favorite)
-    // const updateFavoritePlane=(icao, value)=>{
-    //     let updatedFavoritePlanes = [...favoritePlanes] // Array copy
-    //     //console.log(icao + ' ' + value);
-    //     if (value && !(updatedFavoritePlanes.includes(icao))) {
-    //         updatedFavoritePlanes.push(icao);
-    //         console.log(updatedFavoritePlanes);
-    //         setFavoritePlanes(updatedFavoritePlanes);
-    //     } else if (!value && updatedFavoritePlanes.includes(icao)) {
-    //         let index = updatedFavoritePlanes.indexOf(icao);
-    //         updatedFavoritePlanes.splice(index, 1);
-    //         console.log(updatedFavoritePlanes);
-    //         setFavoritePlanes(updatedFavoritePlanes);
-    //     } else {
-    //         console.warn("updateFavoritePlane: Attempting to" + (value ? ' add duplicate ' : ' remove non-existent') + icao + " from favorite state array");
-    //     }
-    //
-    // }
-
     // Create All Table Rows for every displaying airplane
     let selectedAirplanesElems = [];
     for (let onePlane of selectedAirplanesFilteredMeta) {
@@ -252,8 +241,8 @@ function DashboardTableBody(props) {
                                                       excludedMeta={excludedMeta}
                                                       onePlane={onePlane}
 
-                                                      currRating={planeRating[onePlane['icao-pic'].toLowerCase()]}
-                                                      updateRatingFn={updatePlaneRating}
+                                                      currRating={props.planeRating[onePlane['icao-pic'].toLowerCase()]}
+                                                      updateRatingFn={props.updateRatingFn}
 
                                                       currFavorite={props.favoritePlanes.indexOf(onePlane['icao-pic'].toLowerCase())>=0}
                                                       updateFavoriteFn={props.updateFavoriteFn}/>)
@@ -270,9 +259,11 @@ function OnePlaneTableRow(props) {
     /*
         excludedMeta: an array of strings: describe metadata that will be manually added to the table (will not be automatically generated)
         onePlane: 1 object represent 1 airplane with filtered metadata selection
+
         currRating: an integer that describe prop.onePlane's current rating (initial value)
         updateRatingFn: a callback function that feeds props.onePlane rating
             The function takes 2 parameters (all_lowercase-icao, rating-integer)
+
         currFavorite: a boolean value that describe whether prop.onePlane is a favorite
         updateFavoriteFn: a callback function that feeds whether props.onePlane has become (or no longer is) a favorite
             The function takes 2 parameters (all_lowercase-icao, is-favorite-boolean)
