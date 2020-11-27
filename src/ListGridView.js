@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from 'react';
+import ReactDOM from 'react-dom';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {library} from '@fortawesome/fontawesome-svg-core'
 import {faHeart, faStar} from '@fortawesome/free-solid-svg-icons'
@@ -74,46 +75,27 @@ export default function ListGridView(props) {
 
     }
 
-    // When window's width change, number of displaying columns need to change
-    // Code is adapted from https://www.pluralsight.com/guides/re-render-react-component-on-window-resize
-    const [numCol, setNumCol] = React.useState(calculateNumMeta(window.innerWidth))
-    useEffect(() => {
-        const debouncedHandleResize = debounce(function handleResize() {
-            setNumCol(calculateNumMeta(window.innerWidth))
-        }, 5) // 10 in mili-second unit means re-render components with a maximum frequency of once per 10ms
-        // Recommend to set to 100 or 1000 for production release
-
-        window.addEventListener('resize', debouncedHandleResize)
-
-        return _ => {
-            window.removeEventListener('resize', debouncedHandleResize)
-
-        }
-    })
-    //console.log(numCol);
-
-    let displayTooManyMetaAlert=false;
-    let counter = 0;
-    let filteredFullMetaElem = [];
+    let filteredFullDisplayMeta = {};
     // The metadata's order will follow the same order in airplanes.csv file, regardless the order in filteredMeta
     for (let oneMeta of Object.keys(props.airplaneDisplayMetaName)) {
-        if ((filteredMeta.includes(oneMeta)) && counter < numCol) {
-            filteredFullMetaElem.push(<th key={oneMeta}>{props.airplaneDisplayMetaName[oneMeta]}</th>);
-            counter = counter + 1;
-            // No metadata is able to show in a window with a width <=425 (mobile screen), will not render TooManyMetaAlert in this situation
-        } else if (counter === numCol && window.outerWidth > 425) {
-            displayTooManyMetaAlert=true;
+        if (filteredMeta.includes(oneMeta)) {
+            filteredFullDisplayMeta[oneMeta] = props.airplaneDisplayMetaName[oneMeta];
         }
-        //console.log(filteredFullMetaElem);
+        //console.log(filteredFullDisplayMeta);
     }
+
+    // DashboardTable will call this function that determines whether to render TooManyMetaAlert component
+    const [alertVisible, setAlertVisible] = useState(false);
+    const updateAlertVisibility = (value) => setAlertVisible(value);
 
     return (
         <div className="dashboard-content">
-            {displayTooManyMetaAlert ? <TooManyMetaAlert/> : "" }
-            <DashboardTable numCol={numCol}
-                            filteredFullMetaElem={filteredFullMetaElem}
+            {alertVisible ? <TooManyMetaAlert/> : ''}
+            <DashboardTable filteredFullDisplayMeta={filteredFullDisplayMeta}
                             airplaneDisplayMetaName={props.airplaneDisplayMetaName}
                             airplaneData={props.airplaneData}
+
+                            updateAlertVisibility={updateAlertVisibility}
 
                             brandsToDisplay={brandsToDisplay}
                             typesToDisplay={typesToDisplay}
@@ -141,6 +123,86 @@ function TooManyMetaAlert(props) {
         </Alert>
     );
 }
+
+
+function DashboardTable(props) {
+    /*  props:
+        filteredFullDisplayMeta: An object maps between simplified metadata and the full description metadata (before taking the number of display column to account)
+        airplaneData: An array of objects: 1 object represent 1 airplane whose metadata key has the metadata value
+        updateAlertVisibility: A callback function (takes 1 boolean parameter) that determines whether show TooManyMetaAlert element in ListGridView element
+
+        brandsToDisplay: An array of strings: brands of airplane showing in table body
+        typesToDisplay: An array of strings: type of airplane showing in the table body
+        filteredMeta: An array of strings: metadata that are selected to display
+
+        planeRating: An object that represent the rating of each plane (icao code) has
+        updateRatingFn: a callback function that feeds props.onePlane rating
+
+        favoritePlanes: An array of boolean value that describe whether prop.onePlane is a favorite
+        updateFavoriteFn: a callback function that feeds whether props.onePlane has become (or no longer is) a favorite
+    */
+
+    // When window's width change, number of displaying columns need to change
+    // Code is adapted from https://www.pluralsight.com/guides/re-render-react-component-on-window-resize
+    const [numCol, setNumCol] = React.useState(calculateNumMeta(window.innerWidth));
+
+    useEffect(() => {
+        const debouncedHandleResize = debounce(function handleResize() {
+            setNumCol(calculateNumMeta(window.innerWidth));
+        }, 5) // 5 in mili-second unit means re-render components with a maximum frequency of once per 5ms
+        // Recommend to set to 100 or 1000 for production release
+
+        window.addEventListener('resize', debouncedHandleResize);
+
+        return _ => {
+            window.removeEventListener('resize', debouncedHandleResize);
+
+        }
+    });
+    //console.log(numCol);
+
+    let counter = 1;
+    let filteredDisplayMetaElem = [];
+    let shouldShowAlert =false;
+    //props.updateAlertVisibility(false);
+    for (let oneMeta of Object.keys(props.filteredFullDisplayMeta)) {
+        if ((props.filteredMeta.includes(oneMeta)) && counter <= numCol) {
+            filteredDisplayMetaElem.push(<th key={oneMeta}>{props.filteredFullDisplayMeta[oneMeta]}</th>);
+            counter = counter + 1;
+            shouldShowAlert = false;
+        } // No metadata is able to show in a window with a width <=425 (mobile screen), will not render TooManyMetaAlert in this situation
+        else if (Object.keys(props.filteredFullDisplayMeta).length >= numCol && window.outerWidth > 425) {
+            // The Too many selected metadata warning will only display in list view (The first child under <div className="dashboard-content">)
+            //console.log('about to render TooManyMetaAlert');
+            shouldShowAlert = true;
+        }
+    }
+
+    // props.updateAlertVisibility should enter to React's lifecycle by placing this call within useEffect()
+    useEffect(() => {
+        props.updateAlertVisibility(shouldShowAlert);
+    });
+
+
+    return (
+        <table className="plane-list">
+            <DashboardTableHead filteredDisplayMetaElem={filteredDisplayMetaElem}/>
+            <DashboardTableBody airplaneData={props.airplaneData}
+                                brandsToDisplay={props.brandsToDisplay}
+                                typesToDisplay={props.typesToDisplay}
+                                filteredMeta={props.filteredMeta}
+
+                                numOfMeta={numCol}
+
+                                planeRating={props.planeRating}
+                                updateRatingFn={props.updateRatingFn}
+
+                                favoritePlanes={props.favoritePlanes}
+                                updateFavoriteFn={props.updateFavoriteFn}/>
+        </table>
+    )
+}
+
 
 // The helper function that limits number of window resizing event frequency
 // Code is adapted from https://www.pluralsight.com/guides/re-render-react-component-on-window-resize
@@ -173,48 +235,9 @@ function calculateNumMeta(widthInput) {
     }
 }
 
-function DashboardTable(props) {
-    /*  props:
-        numCol: An integer that determines how many metadata shall display in the table
-        filteredFullMetaElem: all elements for table head metadata description
-            Note: this variable need to stay in ListGridView's Component, as its creation will determine whether to display too many metadata alert
-
-        airplaneData: An array of objects: 1 object represent 1 airplane whose metadata key has the metadata value
-        brandsToDisplay: An array of strings: brands of airplane showing in table body
-        typesToDisplay: An array of strings: type of airplane showing in the table body
-        filteredMeta: An array of strings: metadata that are selected to display
-
-        planeRating: An object that represent the rating of each plane (icao code) has
-        updateRatingFn: a callback function that feeds props.onePlane rating
-
-        favoritePlanes: An array of boolean value that describe whether prop.onePlane is a favorite
-        updateFavoriteFn: a callback function that feeds whether props.onePlane has become (or no longer is) a favorite
-    */
-
-
-    return (
-        <table className="plane-list">
-            <DashboardTableHead filteredFullMetaElem={props.filteredFullMetaElem}/>
-            <DashboardTableBody airplaneData={props.airplaneData}
-                                brandsToDisplay={props.brandsToDisplay}
-                                typesToDisplay={props.typesToDisplay}
-                                filteredMeta={props.filteredMeta}
-
-                                numOfMeta={props.numCol}
-
-                                planeRating={props.planeRating}
-                                updateRatingFn={props.updateRatingFn}
-
-                                favoritePlanes={props.favoritePlanes}
-                                updateFavoriteFn={props.updateFavoriteFn}/>
-        </table>
-    )
-}
-
-
 function DashboardTableHead(props) {
     /*  props:
-        filteredFullMetaElem: all elements for table head metadata description
+        filteredDisplayMetaElem: all elements for table head metadata description
             Note: this variable need to stay in ListGridView's Component, as its creation will determine whether to display too many metadata alert
     */
 
@@ -224,7 +247,7 @@ function DashboardTableHead(props) {
             <th>&nbsp;</th>
             <th>Name</th>
             <th>Picture</th>
-            {props.filteredFullMetaElem}
+            {props.filteredDisplayMetaElem}
         </tr>
         </thead>
     )
@@ -245,13 +268,14 @@ function DashboardTableBody(props) {
     favoritePlanes: An array of boolean value that describe whether prop.onePlane is a favorite
     updateFavoriteFn: a callback function that feeds whether props.onePlane has become (or no longer is) a favorite
     */
+
     let excludedMeta = ['make', 'model', 'icao-pic'];
     let selectedAirplanesFilteredMeta = [];
 
     // Populate filtered airplane objects
     for (let onePlane of props.airplaneData) {
         // Filter planes to display
-        if (props.brandsToDisplay.includes(onePlane.make) && props.typesToDisplay.includes(onePlane.type)) {
+        if (props.brandsToDisplay.includes(onePlane['make']) && props.typesToDisplay.includes(onePlane['type'])) {
             let filteredMetaPlane = {};
             // Filter metadata to display (take counter into consideration)
             let counter = 0;
@@ -277,7 +301,7 @@ function DashboardTableBody(props) {
                                                       currRating={props.planeRating[onePlane['icao-pic'].toLowerCase()]}
                                                       updateRatingFn={props.updateRatingFn}
 
-                                                      currFavorite={props.favoritePlanes.indexOf(onePlane['icao-pic'].toLowerCase())>=0}
+                                                      currFavorite={props.favoritePlanes.includes(onePlane['icao-pic'].toLowerCase())}
                                                       updateFavoriteFn={props.updateFavoriteFn}/>)
     }
 
@@ -323,7 +347,7 @@ function OnePlaneTableRow(props) {
             </td>
             <td key='picture'><img className="tile-image"
                      src={"./plane-thumbnail/" + props.onePlane["icao-pic"].toLowerCase() + ".jpg"}
-                     alt={"Picture of" + props.onePlane["make"] + props["model"] + "in" + props.onePlane["make"] + "livery"}/>
+                     alt={"Picture of " + props.onePlane["make"] + " " + props["model"] + " in " + props.onePlane["make"] + " livery"}/>
             </td>
             {tdElems}
         </tr>
