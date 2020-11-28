@@ -63,7 +63,7 @@ span {
     display: flex;
     justify-content: space-between;
     margin-left: 5px;
-    padding-bottom: 0.5rem;
+    padding-bottom: 0.125rem;
 }
 
 .plane-title span {
@@ -84,18 +84,32 @@ span {
     }
 }
 
+
+
+
 /* Star Favorite icon on upper-right corner in each image; adapted from https://stackoverflow.com/questions/22543336/css-how-to-position-a-x-sign-at-the-top-right-corner-of-the-img-element*/
 .star-button-wrapper-grid {
     position: relative;
     display: inline-block;
 }
 
-/* The .star-button style is in dashboard-filter.css file*/
+/* The .star-rating-button style is in dashboard-filter.css file*/
 .star-grid {
-    /*Star should be in the upper-right corner of image div*/
+    /*Star should be in the button-left corner of image div*/
     position: absolute;
-    top: 0;
+    bottom: 4px;
+    left: 0;
+    background-color: rgba(0,150,255,0.75);
+    border-radius: 0% 5% 0% 0%;;
+}
+
+.favorite-heart-grid {
+    /*Favorite heart button should be in the bottom-right corner of image div*/
+    position: absolute;
+    bottom: 0;
     right: 0;
+    /*background-color: rgba(0,150,255,0.75);*/
+    /*border-radius: 5% 0% 0% 0%;;*/
 }
 
 /*Dropdown table for one plane in a grid*/

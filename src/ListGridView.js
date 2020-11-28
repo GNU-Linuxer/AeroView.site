@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from 'react';
-import ReactDOM from 'react-dom';
+//import ReactDOM from 'react-dom';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {library} from '@fortawesome/fontawesome-svg-core'
-import {faHeart, faStar} from '@fortawesome/free-solid-svg-icons'
+import {faHeart, faStar, faChevronCircleDown} from '@fortawesome/free-solid-svg-icons'
 import {faHeart as regularHeart, faStar as regularStar} from '@fortawesome/free-regular-svg-icons'
 // Load custom style sheet
 import './css/dashboard-filter.css';
@@ -12,9 +12,9 @@ import './css/site-list.css';
 import './css/style.css';
 // Reactstrap depends on bootstrap
 import 'bootstrap/dist/css/bootstrap.min.css';
-import {Alert} from "reactstrap";
+import {Alert, Dropdown, DropdownToggle, DropdownMenu, DropdownItem} from 'reactstrap';
 // Load font awesome icon, MUST add everything if defined in import {***, ***} from '@fortawesome/free-solid-svg-icons'
-library.add(faHeart, faStar, regularHeart, regularStar);
+library.add(faHeart, faStar, faChevronCircleDown, regularHeart, regularStar);
 
 
 export default function ListGridView(props) {
@@ -88,24 +88,41 @@ export default function ListGridView(props) {
     const [alertVisible, setAlertVisible] = useState(false);
     const updateAlertVisibility = (value) => setAlertVisible(value);
 
+    let displayMode = "Grid"
+    let content;
+    if (displayMode === 'List') {
+        content = (<DashboardTable filteredFullDisplayMeta={filteredFullDisplayMeta}
+                                       airplaneData={props.airplaneData}
+
+                                       updateAlertVisibility={updateAlertVisibility}
+
+                                       brandsToDisplay={brandsToDisplay}
+                                       typesToDisplay={typesToDisplay}
+                                       filteredMeta={filteredMeta}
+
+                                       planeRating={planeRating}
+                                       updateRatingFn={updatePlaneRating}
+
+                                       favoritePlanes={favoritePlanes}
+                                       updateFavoriteFn={updateFavoritePlane}/>);
+    } else if (displayMode === 'Grid') {
+        content = (<DashboardGrid filteredFullDisplayMeta={filteredFullDisplayMeta}
+                                       airplaneData={props.airplaneData}
+
+                                       brandsToDisplay={brandsToDisplay}
+                                       typesToDisplay={typesToDisplay}
+                                       filteredMeta={filteredMeta}
+
+                                       planeRating={planeRating}
+                                       updateRatingFn={updatePlaneRating}
+
+                                       favoritePlanes={favoritePlanes}
+                                       updateFavoriteFn={updateFavoritePlane}/>);
+    }
     return (
         <div className="dashboard-content">
             {alertVisible ? <TooManyMetaAlert/> : ''}
-            <DashboardTable filteredFullDisplayMeta={filteredFullDisplayMeta}
-                            airplaneDisplayMetaName={props.airplaneDisplayMetaName}
-                            airplaneData={props.airplaneData}
-
-                            updateAlertVisibility={updateAlertVisibility}
-
-                            brandsToDisplay={brandsToDisplay}
-                            typesToDisplay={typesToDisplay}
-                            filteredMeta={filteredMeta}
-
-                            planeRating={planeRating}
-                            updateRatingFn={updatePlaneRating}
-
-                            favoritePlanes={favoritePlanes}
-                            updateFavoriteFn={updateFavoritePlane}/>
+            {content}
         </div>
     )
 }
@@ -124,6 +141,141 @@ function TooManyMetaAlert(props) {
     );
 }
 
+function DashboardGrid(props) {
+    /*  props:
+        filteredFullDisplayMeta: An object maps between simplified metadata and the full description metadata (before taking the number of display column to account)
+        airplaneData: An array of objects: 1 object represent 1 airplane whose metadata key has the metadata value
+        updateAlertVisibility: NOT USED for Grid View
+
+        brandsToDisplay: An array of strings: brands of airplane showing in table body
+        typesToDisplay: An array of strings: type of airplane showing in the table body
+        filteredMeta: An array of strings: metadata that are selected to display
+
+        planeRating: An object that represent the rating of each plane (icao code) has
+        updateRatingFn: a callback function that feeds props.onePlane rating
+
+        favoritePlanes: An array of boolean value that describe whether prop.onePlane is a favorite
+        updateFavoriteFn: a callback function that feeds whether props.onePlane has become (or no longer is) a favorite
+    */
+
+    // Keys in props.filteredFullDisplayMeta controls which dropdown value to display
+
+    //let excludedMeta = ['make', 'model', 'icao-pic'];
+    // let selectedAirplanesFilteredMeta = [];
+    //
+    // // Populate filtered airplane objects
+    // for (let onePlane of props.airplaneData) {
+    //     // Filter planes to display
+    //     if (props.brandsToDisplay.includes(onePlane['make']) && props.typesToDisplay.includes(onePlane['type'])) {
+    //         let filteredMetaPlane = {};
+    //         // Filter metadata to display
+    //         for (let oneMeta of Object.keys(onePlane)) {
+    //             if ((excludedMeta.includes(oneMeta)) || props.filteredMeta.includes(oneMeta)) {
+    //                 filteredMetaPlane[oneMeta] = onePlane[oneMeta];
+    //             }
+    //         }
+    //         selectedAirplanesFilteredMeta.push(filteredMetaPlane);
+    //     }
+    // }
+    // console.log(selectedAirplanesFilteredMeta);
+    // Create All Table Rows for every displaying airplane
+    let selectedAirplanesElems = [];
+    for (let onePlane of props.airplaneData) {
+        selectedAirplanesElems.push(<OneGridCard key={onePlane["icao-pic"]}
+                                                 filteredFullDisplayMeta={props.filteredFullDisplayMeta}
+                                                 onePlane={onePlane}
+
+                                                 currRating={props.planeRating[onePlane['icao-pic'].toLowerCase()]}
+                                                 updateRatingFn={props.updateRatingFn}
+
+                                                 currFavorite={props.favoritePlanes.includes(onePlane['icao-pic'].toLowerCase())}
+                                                 updateFavoriteFn={props.updateFavoriteFn}/>)
+    }
+
+    return(
+        <div className="plane-container">
+            {selectedAirplanesElems}
+        </div>
+    )
+}
+
+function OneGridCard(props) {
+    /*props:
+            filteredFullDisplayMeta: An object maps between simplified metadata and the full description metadata (before taking the number of display column to account)
+            onePlane: 1 object represent 1 airplane with filtered metadata selection
+
+            currRating: an integer that describe prop.onePlane's current rating (initial value)
+            updateRatingFn: a callback function that feeds props.onePlane rating
+                The function takes 2 parameters (all_lowercase-icao, rating-integer)
+
+            currFavorite: a boolean value that describe whether prop.onePlane is a favorite
+            updateFavoriteFn: a callback function that feeds whether props.onePlane has become (or no longer is) a favorite
+                The function takes 2 parameters (all_lowercase-icao, is-favorite-boolean)
+         */
+    return(
+        <div className='one-plane'>
+            <div className='star-button-wrapper-grid'>
+                <img className="tile-image"
+                     src={"./plane-thumbnail/" + props.onePlane["icao-pic"].toLowerCase() + ".jpg"}
+                     alt={"Picture of " + props.onePlane["make"] + " " + props["model"] + " in " + props.onePlane["make"] + " livery"}/>
+                <button className="favorite-heart-button favorite-heart-grid" onClick={props.currFavorite ? () => props.updateFavoriteFn(props.onePlane["icao-pic"].toLowerCase(), false) : () => props.updateFavoriteFn(props.onePlane["icao-pic"].toLowerCase(), true)}>
+                    <FontAwesomeIcon icon={props.currFavorite ? ['fas', 'heart'] : ['far', 'heart']}/>
+                </button>
+                <span className="star-rating-button star-grid">
+                    <StarRating initial={props.currRating} totalStars={5} callBack={(newRating) => props.updateRatingFn(props.onePlane['icao-pic'].toLowerCase(), newRating)}/>
+                </span>
+            </div>
+            <OneGridPlaneDropdown filteredFullDisplayMeta={props.filteredFullDisplayMeta}
+                                  onePlane={props.onePlane}/>
+        </div>
+    )
+}
+
+function OneGridPlaneDropdown(props) {
+    /*props:
+            filteredFullDisplayMeta: An object maps between simplified metadata and the full description metadata (before taking the number of display column to account)
+            onePlane: 1 object represent 1 airplane with filtered metadata selection
+    */
+    const [dropdownOpen, setDropdownOpen] = useState(false);
+    const toggle = () => setDropdownOpen(prevState => !prevState);
+    //console.log(props.onePlane);
+    let tableRowsElem = [];
+    for (let oneMeta of Object.keys(props.filteredFullDisplayMeta)) {
+        tableRowsElem.push(<GridDropdownItem key={oneMeta}
+                                             Metadata={props.filteredFullDisplayMeta[oneMeta]}
+                                             Value={props.onePlane[oneMeta]}/>)
+    }
+    return (
+        <Dropdown isOpen={dropdownOpen} toggle={toggle} direction="down">
+            <DropdownToggle tag="div" className="plane-title" data-toggle="dropdown" aria-expanded={dropdownOpen}>
+                <span className="plane-title-text">{props.onePlane["make"] + ' ' + props.onePlane["model"]}</span>
+                <button aria-label={"expand plane detail for " + props.onePlane["make"] + ' ' + props.onePlane["model"]}>
+                    <span><FontAwesomeIcon icon={['fas', 'chevron-circle-down']}/></span>
+                </button>
+            </DropdownToggle>
+            <DropdownMenu className='plane-grid-dropdown' flip={false}>
+                <table>
+                    <tbody>
+                        {tableRowsElem}
+                    </tbody>
+                </table>
+            </DropdownMenu>
+        </Dropdown>
+    );
+}
+
+function GridDropdownItem(props) {
+    /*props:
+            Metadata: A string represent the full display metadata
+            Value: A string that represent the value of props.Metadata
+    */
+    return(
+        <tr>
+            <td className="plane-grid-dropdown-meta">{props.Metadata}</td>
+            <td>{props.Value}</td>
+        </tr>
+    )
+}
 
 function DashboardTable(props) {
     /*  props:
