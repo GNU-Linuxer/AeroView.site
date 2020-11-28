@@ -253,7 +253,9 @@ function OneGridPlaneDropdown(props) {
                     <span><FontAwesomeIcon icon={['fas', 'chevron-circle-down']}/></span>
                 </button>
             </DropdownToggle>
-            <DropdownMenu className='plane-grid-dropdown' flip={false}>
+            {/*Prevent dropdown from overflowing beyond browser's right boundry, see */}
+            {/*https://github.com/reactstrap/reactstrap/issues/1169#issuecomment-438132591*/}
+            <DropdownMenu className='plane-grid-dropdown' modifiers={{ preventOverflow: { boundariesElement: 'window' } }} positionFixed={true} flip={false}>
                 <table>
                     <tbody>
                         {tableRowsElem}
