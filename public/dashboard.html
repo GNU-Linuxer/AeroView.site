@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
+
+    <title>AeroView</title>
+
+    <link href="img/favicon.svg" rel="icon" type="image/svg+xml">
+
+    <!-- Metadata for the home page -->
+    <meta name="author" content="David Xie, Jason Xu, Leo Liao">
+    <meta name="description" content="A civil aviation information website">
+
+    <!-- Bootstrap -->
+    <link crossorigin="anonymous" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" rel="stylesheet">
+    <!-- Font awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet">
+
+    <!-- Site stylesheets -->
+    <link href="css/site-elements.css" rel="stylesheet">
+    <link href="css/dashboard-filter.css" rel="stylesheet">
+    <link href="css/site-list.css" rel="stylesheet">
+    <link href="css/site-grid.css" rel="stylesheet">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="site-branding">
+            <img alt="Site logo" class="site-logo" src="img/site-title.svg">
+            <span class="site-title">AeroView</span>
+        </div>
+        <div class="site-nav-widget">
+            <!--
+        Use of Bootstrap's dropdown was intentionally avoided here.  The
+        shape of navigation menu toggle button is a hamburger icon instead
+        of a regular Bootstrap button, which would cause the dropdown menu
+        to look weird.
+         -->
+            <button class="site-nav-menu-toggle-btn" aria-label="Toggle navigation menu" aria-haspopup="true" aria-expanded="false">
+                <svg viewBox="0 0 18 18">
+                    <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z" />
+                </svg>
+            </button>
+            <nav class="site-nav">
+                <a class="site-nav-link" href="./index.html">Dashboard</a>
+                <a class="site-nav-link" href="./comparison.html">Comparison</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- showing and hiding the jumbotron background image is managed in the style-elements.css file -->
+    <div class="page-title">Airplane Dashboard</div>
+
+    <main class="page-content">
+        <!-- Search, Display, and filter row -->
+        <div class="dashboard-widgets">
+            <!-- Mobile search -->
+            <div class="search-form-container" id="search-form-stub-mobile">
+                <!-- DOM element to be added dynamically by JavaScript -->
+            </div>
+
+            <div class="options">
+                <div class="selector-group view-selector-group">
+                    <button id="list-view-btn" aria-label="switch to list view">
+                        <span class="fas fa-list-ul"></span>
+                        <!-- Underline the first word to signify keyboard shortcut-->
+                        <span class="button-description"><u>L</u>ist</span>
+                    </button>
+                    <span aria-hidden="true" class="separator">/</span>
+                    <button id="grid-view-btn" aria-label="switch to grid view">
+                        <span class="fas fa-th-large"></span>
+                        <span class="button-description"><u>G</u>rid</span>
+                    </button>
+                </div>
+
+                <!-- desktop: search bar now need to be separated by 2 fillers -->
+                <div class="search-form-container" id="search-form-stub-desktop">
+                    <!-- DOM element to be added dynamically by JavaScript -->
+                </div>
+                <!-- END desktop search bar -->
+
+                <!-- BEGIN filter and option icon group -->
+                <div class="selector-group content-selector-group">
+                    <div>
+                        <!--Prevent the dropdown menu from flipping up when no enough space below remains-->
+                        <!--see https://getbootstrap.com/docs/4.1/components/dropdowns/#options-->
+                        <button id="filter-button" aria-label="filter" data-toggle="dropdown" data-flip="false" aria-expanded="false" aria-haspopup="true">
+                            <span class="fas fa-filter"></span>
+                        </button>
+                        <!-- Dropdown menu for filter, adapted from https://stackoverflow.com/a/52517790 -->
+                        <ul aria-labelledby="filter-button" class="filter-dropdown-menu dropdown-menu dropdown-menu-right checkbox-menu allow-focus">
+                            <!-- DOM elements to be added dynamically by JavaScript -->
+                        </ul>
+                    </div>
+
+                    <div>
+                        <button id="edit-button" aria-label="edit" data-toggle="dropdown" data-flip="false" aria-expanded="false" aria-haspopup="true">
+                            <span class="fas fa-ellipsis-v"></span>
+                        </button>
+                        <ul aria-labelledby="edit-button" class="option-dropdown-menu dropdown-menu dropdown-menu-right checkbox-menu allow-focus">
+                            <!-- DOM elements to be added dynamically by JavaScript -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main airplane card -->
+        <div class="dashboard-content">
+            <!-- DOM elements to be added dynamically by JavaScript -->
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <p>&copy; 2020 David Xie, Jason Xu, Leo Liao</p>
+        <p>The website title image is by
+            <a href="https://commons.wikimedia.org/wiki/File:LAX_International_Line-up_2.jpg">
+                Alan Wilson</a>, used under CC BY-SA license.
+        </p>
+    </footer>
+
+    <!-- jQuery and JS bundle w/ Popper.js for bootstrap dropdown menu functionality -->
+    <script crossorigin="anonymous" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script crossorigin="anonymous" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- d3.fetch() and d3.dsv() embed to load airplane data from an external.csv file -->
+    <script src="https://d3js.org/d3-dsv.v2.min.js"></script>
+    <script src="https://d3js.org/d3-fetch.v2.min.js"></script>
+
+    <!-- For site-wide elements, including navigation menu -->
+    <script type="module" src="js/site-elements.js"></script>
+    <script type="module" src="js/dashboard-search.js"></script>
+
+    <!-- index.js to load plane data and dynamic page elements -->
+    <script type="module" src="js/index.js"></script>
+</body>
+
+</html>
