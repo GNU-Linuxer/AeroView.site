@@ -9,6 +9,9 @@ import './css/style.css';
 // Reactstrap depends on bootstrap
 import 'bootstrap/dist/css/bootstrap.min.css';
 
+import { BrowserRouter, Route, Switch, Link, NavLink, useParams } from 'react-router-dom';
+
+
 export function SiteHeader() {
   return (
     <header className="site-header">
@@ -29,8 +32,8 @@ export function SiteHeader() {
           </svg>
         </button>
         <nav className="site-nav">
-          <a className="site-nav-link" href="./index">Dashboard</a>
-          <a className="site-nav-link" href="./comparison">Comparison</a>
+          <NavLink exact to='/' className="site-nav-link">Dashboard</NavLink>
+          <NavLink to='/comparison' className="site-nav-link" >Comparison</NavLink>
         </nav>
       </div>
     </header>
