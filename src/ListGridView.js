@@ -1,9 +1,9 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 //import ReactDOM from 'react-dom';
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
-import {library} from '@fortawesome/fontawesome-svg-core'
-import {faHeart, faStar, faChevronCircleDown} from '@fortawesome/free-solid-svg-icons'
-import {faHeart as regularHeart, faStar as regularStar} from '@fortawesome/free-regular-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faHeart, faStar, faChevronCircleDown } from '@fortawesome/free-solid-svg-icons'
+import { faHeart as regularHeart, faStar as regularStar } from '@fortawesome/free-regular-svg-icons'
 // Load custom style sheet
 import './css/dashboard-filter.css';
 import './css/site-elements.css';
@@ -12,9 +12,10 @@ import './css/site-list.css';
 import './css/style.css';
 // Reactstrap depends on bootstrap
 import 'bootstrap/dist/css/bootstrap.min.css';
-import {Alert, Dropdown, DropdownToggle, DropdownMenu, DropdownItem} from 'reactstrap';
+import { Alert, Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
 // Load font awesome icon, MUST add everything if defined in import {***, ***} from '@fortawesome/free-solid-svg-icons'
 library.add(faHeart, faStar, faChevronCircleDown, regularHeart, regularStar);
+
 
 
 export default function ListGridView(props) {
@@ -32,20 +33,20 @@ export default function ListGridView(props) {
     // This should read from user data to re-load previously saved rating
     let initialRating = {};
     for (let onePlane of props.airplaneData) {
-        initialRating[onePlane["icao-pic"].toLowerCase()]=0;
+        initialRating[onePlane["icao-pic"].toLowerCase()] = 0;
     }
 
     // Handle change of 1 airplane's star rating
     const [planeRating, setRating] = useState(initialRating);
     //console.log(initialRating);
-    const updatePlaneRating=(icao, rating)=>{
-        let updatedPlaneRating = {...planeRating} // object copy
+    const updatePlaneRating = (icao, rating) => {
+        let updatedPlaneRating = { ...planeRating } // object copy
         //console.log(icao + ' ' + rating);
         // User can remove rating (0 star) by clicking on the same rating star again
         if (rating === updatedPlaneRating[icao]) {
-            updatedPlaneRating[icao]=0;
+            updatedPlaneRating[icao] = 0;
         } else {
-            updatedPlaneRating[icao]=rating;
+            updatedPlaneRating[icao] = rating;
         }
         console.log(updatedPlaneRating);
         setRating(updatedPlaneRating);
@@ -57,7 +58,7 @@ export default function ListGridView(props) {
     // This should read from user data to re-load previously saved rating
     const [favoritePlanes, setFavoritePlanes] = useState([]);
     // Value is a boolean value that denote whether a plane (with this icao code) is a favorite (true when is favorite)
-    const updateFavoritePlane=(icao, value)=>{
+    const updateFavoritePlane = (icao, value) => {
         let updatedFavoritePlanes = [...favoritePlanes] // Array copy
         //console.log(icao + ' ' + value);
         if (value && !(updatedFavoritePlanes.includes(icao))) {
@@ -92,36 +93,36 @@ export default function ListGridView(props) {
     let content;
     if (displayMode === 'List') {
         content = (<DashboardTable filteredFullDisplayMeta={filteredFullDisplayMeta}
-                                       airplaneData={props.airplaneData}
+            airplaneData={props.airplaneData}
 
-                                       updateAlertVisibility={updateAlertVisibility}
+            updateAlertVisibility={updateAlertVisibility}
 
-                                       brandsToDisplay={brandsToDisplay}
-                                       typesToDisplay={typesToDisplay}
-                                       filteredMeta={filteredMeta}
+            brandsToDisplay={brandsToDisplay}
+            typesToDisplay={typesToDisplay}
+            filteredMeta={filteredMeta}
 
-                                       planeRating={planeRating}
-                                       updateRatingFn={updatePlaneRating}
+            planeRating={planeRating}
+            updateRatingFn={updatePlaneRating}
 
-                                       favoritePlanes={favoritePlanes}
-                                       updateFavoriteFn={updateFavoritePlane}/>);
+            favoritePlanes={favoritePlanes}
+            updateFavoriteFn={updateFavoritePlane} />);
     } else if (displayMode === 'Grid') {
         content = (<DashboardGrid filteredFullDisplayMeta={filteredFullDisplayMeta}
-                                       airplaneData={props.airplaneData}
+            airplaneData={props.airplaneData}
 
-                                       brandsToDisplay={brandsToDisplay}
-                                       typesToDisplay={typesToDisplay}
-                                       filteredMeta={filteredMeta}
+            brandsToDisplay={brandsToDisplay}
+            typesToDisplay={typesToDisplay}
+            filteredMeta={filteredMeta}
 
-                                       planeRating={planeRating}
-                                       updateRatingFn={updatePlaneRating}
+            planeRating={planeRating}
+            updateRatingFn={updatePlaneRating}
 
-                                       favoritePlanes={favoritePlanes}
-                                       updateFavoriteFn={updateFavoritePlane}/>);
+            favoritePlanes={favoritePlanes}
+            updateFavoriteFn={updateFavoritePlane} />);
     }
     return (
         <div className="dashboard-content">
-            {alertVisible ? <TooManyMetaAlert/> : ''}
+            {alertVisible ? <TooManyMetaAlert /> : ''}
             {content}
         </div>
     )
@@ -182,17 +183,17 @@ function DashboardGrid(props) {
     let selectedAirplanesElems = [];
     for (let onePlane of props.airplaneData) {
         selectedAirplanesElems.push(<OneGridCard key={onePlane["icao-pic"]}
-                                                 filteredFullDisplayMeta={props.filteredFullDisplayMeta}
-                                                 onePlane={onePlane}
+            filteredFullDisplayMeta={props.filteredFullDisplayMeta}
+            onePlane={onePlane}
 
-                                                 currRating={props.planeRating[onePlane['icao-pic'].toLowerCase()]}
-                                                 updateRatingFn={props.updateRatingFn}
+            currRating={props.planeRating[onePlane['icao-pic'].toLowerCase()]}
+            updateRatingFn={props.updateRatingFn}
 
-                                                 currFavorite={props.favoritePlanes.includes(onePlane['icao-pic'].toLowerCase())}
-                                                 updateFavoriteFn={props.updateFavoriteFn}/>)
+            currFavorite={props.favoritePlanes.includes(onePlane['icao-pic'].toLowerCase())}
+            updateFavoriteFn={props.updateFavoriteFn} />)
     }
 
-    return(
+    return (
         <div className="plane-container">
             {selectedAirplanesElems}
         </div>
@@ -212,21 +213,21 @@ function OneGridCard(props) {
             updateFavoriteFn: a callback function that feeds whether props.onePlane has become (or no longer is) a favorite
                 The function takes 2 parameters (all_lowercase-icao, is-favorite-boolean)
          */
-    return(
+    return (
         <div className='one-plane'>
             <div className='star-button-wrapper-grid'>
                 <img className="tile-image"
-                     src={"./plane-thumbnail/" + props.onePlane["icao-pic"].toLowerCase() + ".jpg"}
-                     alt={"Picture of " + props.onePlane["make"] + " " + props["model"] + " in " + props.onePlane["make"] + " livery"}/>
+                    src={"./plane-thumbnail/" + props.onePlane["icao-pic"].toLowerCase() + ".jpg"}
+                    alt={"Picture of " + props.onePlane["make"] + " " + props["model"] + " in " + props.onePlane["make"] + " livery"} />
                 <button className="favorite-heart-button favorite-heart-grid" onClick={props.currFavorite ? () => props.updateFavoriteFn(props.onePlane["icao-pic"].toLowerCase(), false) : () => props.updateFavoriteFn(props.onePlane["icao-pic"].toLowerCase(), true)}>
-                    <FontAwesomeIcon icon={props.currFavorite ? ['fas', 'heart'] : ['far', 'heart']}/>
+                    <FontAwesomeIcon icon={props.currFavorite ? ['fas', 'heart'] : ['far', 'heart']} />
                 </button>
                 <span className="star-rating-button star-grid">
-                    <StarRating initial={props.currRating} totalStars={5} callBack={(newRating) => props.updateRatingFn(props.onePlane['icao-pic'].toLowerCase(), newRating)}/>
+                    <StarRating initial={props.currRating} totalStars={5} callBack={(newRating) => props.updateRatingFn(props.onePlane['icao-pic'].toLowerCase(), newRating)} />
                 </span>
             </div>
             <OneGridPlaneDropdown filteredFullDisplayMeta={props.filteredFullDisplayMeta}
-                                  onePlane={props.onePlane}/>
+                onePlane={props.onePlane} />
         </div>
     )
 }
@@ -242,15 +243,15 @@ function OneGridPlaneDropdown(props) {
     let tableRowsElem = [];
     for (let oneMeta of Object.keys(props.filteredFullDisplayMeta)) {
         tableRowsElem.push(<GridDropdownItem key={oneMeta}
-                                             Metadata={props.filteredFullDisplayMeta[oneMeta]}
-                                             Value={props.onePlane[oneMeta]}/>)
+            Metadata={props.filteredFullDisplayMeta[oneMeta]}
+            Value={props.onePlane[oneMeta]} />)
     }
     return (
         <Dropdown isOpen={dropdownOpen} toggle={toggle} direction="down">
             <DropdownToggle tag="div" className="plane-title" data-toggle="dropdown" aria-expanded={dropdownOpen}>
                 <span className="plane-title-text">{props.onePlane["make"] + ' ' + props.onePlane["model"]}</span>
                 <button aria-label={"expand plane detail for " + props.onePlane["make"] + ' ' + props.onePlane["model"]}>
-                    <span><FontAwesomeIcon icon={['fas', 'chevron-circle-down']}/></span>
+                    <span><FontAwesomeIcon icon={['fas', 'chevron-circle-down']} /></span>
                 </button>
             </DropdownToggle>
             {/*Prevent dropdown from overflowing beyond browser's right boundry, see */}
@@ -271,7 +272,7 @@ function GridDropdownItem(props) {
             Metadata: A string represent the full display metadata
             Value: A string that represent the value of props.Metadata
     */
-    return(
+    return (
         <tr>
             <td className="plane-grid-dropdown-meta">{props.Metadata}</td>
             <td>{props.Value}</td>
@@ -317,7 +318,7 @@ function DashboardTable(props) {
 
     let counter = 1;
     let filteredDisplayMetaElem = [];
-    let shouldShowAlert =false;
+    let shouldShowAlert = false;
     //props.updateAlertVisibility(false);
     for (let oneMeta of Object.keys(props.filteredFullDisplayMeta)) {
         if ((props.filteredMeta.includes(oneMeta)) && counter <= numCol) {
@@ -340,19 +341,19 @@ function DashboardTable(props) {
 
     return (
         <table className="plane-list">
-            <DashboardTableHead filteredDisplayMetaElem={filteredDisplayMetaElem}/>
+            <DashboardTableHead filteredDisplayMetaElem={filteredDisplayMetaElem} />
             <DashboardTableBody airplaneData={props.airplaneData}
-                                brandsToDisplay={props.brandsToDisplay}
-                                typesToDisplay={props.typesToDisplay}
-                                filteredMeta={props.filteredMeta}
+                brandsToDisplay={props.brandsToDisplay}
+                typesToDisplay={props.typesToDisplay}
+                filteredMeta={props.filteredMeta}
 
-                                numOfMeta={numCol}
+                numOfMeta={numCol}
 
-                                planeRating={props.planeRating}
-                                updateRatingFn={props.updateRatingFn}
+                planeRating={props.planeRating}
+                updateRatingFn={props.updateRatingFn}
 
-                                favoritePlanes={props.favoritePlanes}
-                                updateFavoriteFn={props.updateFavoriteFn}/>
+                favoritePlanes={props.favoritePlanes}
+                updateFavoriteFn={props.updateFavoriteFn} />
         </table>
     )
 }
@@ -376,16 +377,16 @@ function debounce(fn, ms) {
 function calculateNumMeta(widthInput) {
     //console.log(widthInput);
     // large desktop screen
-    if (widthInput >=768) {
+    if (widthInput >= 768) {
         let availableSpace = widthInput - 56 - 65 - 96 - 300;
         // ECMAScript 6 feature; use Math.floor(decimal); for old browser
         // 120 means reserving up to 120px width for all metadata column (except make, model, and picture)
-        return(Math.trunc(availableSpace / 130));
+        return (Math.trunc(availableSpace / 130));
     }
     // mobile and small desktop screen (the everything else)
     else {
         let availableSpace = widthInput - 55 - 63 - 83 - 116;
-        return(Math.trunc(availableSpace / 110));
+        return (Math.trunc(availableSpace / 110));
     }
 }
 
@@ -397,12 +398,12 @@ function DashboardTableHead(props) {
 
     return (
         <thead>
-        <tr>
-            <th>&nbsp;</th>
-            <th>Name</th>
-            <th>Picture</th>
-            {props.filteredDisplayMetaElem}
-        </tr>
+            <tr>
+                <th>&nbsp;</th>
+                <th>Name</th>
+                <th>Picture</th>
+                {props.filteredDisplayMetaElem}
+            </tr>
         </thead>
     )
 }
@@ -449,14 +450,14 @@ function DashboardTableBody(props) {
     let selectedAirplanesElems = [];
     for (let onePlane of selectedAirplanesFilteredMeta) {
         selectedAirplanesElems.push(<OnePlaneTableRow key={onePlane["icao-pic"]}
-                                                      excludedMeta={excludedMeta}
-                                                      onePlane={onePlane}
+            excludedMeta={excludedMeta}
+            onePlane={onePlane}
 
-                                                      currRating={props.planeRating[onePlane['icao-pic'].toLowerCase()]}
-                                                      updateRatingFn={props.updateRatingFn}
+            currRating={props.planeRating[onePlane['icao-pic'].toLowerCase()]}
+            updateRatingFn={props.updateRatingFn}
 
-                                                      currFavorite={props.favoritePlanes.includes(onePlane['icao-pic'].toLowerCase())}
-                                                      updateFavoriteFn={props.updateFavoriteFn}/>)
+            currFavorite={props.favoritePlanes.includes(onePlane['icao-pic'].toLowerCase())}
+            updateFavoriteFn={props.updateFavoriteFn} />)
     }
 
     return (
@@ -492,16 +493,16 @@ function OnePlaneTableRow(props) {
             <td key='favoriteBtn'>
                 <button className="favorite-heart-button favorite-heart-list" onClick={props.currFavorite ? () => props.updateFavoriteFn(props.onePlane["icao-pic"].toLowerCase(), false) : () => props.updateFavoriteFn(props.onePlane["icao-pic"].toLowerCase(), true)}>
                     {/* Switch between 'far' and 'fas' to select outlined star or solid star*/}
-                    <FontAwesomeIcon icon={props.currFavorite ? ['fas', 'heart'] : ['far', 'heart']}/>
+                    <FontAwesomeIcon icon={props.currFavorite ? ['fas', 'heart'] : ['far', 'heart']} />
                 </button>
             </td>
             <td key='name' className="airplane-name">
                 <div>{props.onePlane["make"] + ' ' + props.onePlane["model"]}</div>
-                <div><StarRating initial={props.currRating} totalStars={5} callBack={(newRating) => props.updateRatingFn(props.onePlane['icao-pic'].toLowerCase(), newRating)}/></div>
+                <div><StarRating initial={props.currRating} totalStars={5} callBack={(newRating) => props.updateRatingFn(props.onePlane['icao-pic'].toLowerCase(), newRating)} /></div>
             </td>
             <td key='picture'><img className="tile-image"
-                     src={"./plane-thumbnail/" + props.onePlane["icao-pic"].toLowerCase() + ".jpg"}
-                     alt={"Picture of " + props.onePlane["make"] + " " + props["model"] + " in " + props.onePlane["make"] + " livery"}/>
+                src={"./plane-thumbnail/" + props.onePlane["icao-pic"].toLowerCase() + ".jpg"}
+                alt={"Picture of " + props.onePlane["make"] + " " + props["model"] + " in " + props.onePlane["make"] + " livery"} />
             </td>
             {tdElems}
         </tr>
@@ -517,11 +518,11 @@ function StarRating(props) {
      */
 
     let StarElems = [];
-    for (let i=1; i <= props.totalStars; i = i + 1) {
-        StarElems.push(<Star key={i} starId={i} isSelected={props.initial >= i} callBack={(i) => props.callBack(i)}/>);
+    for (let i = 1; i <= props.totalStars; i = i + 1) {
+        StarElems.push(<Star key={i} starId={i} isSelected={props.initial >= i} callBack={(i) => props.callBack(i)} />);
     }
 
-    return(
+    return (
         <span>
             {StarElems}
         </span>
@@ -536,7 +537,7 @@ function Star(props) {
      */
     return (
         <button onClick={() => props.callBack(props.starId)} className='star-rating-button'>
-            <FontAwesomeIcon icon={props.isSelected ? ['fas', 'star'] : ['far', 'star']}/>
+            <FontAwesomeIcon icon={props.isSelected ? ['fas', 'star'] : ['far', 'star']} />
         </button>
     )
 }

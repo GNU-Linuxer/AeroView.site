@@ -1,8 +1,8 @@
-import React, {useState} from 'react';
-import {Dropdown, DropdownToggle, DropdownMenu, DropdownItem} from 'reactstrap';
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
-import {library} from '@fortawesome/fontawesome-svg-core'
-import {faListUl, faThLarge, faSearch, faFilter, faEllipsisV} from '@fortawesome/free-solid-svg-icons'
+import React, { useState } from 'react';
+import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faListUl, faThLarge, faSearch, faFilter, faEllipsisV } from '@fortawesome/free-solid-svg-icons'
 // Load custom style sheet
 import './css/dashboard-filter.css';
 import './css/site-elements.css';
@@ -22,19 +22,19 @@ export default function IndexToolbar(props) {
     return (
         <div className="dashboard-widgets">
             {/* Mobile search goes here*/}
-            {window.outerWidth < 768 ? <SearchBoxAndBtn/> : ''}
+            {window.outerWidth < 768 ? <SearchBoxAndBtn /> : ''}
             <div className="options">
                 <div className="selector-group view-selector-group">
-                    <ListButton selected={props.viewSelection === "List"}/>
+                    <ListButton selected={props.viewSelection === "List"} />
                     <span aria-hidden="true" className="separator">/</span>
-                    <GridButton selected={props.viewSelection === "Grid"}/>
+                    <GridButton selected={props.viewSelection === "Grid"} />
                 </div>
                 {/*Desktop search bar that will display when width >= 768*/}
-                {window.outerWidth >= 768 ? <SearchBoxAndBtn/> : ''}
+                {window.outerWidth >= 768 ? <SearchBoxAndBtn /> : ''}
                 <div className="selector-group content-selector-group">
                     {/*TODO BUG: don't know how to remove the bootstrap button hover effect*/}
-                    <FilterButton/>
-                    <OptionButton/>
+                    <FilterButton />
+                    <OptionButton />
                 </div>
             </div>
         </div>
@@ -62,7 +62,7 @@ function ListButton(props) {
 
     return (
         <button onClick={handleListClick} id="list-view-btn" aria-label="switch to list view" className={selectedClass}>
-            <FontAwesomeIcon icon={['fas', 'list-ul']}/>
+            <FontAwesomeIcon icon={['fas', 'list-ul']} />
             <span className="button-description">&nbsp;<u>L</u>ist</span>
         </button>
     )
@@ -89,7 +89,7 @@ function GridButton(props) {
 
     return (
         <button onClick={handleGridClick} id="grid-view-btn" aria-label="switch to grid view" className={selectedClass}>
-            <FontAwesomeIcon icon={['fas', 'th-large']}/>
+            <FontAwesomeIcon icon={['fas', 'th-large']} />
             <span className="button-description">&nbsp;<u>G</u>rid</span>
         </button>
     )
@@ -123,9 +123,9 @@ function SearchBoxAndBtn(props) {
             <form role="search" onSubmit={handleSubmit} autoComplete="off">
                 <div className="search-bar-container">
                     <input type="text" placeholder="Type to search" onChange={handleChange} value={inputValue}
-                           className="search-textbox" id="search-textbox" required=""/>
+                        className="search-textbox" id="search-textbox" required="" />
                     <button type="submit" aria-label="search" id="search-button"><FontAwesomeIcon
-                        icon={['fas', 'search']}/></button>
+                        icon={['fas', 'search']} /></button>
                 </div>
             </form>
         </div>
@@ -142,10 +142,10 @@ function FilterButton() {
 
     //States for Type selection (when checkbox changes, isChecked in type variable will also change appropriately
     const [type, setType] = useState([
-            {id: 1, value: "Narrow-body Jet", isChecked: true},
-            {id: 2, value: "Wide-body Jet", isChecked: true},
-            {id: 3, value: "Double-Decker", isChecked: true},
-            ])
+        { id: 1, value: "Narrow-body Jet", isChecked: true },
+        { id: 2, value: "Wide-body Jet", isChecked: true },
+        { id: 3, value: "Double-Decker", isChecked: true },
+    ])
     const handleTypeSelection = (event) => {
         let updatedType = [...type];
         for (let oneType of updatedType) {
@@ -160,9 +160,9 @@ function FilterButton() {
 
     //States for Manufacture selection
     const [make, setMake] = useState([
-        {id: 1, value: "Boeing", isChecked: true},
-        {id: 2, value: "Airbus", isChecked: true},
-        {id: 3, value: "Irkut", isChecked: false}
+        { id: 1, value: "Boeing", isChecked: true },
+        { id: 2, value: "Airbus", isChecked: true },
+        { id: 3, value: "Irkut", isChecked: false }
     ])
     const handleMakeSelection = (event) => {
         let updatedType = [...make];
@@ -179,7 +179,7 @@ function FilterButton() {
     return (
         <Dropdown isOpen={dropdownOpen} toggle={toggle} direction="down">
             <DropdownToggle id="filter-button" aria-label="filter" aria-expanded={false} aria-haspopup={true}>
-                <FontAwesomeIcon icon={['fas', 'filter']}/>
+                <FontAwesomeIcon icon={['fas', 'filter']} />
                 <span className="button-description">&nbsp;Type</span>
             </DropdownToggle>
             <DropdownMenu right={true} flip={false}>
@@ -200,8 +200,8 @@ function OptionButton() {
 
     //States for Type selection (when checkbox changes, isChecked in type variable will also change appropriately
     const [type, setType] = useState([
-        {id: 1, value: "ICAO Code", isChecked: true},
-        {id: 2, value: "MTOW", isChecked: false},
+        { id: 1, value: "ICAO Code", isChecked: true },
+        { id: 2, value: "MTOW", isChecked: false },
     ])
     const handleTypeSelection = (event) => {
         let updatedType = [...type];
@@ -218,7 +218,7 @@ function OptionButton() {
     return (
         <Dropdown isOpen={dropdownOpen} toggle={toggle} direction="down">
             <DropdownToggle id="filter-button" aria-label="filter" aria-expanded={false} aria-haspopup={true}>
-                <FontAwesomeIcon icon={['fas', 'ellipsis-v']}/>
+                <FontAwesomeIcon icon={['fas', 'ellipsis-v']} />
                 <span className="button-description">&nbsp;Info</span>
             </DropdownToggle>
             <DropdownMenu right={true} flip={false}>

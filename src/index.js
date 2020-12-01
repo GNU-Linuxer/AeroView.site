@@ -17,8 +17,8 @@ d3.csv('./data/airplanes.csv')
         airplanes.airplaneData = text.slice(1, text.length);
     }).then(function () {
         //console.log(airplanes);
-        ReactDOM.render(<App airplaneDisplayMetaName={airplanes.airplaneDisplayMetaName} airplaneData={airplanes.airplaneData}/>, document.getElementById('root'));
-});
+        ReactDOM.render(<App airplaneDisplayMetaName={airplanes.airplaneDisplayMetaName} airplaneData={airplanes.airplaneData} />, document.getElementById('root'));
+    });
 
 
 
