@@ -11,26 +11,36 @@ export default function App(props) {
         airplaneData: An array of objects: 1 object represent 1 airplane whose metadata key has the metadata value
      */
 
-    // The page title shown on the jumbotron
-    const [pageTitle, setPageTitle] = useState("Airplane Dashboard");
-
-    let navLinks = [
-        { name: "Dashboard", url: "/" },
-        { name: "Comparison", url: "comparison" }
+    let routes = [
+        {
+            name: "Dashboard", title: "Airplane Dashboard", url: "/",
+            exact: true,
+            view: <ListGridView
+                // Continue passing data down to child components
+                airplaneDisplayMetaName={props.airplaneDisplayMetaName}
+                airplaneData={props.airplaneData} />
+        },
+        {
+            name: "Comparison", title: "Comparison Chart", url: "/comparison",
+            view: <ComparisonPage />
+        },
     ];
     return (
-        // Continue passing data down to child components
         <BrowserRouter>
             <div className="react-container">
                 <SiteHeader appName="AeroView"
                     logo="img/branding-logo.svg"
-                    navLinks={navLinks} />
-                {/* <PageJumbotron title={pageTitle} /> */}
-
+                    navLinks={routes} />
                 <Switch>
-                    <Route exact path="/" render={() => <div><PageJumbotron title={pageTitle} /> <ListGridView airplaneDisplayMetaName={props.airplaneDisplayMetaName} airplaneData={props.airplaneData} /> </div>} />
-                    <Route path="/comparison" render={() => <div><PageJumbotron title={"Comparison Chart"} /> <ComparisonPage /></div>} />
-                    {/* Ideally setPageTitle on the comparison Route path above */}
+                    {routes.map(route =>
+                        <Route key={route.name}
+                               exact={route.exact || false}
+                               path={route.url}
+                               render={() => <div>
+                                   <PageJumbotron title={route.title} />
+                                   {route.view}
+                               </div>}
+                        />)}
                 </Switch>
                 <main className="page-content">
                 </main>
