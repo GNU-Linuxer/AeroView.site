@@ -3,6 +3,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
+import { NavLink } from 'react-router-dom';
 
 /*
  * Returns an HTML element for the site header.
@@ -114,10 +115,8 @@ function NavButton(props) {
 function NavLinks(props) {
     return (
         <nav className="site-nav">
-            {props.links.map(link =>
-                <a key={link.name} className="site-nav-link" href={link.url}>
-                    {link.name}
-                </a>)}
+            <NavLink exact to='/' className="site-nav-link">Dashboard</NavLink>
+            <NavLink to='/comparison' className="site-nav-link" >Comparison</NavLink>
         </nav>
     );
 }
