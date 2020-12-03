@@ -9,7 +9,6 @@ import './css/dashboard-filter.css';
 import './css/site-elements.css';
 import './css/site-grid.css';
 import './css/site-list.css';
-import './css/style.css';
 // Reactstrap depends on bootstrap
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Alert, Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
