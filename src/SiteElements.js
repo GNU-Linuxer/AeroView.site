@@ -60,9 +60,7 @@ export function SiteFooter() {
     return (
         <footer className="site-footer">
             <p>&copy; 2020 David Xie, Jason Xu, Leo Liao</p>
-            <p>The website title image is by
-                <a href="https://commons.wikimedia.org/wiki/File:LAX_International_Line-up_2.jpg">
-                    Alan Wilson</a>, used under CC BY-SA license.
+            <p>The website title image is by <a href="https://commons.wikimedia.org/wiki/File:LAX_International_Line-up_2.jpg">Alan Wilson</a>, used under CC BY-SA license.
             </p>
         </footer>
     );
