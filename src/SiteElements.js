@@ -127,8 +127,13 @@ function NavButton(props) {
 function NavLinks(props) {
     return (
         <nav className="site-nav">
-            <NavLink exact to='/' className="site-nav-link">Dashboard</NavLink>
-            <NavLink to='/comparison' className="site-nav-link" >Comparison</NavLink>
+            {props.links.map(link =>
+                <NavLink key={link.name}
+                         exact={link.exact || false}
+                         to={link.url}
+                         className="site-nav-link">
+                    {link.name}
+                </NavLink>)}
         </nav>
     );
 }
