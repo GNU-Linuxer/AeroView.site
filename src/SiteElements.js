@@ -6,6 +6,14 @@ import React, { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 
 /*
+ * Width threshold for switching from or to mobile layout
+ * If width is strictly smaller than this value, mobile view should be used;
+ * otherwise, if width is equal to or greater than this value, desktop view
+ * should be used
+ */
+const MOBILE_WIDTH_THRESHOLD = 768;
+
+/*
  * Returns an HTML element for the site header.
  *
  * Props:
@@ -15,28 +23,18 @@ import { NavLink } from 'react-router-dom';
  *     'url' properties for the link's display name and target URL
  */
 export function SiteHeader(props) {
-    const [useMobileLayout, setUseMobileLayout] =
-        useState(window.innerWidth < 768);
-    const [showNavLinks, setShowNavLinks] = useState(!useMobileLayout);
+    const width = useWindowWidth();
+    const [buttonActivated, setButtonActivated] = useState(false);
 
-    useEffect(() => {
-        // Add event listener for screen resize, which switches between mobile
-        // and desktop layout when needed
-        window.addEventListener("resize", () => {
-            setUseMobileLayout(window.innerWidth < 768);
-            setShowNavLinks(!useMobileLayout);
-        });
-    }, [useMobileLayout]);
-
-    let navButton = <NavButton expanded={showNavLinks}
-        clickCallback={() => setShowNavLinks(!showNavLinks)} />;
+    let navButton = <NavButton expanded={buttonActivated}
+            clickCallback={() => setButtonActivated(!buttonActivated)} />;
     let navLinks = <NavLinks links={props.navLinks} />;
     return (
         <header className="site-header">
             <SiteBranding logo={props.logo} name={props.appName} />
             <div className="site-nav-widget">
-                {useMobileLayout ? navButton : null}
-                {showNavLinks ? navLinks : null}
+                {width < MOBILE_WIDTH_THRESHOLD && navButton}
+                {(buttonActivated || width >= MOBILE_WIDTH_THRESHOLD) && navLinks}
             </div>
         </header>
     );
@@ -66,6 +64,20 @@ export function SiteFooter() {
         </footer>
     );
 }
+
+/*
+ * A custom hook for dynamically obtaining width of the window
+ * Reference: https://blog.logrocket.com/developing-responsive-layouts-with-react-hooks/
+ */
+const useWindowWidth = () => {
+    const [width, setWidth] = useState(window.innerWidth);
+    useEffect(() => {
+        let updateWindowWidth = () => setWidth(window.innerWidth);
+        window.addEventListener("resize", updateWindowWidth);
+        return () => window.removeEventListener("resize", updateWindowWidth);
+    });
+    return width;
+};
 
 /*
  * Returns an HTML element for site branding suitable to be displayed in site
