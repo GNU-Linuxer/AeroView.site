@@ -65,7 +65,6 @@ export default function App(props) {
                 // Continue passing data down to child components
                 airplaneDisplayMetaName={props.airplaneDisplayMetaName}
                 airplaneData={props.airplaneData}
-                getFavAirplanes={updateFavoritePlane}
 
                 planeRating={planeRating}
                 updateRatingFn={updatePlaneRating}
@@ -75,11 +74,16 @@ export default function App(props) {
         },
         {
             name: "Comparison", title: "Comparison Chart", url: "/comparison",
-            view: <ComparisonPage planeRating={planeRating}
-                                  updateRatingFn={updatePlaneRating}
+            view: <ComparisonPage
+                    // Continue passing data down to child components
+                    airplaneDisplayMetaName={props.airplaneDisplayMetaName}
+                    airplaneData={props.airplaneData}
 
-                                  favoritePlanes={favoritePlanes}
-                                  updateFavoriteFn={updateFavoritePlane}/>
+                    planeRating={planeRating}
+                    updateRatingFn={updatePlaneRating}
+
+                    favoritePlanes={favoritePlanes}
+                    updateFavoriteFn={updateFavoritePlane}/>
         },
     ];
 
