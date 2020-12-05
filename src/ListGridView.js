@@ -187,7 +187,9 @@ function DashboardGrid(props) {
     let selectedAirplanesElems = [];
     for (let onePlane of props.airplaneData) {
         let planeName = onePlane["make"] + ' ' + onePlane["model"];
-        if (planeName.toLowerCase().indexOf(props.searchTerm) !== -1) {
+        if (props.brandsToDisplay.includes(onePlane['make']) &&
+            props.typesToDisplay.includes(onePlane['type']) &&
+            planeName.toLowerCase().indexOf(props.searchTerm) !== -1) {
             selectedAirplanesElems.push(<OneGridCard key={onePlane["icao-pic"]}
                 filteredFullDisplayMeta={props.filteredFullDisplayMeta}
                 onePlane={onePlane}
