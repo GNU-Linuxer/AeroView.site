@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 import { BrowserRouter, Route, Switch, Link, NavLink, useParams } from 'react-router-dom';
 
-import ListGridView from './ListGridView.js';
+import Dashboard from "./Dashboard";
 import { SiteHeader, PageJumbotron, SiteFooter } from './SiteElements.js';
 import { ComparisonPage } from './comparisonPage.js';
 
@@ -15,7 +15,7 @@ export default function App(props) {
         {
             name: "Dashboard", title: "Airplane Dashboard", url: "/",
             exact: true,
-            view: <ListGridView
+            view: <Dashboard
                 // Continue passing data down to child components
                 airplaneDisplayMetaName={props.airplaneDisplayMetaName}
                 airplaneData={props.airplaneData} />
@@ -38,12 +38,12 @@ export default function App(props) {
                                path={route.url}
                                render={() => <div>
                                    <PageJumbotron title={route.title} />
-                                   {route.view}
+                                   <main className="page-content">
+                                       {route.view}
+                                   </main>
                                </div>}
                         />)}
                 </Switch>
-                <main className="page-content">
-                </main>
                 <SiteFooter />
             </div>
         </BrowserRouter>

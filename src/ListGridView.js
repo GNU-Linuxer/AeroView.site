@@ -12,21 +12,23 @@ import './css/site-list.css';
 // Reactstrap depends on bootstrap
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Alert, Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
+// Load other project JavaScript files
+import {ALWAYS_SHOWN_METADATA, DASHBOARD_VIEWS} from "./Dashboard";
+
 // Load font awesome icon, MUST add everything if defined in import {***, ***} from '@fortawesome/free-solid-svg-icons'
 library.add(faHeart, faStar, faChevronCircleDown, regularHeart, regularStar);
 
 
-
 export default function ListGridView(props) {
     /*  props:
+        activeView: The view selected by the user to display
         airplaneDisplayMetaName: An object that maps the shorthand metadata key to display-friendly full name
         airplaneData: An array of objects: 1 object represent 1 airplane whose metadata key has the metadata value
+        brandsToDisplay: An array of strings for brands selected by the user
+        typesToDisplay: An array of strings for airplane types selected by the user
+        filteredMeta: An array of metadata keys the user chooses to display
+        searchTerm: The term entered by the user in the search bar
     */
-
-    // Initial values to display, customize 3 arrays below to customize index.html's initial view; checkbox toggle will overwrite the content
-    let brandsToDisplay = ['Airbus', 'Boeing', 'Irkut'];
-    let typesToDisplay = ['Narrow-Body Jet', 'Wide-Body Jet', 'Double-Decker'];
-    let filteredMeta = ['cruise_speed', 'mtow', 'psng_cap', 'series', 'psng_cap', 'serv_cell', 'aisle_wid', 'takeoff_dis', 'wing_span', 'cab_alt'];
 
     // Temporary: set the initial rating of all plane to 0 (if the value changes, the star-rendering will change)
     // This should read from user data to re-load previously saved rating
@@ -78,7 +80,7 @@ export default function ListGridView(props) {
     let filteredFullDisplayMeta = {};
     // The metadata's order will follow the same order in airplanes.csv file, regardless the order in filteredMeta
     for (let oneMeta of Object.keys(props.airplaneDisplayMetaName)) {
-        if (filteredMeta.includes(oneMeta)) {
+        if (props.filteredMeta.includes(oneMeta)) {
             filteredFullDisplayMeta[oneMeta] = props.airplaneDisplayMetaName[oneMeta];
         }
         //console.log(filteredFullDisplayMeta);
@@ -88,36 +90,37 @@ export default function ListGridView(props) {
     const [alertVisible, setAlertVisible] = useState(false);
     const updateAlertVisibility = (value) => setAlertVisible(value);
 
-    let displayMode = "Grid"
     let content;
-    if (displayMode === 'List') {
+    if (props.activeView === DASHBOARD_VIEWS.LIST) {
         content = (<DashboardTable filteredFullDisplayMeta={filteredFullDisplayMeta}
             airplaneData={props.airplaneData}
 
             updateAlertVisibility={updateAlertVisibility}
 
-            brandsToDisplay={brandsToDisplay}
-            typesToDisplay={typesToDisplay}
-            filteredMeta={filteredMeta}
+            brandsToDisplay={props.brandsToDisplay}
+            typesToDisplay={props.typesToDisplay}
+            filteredMeta={props.filteredMeta}
 
             planeRating={planeRating}
             updateRatingFn={updatePlaneRating}
 
             favoritePlanes={favoritePlanes}
-            updateFavoriteFn={updateFavoritePlane} />);
-    } else if (displayMode === 'Grid') {
+            updateFavoriteFn={updateFavoritePlane}
+            searchTerm={props.searchTerm} />);
+    } else if (props.activeView === DASHBOARD_VIEWS.GRID) {
         content = (<DashboardGrid filteredFullDisplayMeta={filteredFullDisplayMeta}
             airplaneData={props.airplaneData}
 
-            brandsToDisplay={brandsToDisplay}
-            typesToDisplay={typesToDisplay}
-            filteredMeta={filteredMeta}
+            brandsToDisplay={props.brandsToDisplay}
+            typesToDisplay={props.typesToDisplay}
+            filteredMeta={props.filteredMeta}
 
             planeRating={planeRating}
             updateRatingFn={updatePlaneRating}
 
             favoritePlanes={favoritePlanes}
-            updateFavoriteFn={updateFavoritePlane} />);
+            updateFavoriteFn={updateFavoritePlane}
+            searchTerm={props.searchTerm} />);
     }
     return (
         <div className="dashboard-content">
@@ -155,7 +158,9 @@ function DashboardGrid(props) {
         updateRatingFn: a callback function that feeds props.onePlane rating
 
         favoritePlanes: An array of boolean value that describe whether prop.onePlane is a favorite
-        updateFavoriteFn: a callback function that feeds whether props.onePlane has become (or no longer is) a favorite
+        updateFavoriteFn: a callback function that feeds whether props.onePlane has become (or no longer is) a
+
+        searchTerm: The term entered by the user in the search bar
     */
 
     // Keys in props.filteredFullDisplayMeta controls which dropdown value to display
@@ -181,15 +186,18 @@ function DashboardGrid(props) {
     // Create All Table Rows for every displaying airplane
     let selectedAirplanesElems = [];
     for (let onePlane of props.airplaneData) {
-        selectedAirplanesElems.push(<OneGridCard key={onePlane["icao-pic"]}
-            filteredFullDisplayMeta={props.filteredFullDisplayMeta}
-            onePlane={onePlane}
+        let planeName = onePlane["make"] + ' ' + onePlane["model"];
+        if (planeName.toLowerCase().indexOf(props.searchTerm) !== -1) {
+            selectedAirplanesElems.push(<OneGridCard key={onePlane["icao-pic"]}
+                filteredFullDisplayMeta={props.filteredFullDisplayMeta}
+                onePlane={onePlane}
 
-            currRating={props.planeRating[onePlane['icao-pic'].toLowerCase()]}
-            updateRatingFn={props.updateRatingFn}
+                currRating={props.planeRating[onePlane['icao-pic'].toLowerCase()]}
+                updateRatingFn={props.updateRatingFn}
 
-            currFavorite={props.favoritePlanes.includes(onePlane['icao-pic'].toLowerCase())}
-            updateFavoriteFn={props.updateFavoriteFn} />)
+                currFavorite={props.favoritePlanes.includes(onePlane['icao-pic'].toLowerCase())}
+                updateFavoriteFn={props.updateFavoriteFn} />);
+        }
     }
 
     return (
@@ -294,6 +302,8 @@ function DashboardTable(props) {
 
         favoritePlanes: An array of boolean value that describe whether prop.onePlane is a favorite
         updateFavoriteFn: a callback function that feeds whether props.onePlane has become (or no longer is) a favorite
+
+        searchTerm: The term entered by the user in the search bar
     */
 
     // When window's width change, number of displaying columns need to change
@@ -352,7 +362,8 @@ function DashboardTable(props) {
                 updateRatingFn={props.updateRatingFn}
 
                 favoritePlanes={props.favoritePlanes}
-                updateFavoriteFn={props.updateFavoriteFn} />
+                updateFavoriteFn={props.updateFavoriteFn}
+                searchTerm={props.searchTerm} />
         </table>
     )
 }
@@ -421,15 +432,20 @@ function DashboardTableBody(props) {
 
     favoritePlanes: An array of boolean value that describe whether prop.onePlane is a favorite
     updateFavoriteFn: a callback function that feeds whether props.onePlane has become (or no longer is) a favorite
+
+    searchTerm: The term entered by the user in the search bar
     */
 
-    let excludedMeta = ['make', 'model', 'icao-pic'];
+    let excludedMeta = ALWAYS_SHOWN_METADATA;
     let selectedAirplanesFilteredMeta = [];
 
     // Populate filtered airplane objects
     for (let onePlane of props.airplaneData) {
+        let planeName = onePlane["make"] + ' ' + onePlane["model"];
         // Filter planes to display
-        if (props.brandsToDisplay.includes(onePlane['make']) && props.typesToDisplay.includes(onePlane['type'])) {
+        if (props.brandsToDisplay.includes(onePlane['make']) &&
+            props.typesToDisplay.includes(onePlane['type']) &&
+            planeName.toLowerCase().indexOf(props.searchTerm) !== -1) {
             let filteredMetaPlane = {};
             // Filter metadata to display (take counter into consideration)
             let counter = 0;
