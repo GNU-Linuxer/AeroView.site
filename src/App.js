@@ -11,6 +11,29 @@ export default function App(props) {
         airplaneData: An array of objects: 1 object represent 1 airplane whose metadata key has the metadata value
      */
 
+    // Handle change of 1 airplane's favorite toggle (all favorite airplanes' all-lowercase icao code is stored in this array)
+    // Temporary: all planes are not favorite
+    // This should read from user data to re-load previously saved rating
+    const [favoritePlanes, setFavoritePlanes] = useState([]);
+    // Value is a boolean value that denote whether a plane (with this icao code) is a favorite (true when is favorite)
+    const updateFavoritePlane = function (icao, value) {
+        let updatedFavoritePlanes = [...favoritePlanes] // Array copy
+        //console.log(icao + ' ' + value);
+        if (value && !(updatedFavoritePlanes.includes(icao))) {
+            updatedFavoritePlanes.push(icao);
+            console.log(updatedFavoritePlanes);
+            setFavoritePlanes(updatedFavoritePlanes);
+        } else if (!value && updatedFavoritePlanes.includes(icao)) {
+            let index = updatedFavoritePlanes.indexOf(icao);
+            updatedFavoritePlanes.splice(index, 1);
+            console.log(updatedFavoritePlanes);
+            setFavoritePlanes(updatedFavoritePlanes);
+        } else {
+            console.warn("updateFavoritePlane: Attempting to" + (value ? ' add duplicate ' : ' remove non-existent') + icao + " from favorite state array");
+        }
+        setFavoritePlanes(updatedFavoritePlanes);
+    }
+
     let routes = [
         {
             name: "Dashboard", title: "Airplane Dashboard", url: "/",
@@ -18,13 +41,14 @@ export default function App(props) {
             view: <ListGridView
                 // Continue passing data down to child components
                 airplaneDisplayMetaName={props.airplaneDisplayMetaName}
-                airplaneData={props.airplaneData} />
+                airplaneData={props.airplaneData} getFavAirplanes={updateFavoritePlane} />
         },
         {
             name: "Comparison", title: "Comparison Chart", url: "/comparison",
-            view: <ComparisonPage />
+            view: <ComparisonPage favoritePlanes={favoritePlanes} />
         },
     ];
+
     return (
         <BrowserRouter>
             <div className="react-container">
@@ -34,12 +58,12 @@ export default function App(props) {
                 <Switch>
                     {routes.map(route =>
                         <Route key={route.name}
-                               exact={route.exact || false}
-                               path={route.url}
-                               render={() => <div>
-                                   <PageJumbotron title={route.title} />
-                                   {route.view}
-                               </div>}
+                            exact={route.exact || false}
+                            path={route.url}
+                            render={() => <div>
+                                <PageJumbotron title={route.title} />
+                                {route.view}
+                            </div>}
                         />)}
                 </Switch>
                 <main className="page-content">

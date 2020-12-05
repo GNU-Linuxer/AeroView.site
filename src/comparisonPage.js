@@ -13,12 +13,13 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 //console.log(RenderComparisonContent);
 
 export function ComparisonPage(props) {
-  //let fav = <RenderComparisonContent />
+  //console.log(props.favoritePlanes);
+
   return (
     // <!-- Second heading, I don't think that this should apply the style in main content -->
     <div>
       <main className="page-content">
-        <p>Test</p>
+
         <div className="dropdown">
           {/* <!-- Content will be filled by comparison.js file --> */}
           {/* <DropDownContent favoritePlanes={ } /> */}

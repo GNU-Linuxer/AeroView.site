@@ -12,6 +12,8 @@ import './css/site-list.css';
 // Reactstrap depends on bootstrap
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Alert, Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
+import { ComparisonPage } from './comparisonPage.js';
+
 // Load font awesome icon, MUST add everything if defined in import {***, ***} from '@fortawesome/free-solid-svg-icons'
 library.add(faHeart, faStar, faChevronCircleDown, regularHeart, regularStar);
 
@@ -105,6 +107,7 @@ export default function ListGridView(props) {
 
             favoritePlanes={favoritePlanes}
             updateFavoriteFn={updateFavoritePlane} />);
+
     } else if (displayMode === 'Grid') {
         content = (<DashboardGrid filteredFullDisplayMeta={filteredFullDisplayMeta}
             airplaneData={props.airplaneData}
