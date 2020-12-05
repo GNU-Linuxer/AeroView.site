@@ -10,7 +10,7 @@ export default function App(props) {
     /*  airplaneDisplayMetaName: An object that maps the shorthand metadata key to display-friendly full name
         airplaneData: An array of objects: 1 object represent 1 airplane whose metadata key has the metadata value
      */
-
+    console.log(props.airplaneDisplayMetaName);
     // Handle change of 1 airplane's favorite toggle (all favorite airplanes' all-lowercase icao code is stored in this array)
     // Temporary: all planes are not favorite
     // This should read from user data to re-load previously saved rating
@@ -70,20 +70,20 @@ export default function App(props) {
                 updateRatingFn={updatePlaneRating}
 
                 favoritePlanes={favoritePlanes}
-                updateFavoriteFn={updateFavoritePlane}/>
+                updateFavoriteFn={updateFavoritePlane} />
         },
         {
             name: "Comparison", title: "Comparison Chart", url: "/comparison",
             view: <ComparisonPage
-                    // Continue passing data down to child components
-                    airplaneDisplayMetaName={props.airplaneDisplayMetaName}
-                    airplaneData={props.airplaneData}
+                // Continue passing data down to child components
+                airplaneDisplayMetaName={props.airplaneDisplayMetaName}
+                airplaneData={props.airplaneData}
 
-                    planeRating={planeRating}
-                    updateRatingFn={updatePlaneRating}
+                planeRating={planeRating}
+                updateRatingFn={updatePlaneRating}
 
-                    favoritePlanes={favoritePlanes}
-                    updateFavoriteFn={updateFavoritePlane}/>
+                favoritePlanes={favoritePlanes}
+                updateFavoriteFn={updateFavoritePlane} />
         },
     ];
 
@@ -104,8 +104,6 @@ export default function App(props) {
                             </div>}
                         />)}
                 </Switch>
-                <main className="page-content">
-                </main>
                 <SiteFooter />
             </div>
         </BrowserRouter>
