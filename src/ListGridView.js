@@ -23,59 +23,19 @@ export default function ListGridView(props) {
     /*  props:
         airplaneDisplayMetaName: An object that maps the shorthand metadata key to display-friendly full name
         airplaneData: An array of objects: 1 object represent 1 airplane whose metadata key has the metadata value
+
+        planeRating: An object that represent the rating of each plane (icao code) has
+        updateRatingFn: a callback function that feeds props.onePlane rating
+
+        favoritePlanes: An array of boolean value that describe whether prop.onePlane is a favorite
+        updateFavoriteFn: a callback function that feeds whether props.onePlane has become (or no longer is) a favorite
+
     */
 
     // Initial values to display, customize 3 arrays below to customize index.html's initial view; checkbox toggle will overwrite the content
     let brandsToDisplay = ['Airbus', 'Boeing', 'Irkut'];
     let typesToDisplay = ['Narrow-Body Jet', 'Wide-Body Jet', 'Double-Decker'];
     let filteredMeta = ['cruise_speed', 'mtow', 'psng_cap', 'series', 'psng_cap', 'serv_cell', 'aisle_wid', 'takeoff_dis', 'wing_span', 'cab_alt'];
-
-    // Temporary: set the initial rating of all plane to 0 (if the value changes, the star-rendering will change)
-    // This should read from user data to re-load previously saved rating
-    let initialRating = {};
-    for (let onePlane of props.airplaneData) {
-        initialRating[onePlane["icao-pic"].toLowerCase()] = 0;
-    }
-
-    // Handle change of 1 airplane's star rating
-    const [planeRating, setRating] = useState(initialRating);
-    //console.log(initialRating);
-    const updatePlaneRating = (icao, rating) => {
-        let updatedPlaneRating = { ...planeRating } // object copy
-        //console.log(icao + ' ' + rating);
-        // User can remove rating (0 star) by clicking on the same rating star again
-        if (rating === updatedPlaneRating[icao]) {
-            updatedPlaneRating[icao] = 0;
-        } else {
-            updatedPlaneRating[icao] = rating;
-        }
-        console.log(updatedPlaneRating);
-        setRating(updatedPlaneRating);
-    }
-
-
-    // Handle change of 1 airplane's favorite toggle (all favorite airplanes' all-lowercase icao code is stored in this array)
-    // Temporary: all planes are not favorite
-    // This should read from user data to re-load previously saved rating
-    const [favoritePlanes, setFavoritePlanes] = useState([]);
-    // Value is a boolean value that denote whether a plane (with this icao code) is a favorite (true when is favorite)
-    const updateFavoritePlane = (icao, value) => {
-        let updatedFavoritePlanes = [...favoritePlanes] // Array copy
-        //console.log(icao + ' ' + value);
-        if (value && !(updatedFavoritePlanes.includes(icao))) {
-            updatedFavoritePlanes.push(icao);
-            console.log(updatedFavoritePlanes);
-            setFavoritePlanes(updatedFavoritePlanes);
-        } else if (!value && updatedFavoritePlanes.includes(icao)) {
-            let index = updatedFavoritePlanes.indexOf(icao);
-            updatedFavoritePlanes.splice(index, 1);
-            console.log(updatedFavoritePlanes);
-            setFavoritePlanes(updatedFavoritePlanes);
-        } else {
-            console.warn("updateFavoritePlane: Attempting to" + (value ? ' add duplicate ' : ' remove non-existent') + icao + " from favorite state array");
-        }
-
-    }
 
     let filteredFullDisplayMeta = {};
     // The metadata's order will follow the same order in airplanes.csv file, regardless the order in filteredMeta
@@ -102,11 +62,11 @@ export default function ListGridView(props) {
             typesToDisplay={typesToDisplay}
             filteredMeta={filteredMeta}
 
-            planeRating={planeRating}
-            updateRatingFn={updatePlaneRating}
+            planeRating={props.planeRating}
+            updateRatingFn={props.updateRatingFn}
 
-            favoritePlanes={favoritePlanes}
-            updateFavoriteFn={updateFavoritePlane} />);
+            favoritePlanes={props.favoritePlanes}
+            updateFavoriteFn={props.updateFavoriteFn} />);
 
     } else if (displayMode === 'Grid') {
         content = (<DashboardGrid filteredFullDisplayMeta={filteredFullDisplayMeta}
@@ -116,11 +76,11 @@ export default function ListGridView(props) {
             typesToDisplay={typesToDisplay}
             filteredMeta={filteredMeta}
 
-            planeRating={planeRating}
-            updateRatingFn={updatePlaneRating}
+            planeRating={props.planeRating}
+            updateRatingFn={props.updateRatingFn}
 
-            favoritePlanes={favoritePlanes}
-            updateFavoriteFn={updateFavoritePlane} />);
+            favoritePlanes={props.favoritePlanes}
+            updateFavoriteFn={props.updateFavoriteFn} />);
     }
     return (
         <div className="dashboard-content">

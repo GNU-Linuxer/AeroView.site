@@ -34,6 +34,29 @@ export default function App(props) {
         setFavoritePlanes(updatedFavoritePlanes);
     }
 
+    // Temporary: set the initial rating of all plane to 0 (if the value changes, the star-rendering will change)
+    // This should read from user data to re-load previously saved rating
+    let initialRating = {};
+    for (let onePlane of props.airplaneData) {
+        initialRating[onePlane["icao-pic"].toLowerCase()] = 0;
+    }
+
+    // Handle change of 1 airplane's star rating
+    const [planeRating, setRating] = useState(initialRating);
+    //console.log(initialRating);
+    const updatePlaneRating = (icao, rating) => {
+        let updatedPlaneRating = { ...planeRating } // object copy
+        //console.log(icao + ' ' + rating);
+        // User can remove rating (0 star) by clicking on the same rating star again
+        if (rating === updatedPlaneRating[icao]) {
+            updatedPlaneRating[icao] = 0;
+        } else {
+            updatedPlaneRating[icao] = rating;
+        }
+        console.log(updatedPlaneRating);
+        setRating(updatedPlaneRating);
+    }
+
     let routes = [
         {
             name: "Dashboard", title: "Airplane Dashboard", url: "/",
@@ -41,11 +64,22 @@ export default function App(props) {
             view: <ListGridView
                 // Continue passing data down to child components
                 airplaneDisplayMetaName={props.airplaneDisplayMetaName}
-                airplaneData={props.airplaneData} getFavAirplanes={updateFavoritePlane} />
+                airplaneData={props.airplaneData}
+                getFavAirplanes={updateFavoritePlane}
+
+                planeRating={planeRating}
+                updateRatingFn={updatePlaneRating}
+
+                favoritePlanes={favoritePlanes}
+                updateFavoriteFn={updateFavoritePlane}/>
         },
         {
             name: "Comparison", title: "Comparison Chart", url: "/comparison",
-            view: <ComparisonPage favoritePlanes={favoritePlanes} />
+            view: <ComparisonPage planeRating={planeRating}
+                                  updateRatingFn={updatePlaneRating}
+
+                                  favoritePlanes={favoritePlanes}
+                                  updateFavoriteFn={updateFavoritePlane}/>
         },
     ];
 
