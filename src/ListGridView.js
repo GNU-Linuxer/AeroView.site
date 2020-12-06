@@ -189,7 +189,7 @@ function DashboardGrid(props) {
         let planeName = onePlane["make"] + ' ' + onePlane["model"];
         if (props.brandsToDisplay.includes(onePlane['make']) &&
             props.typesToDisplay.includes(onePlane['type']) &&
-            planeName.toLowerCase().indexOf(props.searchTerm) !== -1) {
+            planeName.toLowerCase().indexOf(props.searchTerm.toLowerCase()) !== -1) {
             selectedAirplanesElems.push(<OneGridCard key={onePlane["icao-pic"]}
                 filteredFullDisplayMeta={props.filteredFullDisplayMeta}
                 onePlane={onePlane}
@@ -447,7 +447,7 @@ function DashboardTableBody(props) {
         // Filter planes to display
         if (props.brandsToDisplay.includes(onePlane['make']) &&
             props.typesToDisplay.includes(onePlane['type']) &&
-            planeName.toLowerCase().indexOf(props.searchTerm) !== -1) {
+            planeName.toLowerCase().indexOf(props.searchTerm.toLowerCase()) !== -1) {
             let filteredMetaPlane = {};
             // Filter metadata to display (take counter into consideration)
             let counter = 0;
