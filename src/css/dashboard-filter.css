@@ -58,6 +58,11 @@ button.selected-view {
     color: hsl(205, 100%, 25%);
 }
 
+.button-description {
+    /* Add margin between description text and
+     * FontAwesome icons inserted as React components */
+    margin-left: 0.25em;
+}
 
 /* Decorative text elements */
 
