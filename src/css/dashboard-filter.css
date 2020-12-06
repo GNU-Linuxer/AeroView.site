@@ -80,6 +80,9 @@ ul.checkbox-menu {
     list-style-type: none;
     margin-bottom: 0;
     padding-left: 0;
+    /* Limit height to prevent menu overflow moving it to undesired position */
+    max-height: 280px;
+    overflow-y: scroll;
 }
 
 .checkbox-menu li {
@@ -89,6 +92,16 @@ ul.checkbox-menu {
     margin: 0;
     /* Enlarge space between each item by default to ease selection with finger */
     line-height: 2.25em;
+}
+
+.checkbox-menu label {
+    /* Remove redundant margin added to bottom of labels by reboot stylesheet */
+    margin-bottom: 0;
+}
+
+.filter-dropdown-menu {
+    /* Explicitly define width for Safari on iOS */
+    width: 200px;
 }
 
 .option-dropdown-menu {

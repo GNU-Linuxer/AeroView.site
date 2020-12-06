@@ -7,7 +7,8 @@ import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faList, faTh, faFilter, faEllipsisV } from '@fortawesome/free-solid-svg-icons'
 
-import ListGridView from "./ListGridView";
+import ListGridView from './ListGridView';
+import { ButtonDropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
 
 /*
  * A read-only object containing constants that represent views supported by
@@ -178,48 +179,30 @@ function ViewSelector(props) {
  */
 function FilterSelector(props) {
     const [buttonActivated, setButtonActivated] = useState(false);
-    return (
-        <div>
-            <button id="filter-button" aria-label="filter"
-                    data-toggle="dropdown" data-flip="false"
-                    aria-expanded={buttonActivated} aria-haspopup="true"
-                    onClick={() => setButtonActivated(!buttonActivated)}>
-                <FontAwesomeIcon icon={faFilter} />
-            </button>
-            {buttonActivated && <FilterMenu
-                airplaneData={props.airplaneData}
-                brandsToDisplay={props.brandsToDisplay}
-                typesToDisplay={props.typesToDisplay}
-                changeBrandsCallback={props.changeBrandsCallback}
-                changeTypesCallback={props.changeTypesCallback} />}
-        </div>
-    );
-}
 
-/*
- * Returns an HTML element for the filter dropdown menu.  It needs the
- * following props passed to 'FilterSelector':
- * - airplaneData
- * - brandsToDisplay
- * - typesToDisplay
- * - changeBrandsCallback
- * - changeTypesCallback
- */
-function FilterMenu(props) {
     let makes = [...new Set(props.airplaneData.map(plane => plane.make))];
     let types = [...new Set(props.airplaneData.map(plane => plane.type))];
+
     return (
-        <ul aria-labelledby="filter-button" className="filter-dropdown-menu">
-            {makes.map(make => <MenuEntry
-                key={make} entryKey={make} entryName={make}
-                selectedKeys={props.brandsToDisplay}
-                onSelectionChangeCallback={props.changeBrandsCallback} />)}
-            <li className="dropdown-divider" />
-            {types.map(type => <MenuEntry
-                key={type} entryKey={type} entryName={type}
-                selectedKeys={props.typesToDisplay}
-                onSelectionChangeCallback={props.changeTypesCallback} />)}
-        </ul>
+        <ButtonDropdown isOpen={buttonActivated}
+                        toggle={() => setButtonActivated(!buttonActivated)}>
+            <DropdownToggle tag="button">
+                <FontAwesomeIcon icon={faFilter} />
+            </DropdownToggle>
+            <DropdownMenu right tag="ul" className="checkbox-menu filter-dropdown-menu">
+                <DropdownItem header>Brand</DropdownItem>
+                {makes.map(make => <MenuEntry
+                    key={make} entryKey={make} entryName={make}
+                    selectedKeys={props.brandsToDisplay}
+                    onSelectionChangeCallback={props.changeBrandsCallback} />)}
+                <DropdownItem divider />
+                <DropdownItem header>Type</DropdownItem>
+                {types.map(type => <MenuEntry
+                    key={type} entryKey={type} entryName={type}
+                    selectedKeys={props.typesToDisplay}
+                    onSelectionChangeCallback={props.changeTypesCallback} />)}
+            </DropdownMenu>
+        </ButtonDropdown>
     );
 }
 
@@ -233,45 +216,28 @@ function FilterMenu(props) {
  */
 function MetadataSelector(props) {
     const [buttonActivated, setButtonActivated] = useState(false);
-    return (
-        <div>
-            <button id="edit-button" aria-label="edit"
-                    data-toggle="dropdown" data-flip="false"
-                    aria-expanded={buttonActivated} aria-haspopup="true"
-                    onClick={() => setButtonActivated(!buttonActivated)}>
-                <FontAwesomeIcon icon={faEllipsisV} />
-            </button>
-            {buttonActivated && <MetadataMenu
-                airplaneData={props.airplaneData}
-                airplaneDisplayMetaName={props.airplaneDisplayMetaName}
-                filteredMeta={props.filteredMeta}
-                changeFilteredMetaCallback={props.changeFilteredMetaCallback} />}
-        </div>
-    );
-}
 
-/*
- * Returns an HTML element for the metadata dropdown menu.  It needs the
- * following props passed to 'MetadataSelector':
- * - airplaneData
- * - airplaneDisplayMetaName
- * - filteredMeta
- * - changeFilteredMetaCallback
- */
-function MetadataMenu(props) {
     let metaKeys = Object.keys(props.airplaneData[0]);
+
     return (
-        <ul aria-labelledby="filter-button" className="filter-dropdown-menu">
-            {metaKeys
-                .filter(metaKey => ALWAYS_SHOWN_METADATA.indexOf(metaKey) === -1)
-                .map(metaKey => <MenuEntry
-                    key={metaKey}
-                    entryKey={metaKey}
-                    entryName={props.airplaneDisplayMetaName[metaKey]}
-                    selectedKeys={props.filteredMeta}
-                    onSelectionChangeCallback={props.changeFilteredMetaCallback} />)
-            }
-        </ul>
+        <ButtonDropdown isOpen={buttonActivated}
+                        toggle={() => setButtonActivated(!buttonActivated)}>
+            <DropdownToggle tag="button">
+                <FontAwesomeIcon icon={faEllipsisV} />
+            </DropdownToggle>
+            <DropdownMenu right tag="ul" className="checkbox-menu option-dropdown-menu">
+                <DropdownItem header>Metadata to display</DropdownItem>
+                {metaKeys
+                    .filter(metaKey => ALWAYS_SHOWN_METADATA.indexOf(metaKey) === -1)
+                    .map(metaKey => <MenuEntry
+                        key={metaKey}
+                        entryKey={metaKey}
+                        entryName={props.airplaneDisplayMetaName[metaKey]}
+                        selectedKeys={props.filteredMeta}
+                        onSelectionChangeCallback={props.changeFilteredMetaCallback} />)
+                }
+            </DropdownMenu>
+        </ButtonDropdown>
     );
 }
 
