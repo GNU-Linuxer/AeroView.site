@@ -255,24 +255,24 @@ function MetadataSelector(props) {
  *     which takes a single argument for the new array of selections
  */
 function MenuEntry(props) {
-    function toggleKeySelection(key) {
+    const toggleSelection = () => {
         let newKeyArray;
-        if (props.selectedKeys.indexOf(key) === -1) {
+        if (props.selectedKeys.indexOf(props.entryKey) === -1) {
             // The key is unselected; select it
-            newKeyArray = [...props.selectedKeys, key];
+            newKeyArray = [...props.selectedKeys, props.entryKey];
         } else {
             // The key is selected; unselect it
             newKeyArray = props.selectedKeys
-                .filter(selectedKey => selectedKey !== key);
+                .filter(selectedKey => selectedKey !== props.entryKey);
         }
         props.onSelectionChangeCallback(newKeyArray);
-    }
+    };
 
     return (
-        <li>
+        <li onClick={toggleSelection}>
             <input type="checkbox"
                    checked={props.selectedKeys.indexOf(props.entryKey) !== -1}
-                   onChange={() => toggleKeySelection(props.entryKey)} />
+                   onChange={toggleSelection} />
             <label>{props.entryName}</label>
         </li>
     );
