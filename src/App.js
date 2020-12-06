@@ -10,7 +10,7 @@ export default function App(props) {
     /*  airplaneDisplayMetaName: An object that maps the shorthand metadata key to display-friendly full name
         airplaneData: An array of objects: 1 object represent 1 airplane whose metadata key has the metadata value
      */
-    console.log(props.airplaneDisplayMetaName);
+
     // Handle change of 1 airplane's favorite toggle (all favorite airplanes' all-lowercase icao code is stored in this array)
     // Temporary: all planes are not favorite
     // This should read from user data to re-load previously saved rating

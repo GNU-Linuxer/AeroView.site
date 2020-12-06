@@ -1,5 +1,9 @@
 import React from 'react';
 
+import ComparisonPage from './comparisonPage.js';
+
+// This file is used solely for reference: Remove at production build of webpage
+
 // Track website's states
 let state = {
     // Loading airplane data
@@ -30,6 +34,7 @@ d3.csv(state.airplaneFile)
     }).then(function () {
         main();
     });
+
 
 // Load initial planes defined in the state.initialPlanes
 function loadInitialPlanes() {
