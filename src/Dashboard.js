@@ -191,17 +191,17 @@ function FilterSelector(props) {
                 <FontAwesomeIcon icon={faFilter} />
             </DropdownToggle>
             <DropdownMenu right tag="ul" className="checkbox-menu filter-dropdown-menu">
-                <DropdownItem header>Brand</DropdownItem>
-                {makes.map(make => <MenuEntry
-                    key={make} entryKey={make} entryName={make}
-                    selectedKeys={props.brandsToDisplay}
-                    onSelectionChangeCallback={props.changeBrandsCallback} />)}
-                <DropdownItem divider />
                 <DropdownItem header>Type</DropdownItem>
                 {types.map(type => <MenuEntry
                     key={type} entryKey={type} entryName={type}
                     selectedKeys={props.typesToDisplay}
                     onSelectionChangeCallback={props.changeTypesCallback} />)}
+                <DropdownItem divider />
+                <DropdownItem header>Brand</DropdownItem>
+                {makes.map(make => <MenuEntry
+                    key={make} entryKey={make} entryName={make}
+                    selectedKeys={props.brandsToDisplay}
+                    onSelectionChangeCallback={props.changeBrandsCallback} />)}
             </DropdownMenu>
         </ButtonDropdown>
     );
