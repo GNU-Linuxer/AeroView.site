@@ -156,9 +156,9 @@ function RenderPlaneDetails(props) {
   console.log(planeDetails);
 
   let data = planeDetails.map((arrayItem) => {
-    arrayItem.map((planeItem) => {
+    return arrayItem.map((planeItem) => {
       console.log(planeItem);
-      let planeData = <p className="chart-cell column">{planeItem}</p>
+      let planeData = <p key={planeItem} className="chart-cell column">{planeItem}</p>
       return planeData;
     })
   })
