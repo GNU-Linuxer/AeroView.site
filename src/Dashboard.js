@@ -110,12 +110,10 @@ export default function Dashboard(props) {
 function Widgets(props) {
     return (
         <div className="dashboard-widgets">
-            <div className="search-form-container" id="search-form-stub-mobile">
-                <SearchBar
-                    searchTerm={props.searchTerm}
-                    searchCallback={props.searchCallback}
-                />
-            </div>
+            <SearchBar
+                searchTerm={props.searchTerm}
+                searchCallback={props.searchCallback}
+            />
 
             <div className="options">
                 <ViewSelector
@@ -123,8 +121,7 @@ function Widgets(props) {
                     switchViewCallback={props.switchViewCallback}
                 />
 
-                <div className="search-form-container" id="search-form-stub-desktop">
-                </div>
+                {/* TODO: move search bar to here in desktop view */}
 
                 <div className="selector-group content-selector-group">
                     <FilterSelector
