@@ -47,6 +47,10 @@ export default function Dashboard(props) {
     ]);
     const [searchTerm, setSearchTerm] = useState("");
 
+    // Listen for keyboard shortcut for switching view
+    window.addEventListener('keydown',
+            event => switchViewIfRequested(event, setView));
+
     return (
         <div className="dashboard">
             <Widgets
@@ -299,4 +303,25 @@ function SearchBar(props) {
             </div>
         </form>
     );
+}
+
+/*
+ * If any keyboard shortcut for switching view is pressed, and no textbox input
+ * is focused, changes the dashboard view accordingly.
+ *
+ * Parameters:
+ * - event: the event fired when a key is pressed
+ * - switchViewCallback: the callback function on view change event, which
+ *     takes a single argument for the new view
+ */
+function switchViewIfRequested(event, switchViewCallback) {
+    // The hot key will only activate if the search textbox is not currently active (user inputting text in the <input>)
+    let searchInput = document.querySelector('#search-textbox');
+    if (searchInput !== document.activeElement) {
+        if (event.key === "l" || event.key === "L") {
+            switchViewCallback(DASHBOARD_VIEWS.LIST);
+        } else if (event.key === "g" || event.key === "G") {
+            switchViewCallback(DASHBOARD_VIEWS.GRID);
+        }
+    }
 }
