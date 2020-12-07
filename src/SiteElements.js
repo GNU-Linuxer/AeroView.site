@@ -47,8 +47,21 @@ export function SiteHeader(props) {
  * - title: the title of page shown on the jumbotron
  */
 export function PageJumbotron(props) {
+    const width = useWindowWidth();
+
+    let style;
+    if (width < MOBILE_WIDTH_THRESHOLD) {
+        style = {};
+    } else {
+        style = {
+            backgroundImage: "linear-gradient(hsla(205, 100%, 25%, 0.8)," +
+                "hsla(205, 100%, 25%, 0.8))," +
+                "url(/img/main-photo.jpg)"
+        };
+    }
+
     return (
-        <div className="page-title">{props.title}</div>
+        <div className="page-title" style={style}>{props.title}</div>
     );
 }
 

@@ -197,8 +197,8 @@ a:hover {
     .page-title {
         /* Larger title font size on Desktop */
         font-size: 2.75rem;
-        /* Add color overlay: 2 linear gradient color parameter should be same color value */
-        background-image: linear-gradient(hsla(205, 100%, 25%, 0.8), hsla(205, 100%, 25%, 0.8)), url("../main-photo.jpg");
+        /* Background image is now being set in React components, because there
+         * is almost ABSOLUTELY no way to access 'public/' folder from here */
         background-position: center;
         background-size: cover;
     }
