@@ -122,6 +122,7 @@ function NavLinks(props) {
                          exact={link.exact || false}
                          to={link.url}
                          className="site-nav-link"
+                         activeClassName="site-nav-link-selected"
                          onClick={props.clickCallback}>
                     {link.name}
                 </NavLink>)}

@@ -119,6 +119,11 @@ a:hover {
     margin-top: 0.5em;
 }
 
+.site-nav-link-selected {
+    /* Use bold text for active navigation link */
+    font-weight: bold;
+}
+
 /* Jumbotron heading that describe current page title */
 
 .page-title {
