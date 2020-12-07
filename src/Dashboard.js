@@ -29,6 +29,10 @@ export const ALWAYS_SHOWN_METADATA = ['make', 'model', 'icao-pic'];
  * Returns an HTML element for the dashboard.
  *
  * Props:
+ * - activeView: the view to be shown selected by the user, which is one of the
+ *     constants in global variable 'DASHBOARD_VIEWS'
+ * - switchViewCallback: the callback function on view change event, which
+ *     takes a single argument for the new view
  * - airplaneDisplayMetaName: an object that maps the shorthand metadata key to
  *     display-friendly full name
  * - airplaneData: an array of objects: 1 object represent 1 airplane whose
@@ -39,7 +43,6 @@ export const ALWAYS_SHOWN_METADATA = ['make', 'model', 'icao-pic'];
  * - updateFavoriteFn: the callback function on favorite planes change
  */
 export default function Dashboard(props) {
-    const [view, setView] = useState(DASHBOARD_VIEWS.LIST);
     const [filteredBrands, setFilteredBrands] = useState([
         'Airbus', 'Boeing'
     ]);
@@ -54,13 +57,13 @@ export default function Dashboard(props) {
 
     // Listen for keyboard shortcut for switching view
     window.addEventListener('keydown',
-            event => switchViewIfRequested(event, setView));
+            event => switchViewIfRequested(event, props.switchViewCallback));
 
     return (
         <div className="dashboard">
             <Widgets
-                activeView={view}
-                switchViewCallback={view => setView(view)}
+                activeView={props.activeView}
+                switchViewCallback={props.switchViewCallback}
                 airplaneDisplayMetaName={props.airplaneDisplayMetaName}
                 airplaneData={props.airplaneData}
                 brandsToDisplay={filteredBrands}
@@ -73,7 +76,7 @@ export default function Dashboard(props) {
                 searchCallback={setSearchTerm}
             />
             <ListGridView
-                activeView={view}
+                activeView={props.activeView}
                 // Continue passing data down to child components
                 airplaneDisplayMetaName={props.airplaneDisplayMetaName}
                 airplaneData={props.airplaneData}

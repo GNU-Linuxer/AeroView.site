@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
 
-import Dashboard from './Dashboard.js';
+import Dashboard, { DASHBOARD_VIEWS } from './Dashboard.js';
 import PlaneInfo from './PlaneInfo.js';
 import { SiteHeader, PageJumbotron, SiteFooter } from './SiteElements.js';
 import { ComparisonPage } from './ComparisonPage.js';
@@ -11,6 +11,9 @@ export default function App(props) {
     /*  airplaneDisplayMetaName: An object that maps the shorthand metadata key to display-friendly full name
         airplaneData: An array of objects: 1 object represent 1 airplane whose metadata key has the metadata value
      */
+
+    // To preserve dashboard view, it must be an app-level state defined here
+    const [dashboardView, setDashboardView] = useState(DASHBOARD_VIEWS.LIST);
 
     // Handle change of 1 airplane's favorite toggle (all favorite airplanes' all-lowercase icao code is stored in this array)
     // Temporary: all planes are not favorite
@@ -63,6 +66,9 @@ export default function App(props) {
             name: "Dashboard", title: "Airplane Dashboard", url: "/",
             exact: true,
             view: <Dashboard
+                activeView={dashboardView}
+                switchViewCallback={setDashboardView}
+
                 // Continue passing data down to child components
                 airplaneDisplayMetaName={props.airplaneDisplayMetaName}
                 airplaneData={props.airplaneData}
