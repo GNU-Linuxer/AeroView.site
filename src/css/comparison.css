@@ -14,7 +14,8 @@
     border: 3px solid;
 }
 
-.dropdown {
+/* WARNING: .dropdown is a reserved class for ReactStrap; rename to comparison-dropdown*/
+.comparison-dropdown {
     display: flex;
     margin-left: 22%;
     flex-direction: row;
@@ -29,7 +30,7 @@
 }
 
 @media (min-width: 768px) {
-    .dropdown {
+    .comparison-dropdown {
         /* The first column in the table occupies 173.31 of space*/
         margin-left: 173px;
     }

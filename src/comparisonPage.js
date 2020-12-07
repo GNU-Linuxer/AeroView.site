@@ -6,6 +6,7 @@ import './css/comparison.css';
 
 // Reactstrap depends on bootstrap
 import 'bootstrap/dist/css/bootstrap.min.css';
+import {Alert, Dropdown, DropdownToggle, DropdownMenu, DropdownItem} from 'reactstrap';
 
 // import { BrowserRouter, Route, Switch, Link, NavLink, useParams } from 'react-router-dom';
 //console.log(RenderComparisonContent);
@@ -16,9 +17,9 @@ export function ComparisonPage(props) {
     // displayPlane is an array of icao strings that controls which airplane (and the order) displaying in comparison
     // Load favorite planes (checked the heart button) to populate comparison
     //const [displayPlane, setDisplayPlane] = useState(props.favoritePlanes);
-    const [displayPlane, setDisplayPlane] = useState(['bcs3', 'a20n', 'mc23']);
+    const [displayPlane, setDisplayPlane] = useState(['bcs3', 'a20n', 'mc23', 'a20n']);
     // position (start from 0) determines which column would show this icao airplane
-    const updateFavoritePlane = function (icao, position) {
+    const updateDisplayPlane = function (icao, position) {
         let updatedFavoritePlanes = [...displayPlane] // Array copy
         //console.log(icao + ' ' + operation);
         updatedFavoritePlanes[position] = icao;
@@ -29,9 +30,12 @@ export function ComparisonPage(props) {
     return (
         <main className="page-content">
 
-            <div className="dropdown">
-                <DropDownMenus favPlanes={props.favoritePlanes} airplaneData={props.airplaneData}/>
-            </div>
+            <RenderDropDowns airplaneData={props.airplaneData}
+                             displayPlane={displayPlane}
+                             updateDisplayPlaneFn={updateDisplayPlane}
+
+                             favoritePlanes={props.favoritePlanes}
+                             updateFavoriteFn={props.updateFavoriteFn}/>
 
             <RenderGrid // Continue passing data down to child components
                 airplaneDisplayMetaName={props.airplaneDisplayMetaName}
@@ -47,38 +51,112 @@ export function ComparisonPage(props) {
     )
 }
 
-function DropDownMenus(props) {
-    let dropDownComponent
-    let planeName;
-
-    const dropDownClick = () => {
-        // Execute behavior when clicking on dropdown menu items
-        console.log('test');
-    }
-
-    let dropDowns = props.favPlanes.map((favPlaneItem) => {
-        props.airplaneData.map((planeItem) => {
-            if (favPlaneItem === planeItem.icao.toLowerCase()) {
-                planeName = planeItem.make + ' ' + planeItem.model;
+function RenderDropDowns(props) {
+    let ComparisonDropdownElems = [];
+    let limit = 5;
+    // Restrict how many columns to display based on available browser width
+    for (let i = 0; i < limit; i = i + 1) {
+        let currSelection = props.displayPlane[i];
+        // Replace with real airplane name
+        if (currSelection !== undefined) {
+            for (let onePlane of props.airplaneData) {
+                if (onePlane['icao-pic'].toLowerCase() === currSelection) {
+                    currSelection = onePlane['make'] + ' ' + onePlane['model'];
+                }
             }
-            dropDownComponent = <span><button className="btn btn-secondary dropdown-toggle"
-                                              key={planeName}>{planeName}</button></span>
-        })
-        return dropDownComponent;
-    })
+        }
 
-    let dropDownMenuItems = Object.keys(props.airplaneData).map((planeItem) => { // Not sure how to append these items to the `dropDowns` elements
-        let drops = <a className='dropdown-item' href='#' onClick={dropDownClick}
-                       key={planeItem}>{props.airplaneData[planeItem].make + ' ' + props.airplaneData[planeItem].model}</a>
-        return drops;
-    })
+        ComparisonDropdownElems.push(
+            <OneComparisonDropdown key={"Dropdown number: " + i}
+                                   airplaneData={props.airplaneData}
+                                   updateDisplayPlaneFn={props.updateDisplayPlaneFn}
+                                   selectedAirplane={currSelection === undefined ? ' ' : currSelection}
+                                   index={i}
 
+                                   favoritePlanes={props.favoritePlanes}
+                                   updateFavoriteFn={props.updateFavoriteFn}/>
+        )
+    }
     return (
-        <div>
-            {dropDowns}
+        <div className="comparison-dropdown">
+            {ComparisonDropdownElems}
         </div>
     )
 }
+
+// The component that defines dropdown button and element;
+function OneComparisonDropdown(props) {
+    /* Extra props:
+        index: an integer representing the position of airplane row
+    */
+
+    const [dropdownOpen, setDropdownOpen] = useState(false);
+
+    const toggle = () => setDropdownOpen(prevState => !prevState);
+
+    let ComparisonDropdownElems = [];
+    //console.log(props.airplaneData);
+    for (let onePlane of props.airplaneData) {
+        ComparisonDropdownElems.push(<OneComparisonDropdownItem key={onePlane['make'] + ' ' + onePlane['model']}
+                                                            name={onePlane['make'] + ' ' + onePlane['model']}
+                                                            icao={onePlane['icao-pic'].toLowerCase()}
+                                                                updateDisplayPlaneFn={props.updateDisplayPlaneFn}
+                                                            index={props.index}/>);
+    }
+    return (
+        <Dropdown isOpen={dropdownOpen} toggle={toggle}>
+            <DropdownToggle caret> {props.selectedAirplane}</DropdownToggle>
+            <DropdownMenu>
+                {ComparisonDropdownElems}
+            </DropdownMenu>
+        </Dropdown>
+    );
+}
+
+// This component defines 1 dropdown menu item
+function OneComparisonDropdownItem(props) {
+    const handleSelection = (event) => {
+        event.preventDefault();
+        props.updateDisplayPlaneFn(props.icao, props.index);
+    }
+
+    return (
+        <DropdownItem onClick={handleSelection}>{props.name}</DropdownItem>
+    )
+}
+
+// function DropDownMenus(props) {
+//     let dropDownComponent
+//     let planeName;
+//
+//     const dropDownClick = () => {
+//         // Execute behavior when clicking on dropdown menu items
+//         console.log('test');
+//     }
+//
+//     let dropDowns = props.favPlanes.map((favPlaneItem) => {
+//         props.airplaneData.map((planeItem) => {
+//             if (favPlaneItem === planeItem.icao.toLowerCase()) {
+//                 planeName = planeItem.make + ' ' + planeItem.model;
+//             }
+//             dropDownComponent = <span><button className="btn btn-secondary dropdown-toggle"
+//                                               key={planeName}>{planeName}</button></span>
+//         })
+//         return dropDownComponent;
+//     })
+//
+//     let dropDownMenuItems = Object.keys(props.airplaneData).map((planeItem) => { // Not sure how to append these items to the `dropDowns` elements
+//         let drops = <a className='dropdown-item' href='#' onClick={dropDownClick}
+//                        key={planeItem}>{props.airplaneData[planeItem].make + ' ' + props.airplaneData[planeItem].model}</a>
+//         return drops;
+//     })
+//
+//     return (
+//         <div>
+//             {dropDowns}
+//         </div>
+//     )
+// }
 
 function RenderGrid(props) {
     let planeContentElems = [];
@@ -97,10 +175,11 @@ function RenderGrid(props) {
             for (let onePlane of props.airplaneData) {
                 if (onePlane['icao-pic'].toLowerCase() === oneICAO) {
                     //console.log('checkpoint');
-                    planeContentElems.push(<p className="chart-cell column">{onePlane['make'] + ' ' + onePlane['model']}</p>);
+                    planeContentElems.push(<p
+                        className="chart-cell column">{onePlane['make'] + ' ' + onePlane['model']}</p>);
                     planeContentElems.push(<img className="chart-cell column comparison-tile-image"
-                        src={"./plane-thumbnail/" + onePlane['icao-pic'].toLowerCase() + ".jpg"}
-                        alt={"Picture of " + onePlane['make'] + " " + onePlane['model'] + " in " + onePlane['make'] + " livery"}/>);
+                                                src={"./plane-thumbnail/" + onePlane['icao-pic'].toLowerCase() + ".jpg"}
+                                                alt={"Picture of " + onePlane['make'] + " " + onePlane['model'] + " in " + onePlane['make'] + " livery"}/>);
                     // Conditionally populate the planeContentElems
                     for (let oneMeta of Object.keys(onePlane)) {
                         if (!excludedMeta.includes(oneMeta)) {
@@ -122,31 +201,11 @@ function RenderGrid(props) {
     }
     return (
         <div className="chart-content">
+
             {headerColumnElems}
+
             {planeContentElems}
+
         </div>
     )
 }
-
-// function RenderHeaderColumn(props) {
-//     let headerColumn = Object.keys(props.airplaneDisplayMetaName).map((metaItem) => {
-//         if (!excludedMeta.includes(metaItem)) {
-//             let headers = <p className="chart-cell header-column"
-//                              key={metaItem}>{props.airplaneDisplayMetaName[metaItem]}</p>
-//             return headers;
-//         }
-//     })
-//
-//     return (
-//         <div>
-//             <p className="chart-cell header-column">Name</p>
-//             <p className="chart-cell header-column">Picture</p>
-//             {headerColumn}
-//         </div>
-//     )
-// }
-
-// let planeMetaData = Object.keys(props.airplaneDisplayMetaName).map((metaItem => {
-//   if (!excludedMeta.includes(metaItem)) {
-//     //console.log(metaItem);
-//   }
