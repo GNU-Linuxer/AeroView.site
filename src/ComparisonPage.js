@@ -15,7 +15,7 @@ import {library} from '@fortawesome/fontawesome-svg-core'
 import {faHeart, faStar, faChevronCircleDown} from '@fortawesome/free-solid-svg-icons'
 import {faHeart as regularHeart, faStar as regularStar} from '@fortawesome/free-regular-svg-icons'
 
-import {StarRating} from './ListGridView.js';
+import {StarRating} from './PlaneWidgets.js';
 import {Link} from "react-router-dom";
 
 library.add(faHeart, faStar, faChevronCircleDown, regularHeart, regularStar);
@@ -217,8 +217,12 @@ function RenderGrid(props) {
                     //console.log('checkpoint');
                     planeContentElems.push(<div className="chart-cell column">
                         <span>{onePlane['make'] + ' ' + onePlane['model']}</span>
-                        <div><StarRating initial={props.planeRating[onePlane['icao-pic'].toLowerCase()]} totalStars={5}
-                                         callBack={(newRating) => props.updateRatingFn(onePlane['icao-pic'].toLowerCase(), newRating)}/>
+                        <div>
+                            <StarRating maxStars={5}
+                                        rating={props.planeRating[onePlane['icao-pic'].toLowerCase()]}
+                                        updateRatingCallback={newRating =>
+                                            props.updateRatingFn(onePlane['icao-pic'].toLowerCase(), newRating)}
+                            />
                         </div>
                     </div>);
                     planeContentElems.push(<Link to={'/plane/' + onePlane['icao-pic'].toLowerCase()}>

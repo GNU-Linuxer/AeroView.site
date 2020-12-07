@@ -9,6 +9,7 @@ import { useMobileView } from './util/media-query.js';
 
 import './css/site-elements.css';
 import './css/plane-info.css';
+import { StarRating, FavoriteButton } from "./PlaneWidgets";
 
 /*
  * An array of metadata keys that are hidden from the page
@@ -23,6 +24,14 @@ const HIDDEN_METADATA = ["make", "model", "icao-pic"];
  *     display-friendly full name
  * - airplaneData: an array of objects: 1 object represent 1 airplane whose
  *     metadata key has the metadata value
+ * - ratings: an object that maps plane ICAO codes to ratings
+ * - updateRatingsCallback: the callback function on rating change event, which
+ *     takes one argument for the ICAO code of plane whose rating is changed,
+ *     and one argument for the new rating
+ * - favorites: an array storing ICAO codes of favorite planes
+ * - updateFavoritesCallback: the callback function on favorite change event,
+ *     which takes a single argument for the ICAO code of the plane whose
+ *     favorite status is changed
  */
 export default function PlaneInfo(props) {
     let planeICAOCode = useParams()["icao"];
@@ -40,14 +49,25 @@ export default function PlaneInfo(props) {
         );
     }
     let planeName = planeInfo["make"] + ' ' + planeInfo["model"];
+    let lowerCaseICAO = planeICAOCode.toLowerCase();
+    const updateRating = newRating =>
+        props.updateRatingsCallback(lowerCaseICAO, newRating);
+    const toggleFavorite = () =>
+        props.updateFavoritesCallback(lowerCaseICAO);
     return (
         <div>
             <Jumbotron title={planeName}
                        backgroundImage={getPlaneImagePath(planeInfo)} />
             <main className="plane-info-content">
                 <PlaneImage planeInfo={planeInfo} planeName={planeName} />
-                <Specification airplaneDisplayMetaName={props.airplaneDisplayMetaName}
-                               planeInfo={planeInfo} />
+                <div className="plane-info-data-container">
+                    <Widgets rating={props.ratings[lowerCaseICAO]}
+                             updateRatingCallback={updateRating}
+                             favor={props.favorites.includes(lowerCaseICAO)}
+                             updateFavorCallback={toggleFavorite} />
+                    <Specification airplaneDisplayMetaName={props.airplaneDisplayMetaName}
+                                   planeInfo={planeInfo} />
+                </div>
             </main>
         </div>
     );
@@ -93,6 +113,30 @@ function PlaneImage(props) {
 }
 
 /*
+ * Returns an HTML element containing widgets that allow the user to rate the
+ * plane and toggle its favorite status.
+ *
+ * Props:
+ * - rating: the current rating to be shown in the widget
+ * - updateRatingCallback: the callback function on rating change event, which
+ *     takes a single argument for the new rating
+ * - favor: a boolean value representing whether the plane is in favorite
+ * - updateFavorCallback: the callback function on favor change event, which
+ *     takes no arguments
+ */
+function Widgets(props) {
+    return (
+        <div className="plane-info-widgets">
+            <StarRating maxStars={5}
+                        rating={props.rating}
+                        updateRatingCallback={props.updateRatingCallback} />
+            <FavoriteButton favor={props.favor}
+                            updateFavorCallback={props.updateFavorCallback} />
+        </div>
+    );
+}
+
+/*
  * Returns the HTML element for the plane's technical specification.
  *
  * Props:
@@ -113,11 +157,9 @@ function Specification(props) {
         }
     }
     return (
-        <div className="plane-info-spec-container">
-            <table className="plane-info-spec"><tbody>
-                {tableRows}
-            </tbody></table>
-        </div>
+        <table className="plane-info-spec"><tbody>
+            {tableRows}
+        </tbody></table>
     );
 }
 

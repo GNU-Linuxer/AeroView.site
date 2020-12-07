@@ -9,6 +9,7 @@ import { ButtonDropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reac
 import { faList, faTh, faFilter, faEllipsisV, faSearch } from '@fortawesome/free-solid-svg-icons'
 
 import { useMobileView } from './util/media-query.js';
+import { toggleElementInArray } from './util/array.js';
 import ListGridView from './ListGridView.js';
 
 /*
@@ -40,7 +41,8 @@ export const ALWAYS_SHOWN_METADATA = ['make', 'model', 'icao-pic'];
  * - planeRating: an object that represents each plane's rating
  * - updateRatingFn: the callback function on plane rating change
  * - favoritePlanes: an array of boolean values indicating favorite planes
- * - updateFavoriteFn: the callback function on favorite planes change
+ * - updateFavoriteFn: the callback function on favorite planes change event,
+ *     which takes a single argument for the new favorite planes array
  */
 export default function Dashboard(props) {
     const [filteredBrands, setFilteredBrands] = useState([
@@ -272,18 +274,8 @@ function MetadataSelector(props) {
  *     which takes a single argument for the new array of selections
  */
 function MenuEntry(props) {
-    const toggleSelection = () => {
-        let newKeyArray;
-        if (props.selectedKeys.indexOf(props.entryKey) === -1) {
-            // The key is unselected; select it
-            newKeyArray = [...props.selectedKeys, props.entryKey];
-        } else {
-            // The key is selected; unselect it
-            newKeyArray = props.selectedKeys
-                .filter(selectedKey => selectedKey !== props.entryKey);
-        }
-        props.onSelectionChangeCallback(newKeyArray);
-    };
+    const toggleSelection = () => props.onSelectionChangeCallback(
+        toggleElementInArray(props.entryKey, props.selectedKeys));
 
     return (
         <li onClick={toggleSelection}>

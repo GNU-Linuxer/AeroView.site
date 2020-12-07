@@ -14,6 +14,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import {Alert, Dropdown, DropdownToggle, DropdownMenu} from 'reactstrap';
 // Load other project JavaScript files
 import {ALWAYS_SHOWN_METADATA, DASHBOARD_VIEWS} from './Dashboard.js';
+import { FavoriteButton, StarRating } from './PlaneWidgets.js';
 import {Link} from "react-router-dom";
 
 // Load font awesome icon, MUST add everything if defined in import {***, ***} from '@fortawesome/free-solid-svg-icons'
@@ -185,6 +186,11 @@ function OneGridCard(props) {
             updateFavoriteFn: a callback function that feeds whether props.onePlane has become (or no longer is) a favorite
                 The function takes 2 parameters (all_lowercase-icao, is-favorite-boolean)
          */
+
+    let icao = props.onePlane["icao-pic"].toLowerCase();
+    const toggleFavorite = () => props.updateFavoriteFn(icao);
+    const updateRating = newRating => props.updateRatingFn(icao, newRating);
+
     return (
         <div className='one-plane'>
             <div className='star-button-wrapper-grid'>
@@ -193,13 +199,13 @@ function OneGridCard(props) {
                          src={"./plane-thumbnail/" + props.onePlane["icao-pic"].toLowerCase() + ".jpg"}
                          alt={"Picture of " + props.onePlane["make"] + " " + props["model"] + " in " + props.onePlane["make"] + " livery"}/>
                 </Link>
-                <button className="favorite-heart-button favorite-heart-grid"
-                        onClick={props.currFavorite ? () => props.updateFavoriteFn(props.onePlane["icao-pic"].toLowerCase(), false) : () => props.updateFavoriteFn(props.onePlane["icao-pic"].toLowerCase(), true)}>
-                    <FontAwesomeIcon icon={props.currFavorite ? ['fas', 'heart'] : ['far', 'heart']}/>
-                </button>
+                <FavoriteButton className="favorite-heart-grid"
+                                favor={props.currFavorite}
+                                updateFavorCallback={toggleFavorite} />
                 <span className="star-rating-button star-grid">
-                    <StarRating initial={props.currRating} totalStars={5}
-                                callBack={(newRating) => props.updateRatingFn(props.onePlane['icao-pic'].toLowerCase(), newRating)}/>
+                    <StarRating maxStars={5}
+                                rating={props.currRating}
+                                updateRatingCallback={updateRating} />
                 </span>
             </div>
             <OneGridPlaneDropdown filteredFullDisplayMeta={props.filteredFullDisplayMeta}
@@ -474,19 +480,23 @@ function OnePlaneTableRow(props) {
         }
     }
 
+    let icao = props.onePlane["icao-pic"].toLowerCase();
+    const toggleFavorite = () => props.updateFavoriteFn(icao);
+    const updateRating = newRating => props.updateRatingFn(icao, newRating);
+
     return (
         <tr>
             <td key='favoriteBtn'>
-                <button className="favorite-heart-button favorite-heart-list"
-                        onClick={props.currFavorite ? () => props.updateFavoriteFn(props.onePlane["icao-pic"].toLowerCase(), false) : () => props.updateFavoriteFn(props.onePlane["icao-pic"].toLowerCase(), true)}>
-                    {/* Switch between 'far' and 'fas' to select outlined star or solid star*/}
-                    <FontAwesomeIcon icon={props.currFavorite ? ['fas', 'heart'] : ['far', 'heart']}/>
-                </button>
+                <FavoriteButton className="favorite-heart-list"
+                                favor={props.currFavorite}
+                                updateFavorCallback={toggleFavorite} />
             </td>
             <td key='name' className="airplane-name">
                 <div>{props.onePlane["make"] + ' ' + props.onePlane["model"]}</div>
-                <div><StarRating initial={props.currRating} totalStars={5}
-                                 callBack={(newRating) => props.updateRatingFn(props.onePlane['icao-pic'].toLowerCase(), newRating)}/>
+                <div>
+                    <StarRating maxStars={5}
+                                rating={props.currRating}
+                                updateRatingCallback={updateRating} />
                 </div>
             </td>
             <td key='picture'>
@@ -498,38 +508,5 @@ function OnePlaneTableRow(props) {
             </td>
             {tdElems}
         </tr>
-    )
-}
-
-// This function will return a <span> element that contains a set of star rating
-export function StarRating(props) {
-    /*
-        initial: An integer describe the initial rating once this component is loaded
-        callBack: An callback function that takes the plane's icao and updated rating as the parameter, passing the rating upwards
-        totalStars: Number of possible ratings (recommend 5 star rating)
-     */
-
-    let StarElems = [];
-    for (let i = 1; i <= props.totalStars; i = i + 1) {
-        StarElems.push(<Star key={i} starId={i} isSelected={props.initial >= i} callBack={(i) => props.callBack(i)}/>);
-    }
-
-    return (
-        <span>
-            {StarElems}
-        </span>
-    )
-}
-
-function Star(props) {
-    /*
-        starId: an integer representing the *-st number of star (such as 1, 2, 3)
-        isSelected: a boolean value that denote whether the star is selected
-        callBack: a callback function that takes the star's id as parameter when star is updated
-     */
-    return (
-        <button onClick={() => props.callBack(props.starId)} className='star-rating-button'>
-            <FontAwesomeIcon icon={props.isSelected ? ['fas', 'star'] : ['far', 'star']}/>
-        </button>
     )
 }
