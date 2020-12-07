@@ -13,7 +13,7 @@ import './css/site-list.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Alert, Dropdown, DropdownToggle, DropdownMenu } from 'reactstrap';
 // Load other project JavaScript files
-import {ALWAYS_SHOWN_METADATA, DASHBOARD_VIEWS} from './Dashboard';
+import { ALWAYS_SHOWN_METADATA, DASHBOARD_VIEWS } from './Dashboard.js';
 
 // Load font awesome icon, MUST add everything if defined in import {***, ***} from '@fortawesome/free-solid-svg-icons'
 library.add(faHeart, faStar, faChevronCircleDown, regularHeart, regularStar);

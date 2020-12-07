@@ -5,10 +5,10 @@
 
 import React from 'react';
 import { useParams } from 'react-router-dom';
+import { useMobileView } from './media-query.js';
 
 import './css/site-elements.css';
 import './css/plane-info.css';
-import { useMobileView } from "./media-query";
 
 /*
  * An array of metadata keys that are hidden from the page

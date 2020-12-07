@@ -8,8 +8,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { ButtonDropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
 import { faList, faTh, faFilter, faEllipsisV } from '@fortawesome/free-solid-svg-icons'
 
-import { useMobileView } from './media-query';
-import ListGridView from './ListGridView';
+import { useMobileView } from './media-query.js';
+import ListGridView from './ListGridView.js';
 
 /*
  * A read-only object containing constants that represent views supported by

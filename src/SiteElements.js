@@ -4,7 +4,7 @@
 
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { useMobileView } from './media-query';
+import { useMobileView } from './media-query.js';
 
 /*
  * Returns an HTML element for the site header.
