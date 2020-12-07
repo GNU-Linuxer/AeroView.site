@@ -69,7 +69,7 @@
     }
 
     .plane-info-spec-container {
-        width: 480px;
+        min-width: 480px;
         margin-right: 16px;
     }
 }
