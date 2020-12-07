@@ -6,7 +6,7 @@ import React, { useState } from 'react';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { ButtonDropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
-import { faList, faTh, faFilter, faEllipsisV } from '@fortawesome/free-solid-svg-icons'
+import { faList, faTh, faFilter, faEllipsisV, faSearch } from '@fortawesome/free-solid-svg-icons'
 
 import { useMobileView } from './util/media-query.js';
 import ListGridView from './ListGridView.js';
@@ -311,6 +311,9 @@ function SearchBar(props) {
                     <label aria-hidden="true" htmlFor="search-textbox">
                         Type to search</label>
                 </div>
+                <button>
+                    <FontAwesomeIcon icon={faSearch}/>
+                </button>
             </div>
         </form>
     );
