@@ -1,0 +1,56 @@
+.plane-info-header-padding {
+    height: 56px;
+}
+
+.plane-info-content {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 8px;
+}
+
+.plane-info-plane-img-container {
+    width: 100%;
+    margin-bottom: 8px;
+}
+
+.plane-info-plane-img {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+.plane-info-specs {
+    padding-left: 8px;
+    padding-right: 8px;
+}
+
+.plane-info-spec-table tr:nth-of-type(even) {
+    background-color: #eee;
+}
+
+@media (min-width: 768px) {
+    .plane-info-header-padding {
+        height: 64px;
+    }
+
+    .plane-info-content {
+        flex-direction: row;
+        justify-content: center;
+    }
+
+    .plane-info-plane-img-container {
+        width: 360px;
+        margin-left: 16px;
+    }
+
+    .plane-info-specs {
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+}
+
+@media (min-width: 1024px) {
+    .plane-info-plane-img-container {
+        width: 600px;
+    }
+}
