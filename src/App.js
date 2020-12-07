@@ -6,6 +6,7 @@ import Dashboard, { DASHBOARD_VIEWS } from './Dashboard.js';
 import PlaneInfo from './PlaneInfo.js';
 import { SiteHeader, PageJumbotron, SiteFooter } from './SiteElements.js';
 import { ComparisonPage } from './ComparisonPage.js';
+import { toggleElementInArray } from './util/array.js';
 
 export default function App(props) {
     /*  airplaneDisplayMetaName: An object that maps the shorthand metadata key to display-friendly full name
@@ -19,24 +20,8 @@ export default function App(props) {
     // Temporary: all planes are not favorite
     // This should read from user data to re-load previously saved rating
     const [favoritePlanes, setFavoritePlanes] = useState([]);
-    // Value is a boolean value that denote whether a plane (with this icao code) is a favorite (true when is favorite)
-    const updateFavoritePlane = function (icao, value) {
-        let updatedFavoritePlanes = [...favoritePlanes] // Array copy
-        //console.log(icao + ' ' + value);
-        if (value && !(updatedFavoritePlanes.includes(icao))) {
-            updatedFavoritePlanes.push(icao);
-            console.log(updatedFavoritePlanes);
-            setFavoritePlanes(updatedFavoritePlanes);
-        } else if (!value && updatedFavoritePlanes.includes(icao)) {
-            let index = updatedFavoritePlanes.indexOf(icao);
-            updatedFavoritePlanes.splice(index, 1);
-            console.log(updatedFavoritePlanes);
-            setFavoritePlanes(updatedFavoritePlanes);
-        } else {
-            console.warn("updateFavoritePlane: Attempting to" + (value ? ' add duplicate ' : ' remove non-existent') + icao + " from favorite state array");
-        }
-        setFavoritePlanes(updatedFavoritePlanes);
-    }
+    const updateFavoritePlane = icao => setFavoritePlanes(
+        toggleElementInArray(icao, favoritePlanes));
 
     // Temporary: set the initial rating of all plane to 0 (if the value changes, the star-rendering will change)
     // This should read from user data to re-load previously saved rating
