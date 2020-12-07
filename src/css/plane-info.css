@@ -1,0 +1,86 @@
+/*
+ * This file contains styles for special elements on the plane information
+ * page.
+ */
+
+/* Jumbotron */
+
+.plane-info-jumbotron {
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-align: center;
+    color: white;
+    background-color: hsl(205, 100%, 25%);
+    /* Leave space for site header bar */
+    margin-top: 56px;
+    /* Add padding to top and bottom */
+    padding: 1.25em;
+}
+
+/* Root content container */
+
+.plane-info-content {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 8px;
+}
+
+/* Plane image */
+
+.plane-info-plane-img-container {
+    margin: 8px;
+}
+
+.plane-info-plane-img {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+/* Plane specification */
+
+.plane-info-spec-container {
+    margin-left: 8px;
+    margin-right: 8px;
+}
+
+.plane-info-spec {
+    width: 100%;
+}
+
+.plane-info-spec tr:nth-of-type(even) {
+    background-color: #eee;
+}
+
+/* Media queries */
+
+@media (min-width: 768px) {
+    .plane-info-jumbotron {
+        font-size: 2.75rem;
+        background-position: center;
+        background-size: cover;
+        /* Leave space between jumbotron and main content */
+        margin-bottom: 24px;
+    }
+
+    .plane-info-content {
+        flex-direction: row;
+        justify-content: center;
+        margin-bottom: 24px;
+    }
+
+    .plane-info-plane-img-container {
+        margin-left: 16px;
+    }
+
+    .plane-info-spec-container {
+        min-width: 480px;
+        margin-right: 16px;
+    }
+}
+
+@media (min-width: 1024px) {
+    .plane-info-plane-img-container {
+        width: 600px;
+    }
+}

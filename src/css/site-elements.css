@@ -1,0 +1,218 @@
+/*
+ * This file contains styles for elements that present on every webpage of the
+ * website.
+ */
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    /* Use system font */
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    /* Let header and footer span over the entire horizontal space */
+    margin: 0;
+}
+
+.site-header,
+.page-content,
+.site-footer {
+    padding-left: 8px;
+    padding-right: 8px;
+}
+
+a {
+    color: #2188ff;
+    text-decoration: none;
+}
+
+a:visited {
+    color: #0366d6;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+
+/* Site header */
+
+.site-header {
+    height: 56px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    background-color: #444;
+    position: fixed;
+    z-index: 1500; /* Display above any other statically positioned element */
+    top: 0;
+    left: 0;
+    right: 0;
+}
+
+.site-branding {
+    width: fit-content;
+    height: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    /* Properly arrange children */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.site-logo {
+    max-height: 100%;
+}
+
+.site-title {
+    color: white;
+    margin-left: 8px;
+    font-size: 1.25rem;
+}
+
+.site-nav-widget {
+    position: absolute;
+    top: 0;
+    right: 0;
+    /* Use flexbox to display navigation menu below toggle button */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.site-nav {
+    text-align: right;
+    background-color: #444;
+    padding: 16px;
+}
+
+.site-nav-menu-toggle-btn {
+    border: none;
+    background: none;
+    margin: 16px;
+    /* Explicitly specify width
+     * as an attempt to unify element display in different browsers */
+    width: 40px;
+    /* Explicitly specify height
+     * because the hamburger icon's SVG size is imprecise */
+    height: 24px;
+}
+
+.site-nav-menu-toggle-btn svg {
+    fill: #ddd;
+    width: 24px;
+    height: 24px;
+}
+
+.site-nav-link {
+    color: white;
+    display: block;
+}
+
+.site-nav-link:visited,
+.site-nav-link:hover {
+    color: white;
+}
+
+.site-nav-link + .site-nav-link {
+    /* Add space between navigation links */
+    margin-top: 0.5em;
+}
+
+/* Jumbotron heading that describe current page title */
+
+.page-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-align: center;
+    color: white;
+    background-color: hsl(205, 100%, 25%);
+    /* this number MUST match the height of nav bar */
+    margin-top: 56px;
+    /* leave space between jumbotron and main content */
+    margin-bottom: 30px;
+    /* add 1.25em of padding top and bottom */
+    padding: 1.25em;
+    left: 0;
+    right: 0;
+    width: 100%;
+    /* The navbar should take up 100% of the page.*/
+}
+
+
+/* Site footer */
+
+.site-footer {
+    border-top: 2px solid #ddd;
+    font-size: 0.875rem;
+    text-align: center;
+}
+
+
+/* Media queries */
+
+@media (min-width: 768px) {
+    .site-header,
+    .page-content,
+    .site-footer {
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+
+    .site-header {
+        /* Every element's size is constant now, so we can use flexbox */
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .site-branding {
+        margin-left: unset;
+        margin-right: unset;
+    }
+
+    .site-nav-widget {
+        position: unset;
+    }
+
+    .site-nav {
+        background-color: inherit;
+        padding-right: 0;
+    }
+
+    .site-nav-link {
+        display: inline;
+        margin-left: 1em;
+    }
+
+    .site-nav-link:hover {
+        text-decoration: none;
+        color: #ddd;
+    }
+
+    .site-nav-link + .site-nav-link {
+        margin-top: unset;
+    }
+
+    .page-title {
+        /* Larger title font size on Desktop */
+        font-size: 2.75rem;
+        /* Background image is now being set in React components, because there
+         * is almost ABSOLUTELY no way to access 'public/' folder from here */
+        background-position: center;
+        background-size: cover;
+    }
+
+    .button-description {
+        display: inline-block;
+    }
+}
+
+@media (min-width: 1024px) {
+    .site-header,
+    .page-content,
+    .site-footer {
+        padding-left: 24px;
+        padding-right: 24px;
+    }
+}

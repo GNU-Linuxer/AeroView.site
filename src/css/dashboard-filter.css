@@ -1,0 +1,209 @@
+/* The CSS file that defines search bar and button */
+
+/* Dashboard options */
+
+.options {
+    display: flex;
+    margin-bottom: 2rem;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.options button {
+    font-size: 24px;
+    margin-right: 5px;
+}
+
+.options a {
+    text-decoration: none;
+}
+
+.button-description {
+    display: none;
+}
+
+@media (min-width: 768px) {
+    .button-description {
+        display: inline-block;
+    }
+}
+
+/* Ensure selector button groups have the same width,
+ * so the search bar can be aligned to the center */
+.selector-group {
+    flex-basis: 300px;
+}
+
+/* Make filter and view option buttons be in the same line */
+.content-selector-group {
+    display: flex;
+    justify-content: flex-end;
+}
+
+/* Button style */
+
+.options button,
+.search-bar-container button {
+    border: none;
+    background: none;
+}
+
+.options a,
+.options button,
+.search-bar-container button {
+    color: hsl(198, 100%, 75%);
+}
+
+button.selected-view {
+    color: hsl(205, 100%, 25%);
+}
+
+.button-description {
+    /* Add margin between description text and
+     * FontAwesome icons inserted as React components */
+    margin-left: 0.25em;
+}
+
+/* Decorative text elements */
+
+.separator {
+    font-size: 28px;
+    margin-right: 5px;
+}
+
+
+/* Prevent user from selecting non-content text */
+.separator,
+.button-description {
+    user-select: none;
+}
+
+
+/* Dropdown menu of filter and option button adapted from https://stackoverflow.com/a/52517790 */
+
+ul.checkbox-menu {
+    list-style-type: none;
+    margin-bottom: 0;
+    padding-left: 0;
+    /* Limit height to prevent menu overflow moving it to undesired position */
+    max-height: 280px;
+    overflow-y: scroll;
+}
+
+.checkbox-menu li {
+    display: block;
+    padding: 3px 20px 3px 10px;
+    clear: both;
+    margin: 0;
+    /* Enlarge space between each item by default to ease selection with finger */
+    line-height: 2.25em;
+}
+
+.checkbox-menu label {
+    /* Remove redundant margin added to bottom of labels by reboot stylesheet */
+    margin-bottom: 0;
+}
+
+.filter-dropdown-menu {
+    /* Explicitly define width for Safari on iOS */
+    width: 200px;
+}
+
+.option-dropdown-menu {
+    width: 280px;
+}
+
+@media (min-width: 768px) {
+    /* Use smaller line height for mouse users */
+    .checkbox-menu li {
+        line-height: 1.5em;
+    }
+
+    .option-dropdown-menu {
+        width: 340px;
+    }
+}
+
+.checkbox-menu input {
+    margin: 0 5px;
+    top: 2px;
+    position: relative;
+}
+
+
+/* every other row has a background color of #eee (very light gray) */
+.checkbox-menu li:nth-of-type(even) {
+    background-color: #eee;
+}
+
+.checkbox-menu li:hover,
+.checkbox-menu li:focus {
+    background-color: hsl(205, 100%, 35%);
+    color: white;
+}
+
+
+/* Search bar */
+
+.search-bar-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Search bar textbox */
+
+.search-textbox {
+    border-radius: 5px;
+    height: 25px;
+    text-align: left;
+    padding-left: 8px;
+}
+
+/* Display the label for search textbox inside itself,
+ * and hide the label if the textbox contains text
+ * Reference: https://css-tricks.com/float-labels-css/ */
+
+.search-textbox-container {
+    position: relative;
+}
+
+/* Unnecessarily increased specificity, only to suppress lint errors */
+.search-bar-container .search-textbox-container label {
+    position: absolute;
+    top: 0;
+    left: 0;
+    color: #666;
+    margin: 0.04em 0.6em;
+    /* Don't let the user select label text */
+    user-select: none;
+}
+
+.search-bar-container .search-textbox:valid + label {
+    display: none;
+}
+
+/* Search button */
+
+.search-bar-container button {
+    font-size: 20px;
+}
+
+
+/* Favorite heart button (Star button is used for rating) */
+.favorite-heart-button {
+    border: none;
+    background-color: transparent;
+    color: #FF7E79;
+    font-size: 1.5em;
+}
+
+/* Star rating button */
+.star-rating-button {
+    border: none;
+    background-color: transparent;
+    /* 5px padding to the right; otherwise none*/
+    padding: 0 5px 0 0;
+    color: #D29D00;
+    font-size: 1em;
+}

@@ -1,0 +1,18 @@
+make,model,series,type,icao,icao-pic,status,cruise_speed,cruise_range,wing_span,takeoff_dis,land_dis,mtow,serv_cell,num_eng,fuselg_wid,aisle_wid,cab_alt,psng_cap
+Make,Model,Production Series,Type,ICAO Code,"ICAO Code (will not display, used to find picture)",Status,Cruise speed (kt),Cruise Range (N miles),Wing Span (m),Takeoff Distance (m),Landing Distance (m),Maximum Take-off weight (kg),Service celling (ft),Number of engines,Fuselage Width (m),Aisle width (economy),Cabin altitude (m),Passenger Capacity (1-class)
+Airbus,A220-300,CSeries,Narrow-Body Jet,BCS3,BCS3,"In-service/in-production
+",447,3350,35.1,1890,1448,69900,410000,2,3.7,0.51,N/A,160
+Airbus,A320neo,A320neo,Narrow-Body Jet,A20N,A20N,"In-service/in-production
+",450,3500,35.8,1951,1650,79000,390000,2,3.95,0.48,2000,195
+Airbus,A330-900,A330neo,Wide-Body Jet,A339,A339,In-service/in-production,496,7200,64,2350,1850,251000,410000,2,5.64,0.43,1829,460
+Airbus,A340-300,,Wide-Body Jet,A343,A343,In-service,470,7200,60.3,2765,1830,275000,410000,4,5.64,N/A,2286,440
+Airbus,A350-900,A350XWB,Wide-Body Jet,A359,A359,In-service/in-production,488,8100,64.8,2600,2000,268000,430000,2,5.96,0.46,1829,440
+Airbus,A380-800,,Double-Decker,A388,A388,In-service,488,8000,79.8,2970,2010,560000,430000,4,7.14,0.51,2286,853
+Boeing,737-800,737NG,Narrow-Body Jet,B738,B738,In-service,455,2000,34.3,2300,1600,70530,410000,2,3.76,0.51,2400,189
+Boeing,747-8I,747-8,Double-Decker,B748,B748,In-service,516,7730,68.5,3190,2680,442250,430000,4,6.1,N/A,2400 (747-400),605
+Boeing,757-200,,Narrow-Body Jet,B752,B752,In-service,461,3900,38.1,1900,1400,115680,420000,2,3.76,N/A,N/A,239
+Boeing,767-300,,Wide-Body Jet,B763,B763,In-service,459,6105,47.6,2900,1800,186880,450000,2,5.03,N/A,2100,351
+Boeing,777-300ER,,Wide-Body Jet,B77W,B77W,In-service/in-production,482,7930,64.8,3000,1800,351500,430000,2,6.2,N/A,2438,550
+Boeing,787-8,Dreamliner,Wide-Body Jet,B788,B788,"In-service/in-production
+",488,8000,52,2820,1520,228000,430000,2,5.77,N/A,1829,381
+Irkut,MC-21-300,MC-21,Narrow-Body Jet,MC23,MC23,Flight-testing,470,N/A,35.9,N/A,N/A,79250,N/A,2,4.06,N/A,1830,211
