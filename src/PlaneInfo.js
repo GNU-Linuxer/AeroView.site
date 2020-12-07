@@ -30,7 +30,8 @@ export default function PlaneInfo(props) {
     if (planeInfo === undefined) {
         return (
             <div>
-                <div className="plane-info-header-padding" />
+                <Jumbotron title="Plane Information"
+                           backgroundImage="/img/main-photo.jpg" />
                 <main className="page-content">
                     <PlaneNotFoundMessage icao={planeICAOCode} />
                 </main>
@@ -40,19 +41,35 @@ export default function PlaneInfo(props) {
     let planeName = planeInfo["make"] + ' ' + planeInfo["model"];
     return (
         <div>
-            {/* Padding for pushing elements below the site header bar */}
-            <div className="plane-info-header-padding" />
+            <Jumbotron title={planeName}
+                       backgroundImage={getPlaneImagePath(planeInfo)} />
             <main className="plane-info-content">
                 <PlaneImage planeInfo={planeInfo} planeName={planeName} />
-                <div className="plane-info-specs">
-                    <h1>{planeName}</h1>
-                    <Specification airplaneDisplayMetaName={props.airplaneDisplayMetaName}
-                                   planeInfo={planeInfo} />
-                </div>
+                <Specification airplaneDisplayMetaName={props.airplaneDisplayMetaName}
+                               planeInfo={planeInfo} />
             </main>
         </div>
     );
 };
+
+/*
+ * Returns an HTML element for customized jumbotron of the plane information
+ * page.
+ *
+ * Props:
+ * - title: the title shown on top of the jumbotron
+ * - backgroundImage: the jumbotron's background image on desktop views
+ */
+function Jumbotron(props) {
+    return (
+        <div className="plane-info-jumbotron"
+             style={{backgroundImage: `linear-gradient(
+                hsla(205, 100%, 25%, 0.8), hsla(205, 100%, 25%, 0.8)),
+                url(${props.backgroundImage})`}}>
+            {props.title}
+        </div>
+    );
+}
 
 /*
  * Returns the image element for the plane information page.
@@ -65,8 +82,8 @@ function PlaneImage(props) {
     return (
         <div className="plane-info-plane-img-container">
             <img className="plane-info-plane-img"
-                 src={`/plane-thumbnail/${props.planeInfo["icao-pic"].toLowerCase()}.jpg`}
-                 alt={`${props.planeName}`} />
+                 src={getPlaneImagePath(props.planeInfo)}
+                 alt={props.planeName} />
         </div>
     );
 }
@@ -92,10 +109,12 @@ function Specification(props) {
         }
     }
     return (
-        <table className="plane-info-spec-table"><tbody>
-            {tableRows}
-        </tbody></table>
-    )
+        <div className="plane-info-spec-container">
+            <table className="plane-info-spec"><tbody>
+                {tableRows}
+            </tbody></table>
+        </div>
+    );
 }
 
 /*
@@ -111,4 +130,15 @@ function PlaneNotFoundMessage(props) {
             Could not find plane with ICAO Code: {props.icao}
         </p>
     );
+}
+
+/*
+ * Returns the image path for a plane represented by a plane information
+ * object.
+ *
+ * Parameters:
+ * - planeInfo: an object containing information for the plane
+ */
+function getPlaneImagePath(planeInfo) {
+    return `/plane-thumbnail/${planeInfo["icao-pic"].toLowerCase()}.jpg`;
 }
