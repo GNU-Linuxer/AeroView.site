@@ -8,6 +8,7 @@ import { useParams } from 'react-router-dom';
 
 import './css/site-elements.css';
 import './css/plane-info.css';
+import { useMobileView } from "./media-query";
 
 /*
  * An array of metadata keys that are hidden from the page
@@ -61,11 +62,14 @@ export default function PlaneInfo(props) {
  * - backgroundImage: the jumbotron's background image on desktop views
  */
 function Jumbotron(props) {
+    const mobileView = useMobileView();
+    let style = mobileView ? {} : {
+        backgroundImage: `linear-gradient(
+            hsla(205, 100%, 25%, 0.8), hsla(205, 100%, 25%, 0.8)),
+            url(${props.backgroundImage})`
+    };
     return (
-        <div className="plane-info-jumbotron"
-             style={{backgroundImage: `linear-gradient(
-                hsla(205, 100%, 25%, 0.8), hsla(205, 100%, 25%, 0.8)),
-                url(${props.backgroundImage})`}}>
+        <div className="plane-info-jumbotron" style={style}>
             {props.title}
         </div>
     );

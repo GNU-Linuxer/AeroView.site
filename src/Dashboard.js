@@ -5,10 +5,11 @@
 import React, { useState } from 'react';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { ButtonDropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
 import { faList, faTh, faFilter, faEllipsisV } from '@fortawesome/free-solid-svg-icons'
 
+import { useMobileView } from './media-query';
 import ListGridView from './ListGridView';
-import { ButtonDropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
 
 /*
  * A read-only object containing constants that represent views supported by
@@ -108,12 +109,14 @@ export default function Dashboard(props) {
  *     takes a single argument for the new search term
  */
 function Widgets(props) {
+    const mobileView = useMobileView();
+
     return (
         <div className="dashboard-widgets">
-            <SearchBar
+            {mobileView && <SearchBar
                 searchTerm={props.searchTerm}
                 searchCallback={props.searchCallback}
-            />
+            />}
 
             <div className="options">
                 <ViewSelector
@@ -121,7 +124,10 @@ function Widgets(props) {
                     switchViewCallback={props.switchViewCallback}
                 />
 
-                {/* TODO: move search bar to here in desktop view */}
+                {!mobileView && <SearchBar
+                    searchTerm={props.searchTerm}
+                    searchCallback={props.searchCallback}
+                />}
 
                 <div className="selector-group content-selector-group">
                     <FilterSelector

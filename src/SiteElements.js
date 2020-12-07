@@ -2,16 +2,9 @@
  * This file provides components for site-wide elements.
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-
-/*
- * Width threshold for switching from or to mobile layout
- * If width is strictly smaller than this value, mobile view should be used;
- * otherwise, if width is equal to or greater than this value, desktop view
- * should be used
- */
-const MOBILE_WIDTH_THRESHOLD = 768;
+import { useMobileView } from './media-query';
 
 /*
  * Returns an HTML element for the site header.
@@ -23,7 +16,7 @@ const MOBILE_WIDTH_THRESHOLD = 768;
  *     'url' properties for the link's display name and target URL
  */
 export function SiteHeader(props) {
-    const width = useWindowWidth();
+    const mobileView = useMobileView();
     const [buttonActivated, setButtonActivated] = useState(false);
 
     let navButton = <NavButton expanded={buttonActivated}
@@ -33,8 +26,8 @@ export function SiteHeader(props) {
         <header className="site-header">
             <SiteBranding logo={props.logo} name={props.appName} />
             <div className="site-nav-widget">
-                {width < MOBILE_WIDTH_THRESHOLD && navButton}
-                {(buttonActivated || width >= MOBILE_WIDTH_THRESHOLD) && navLinks}
+                {mobileView && navButton}
+                {(buttonActivated || !mobileView) && navLinks}
             </div>
         </header>
     );
@@ -47,19 +40,12 @@ export function SiteHeader(props) {
  * - title: the title of page shown on the jumbotron
  */
 export function PageJumbotron(props) {
-    const width = useWindowWidth();
-
-    let style;
-    if (width < MOBILE_WIDTH_THRESHOLD) {
-        style = {};
-    } else {
-        style = {
-            backgroundImage: "linear-gradient(hsla(205, 100%, 25%, 0.8)," +
-                "hsla(205, 100%, 25%, 0.8))," +
-                "url(/img/main-photo.jpg)"
-        };
-    }
-
+    const mobileView = useMobileView();
+    let style = mobileView ? {} : {
+        backgroundImage: "linear-gradient(hsla(205, 100%, 25%, 0.8)," +
+            "hsla(205, 100%, 25%, 0.8))," +
+            "url(/img/main-photo.jpg)"
+    };
     return (
         <div className="page-title" style={style}>{props.title}</div>
     );
@@ -77,20 +63,6 @@ export function SiteFooter() {
         </footer>
     );
 }
-
-/*
- * A custom hook for dynamically obtaining width of the window
- * Reference: https://blog.logrocket.com/developing-responsive-layouts-with-react-hooks/
- */
-const useWindowWidth = () => {
-    const [width, setWidth] = useState(window.innerWidth);
-    useEffect(() => {
-        let updateWindowWidth = () => setWidth(window.innerWidth);
-        window.addEventListener("resize", updateWindowWidth);
-        return () => window.removeEventListener("resize", updateWindowWidth);
-    });
-    return width;
-};
 
 /*
  * Returns an HTML element for site branding suitable to be displayed in site
