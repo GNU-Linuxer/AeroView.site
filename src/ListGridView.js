@@ -48,7 +48,9 @@ export default function ListGridView(props) {
 
     // DashboardTable will call this function that determines whether to render TooManyMetaAlert component
     const [alertVisible, setAlertVisible] = useState(false);
-    const updateAlertVisibility = (value) => setAlertVisible(value);
+    const updateAlertVisibility = (value) => {
+        setAlertVisible(value);
+    }
 
     let content;
     if (props.activeView === DASHBOARD_VIEWS.LIST) {
@@ -84,7 +86,7 @@ export default function ListGridView(props) {
     }
     return (
         <div className="dashboard-content">
-            {alertVisible ? <TooManyMetaAlert /> : ''}
+            {alertVisible && props.activeView === DASHBOARD_VIEWS.LIST ? <TooManyMetaAlert /> : ''}
             {content}
         </div>
     )
