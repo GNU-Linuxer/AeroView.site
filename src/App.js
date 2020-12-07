@@ -29,7 +29,7 @@ export default function App(props) {
         <BrowserRouter>
             <div className="react-container">
                 <SiteHeader appName="AeroView"
-                    logo="img/branding-logo.svg"
+                    logo="/img/branding-logo.svg"
                     navLinks={routes} />
                 <Switch>
                     {routes.map(route =>

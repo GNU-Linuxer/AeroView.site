@@ -11,7 +11,7 @@ let airplanes = {
 // Load airplane data, will be in an array of objects, whereas 1 object means 1 airplane
 // The first object describe how shorthand key correspond to full metadata name, such as {cruise_range: "Cruise Range (N miles)"}
 // eslint-disable-next-line no-undef
-d3.csv('./data/airplanes.csv')
+d3.csv('/data/airplanes.csv')
     .then(function (text) {
         airplanes.airplaneDisplayMetaName = text[0];
         airplanes.airplaneData = text.slice(1, text.length);
