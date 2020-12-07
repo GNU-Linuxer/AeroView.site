@@ -312,11 +312,8 @@ function SearchBar(props) {
                            value={props.searchTerm}
                            onChange={event => props.searchCallback(event.target.value)} />
                     <label aria-hidden="true" htmlFor="search-textbox">
-                        Type to search</label>
+                        <FontAwesomeIcon icon={faSearch} /> Type to search</label>
                 </div>
-                <button>
-                    <FontAwesomeIcon icon={faSearch}/>
-                </button>
             </div>
         </form>
     );

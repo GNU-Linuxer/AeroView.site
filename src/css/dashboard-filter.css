@@ -174,7 +174,7 @@ ul.checkbox-menu {
     top: 0;
     left: 0;
     color: #666;
-    margin: 0.04em 0.6em;
+    margin: 0.06em 0.75em;
     /* Don't let the user select label text */
     user-select: none;
 }
