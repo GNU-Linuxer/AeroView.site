@@ -33,6 +33,10 @@ export const ALWAYS_SHOWN_METADATA = ['make', 'model', 'icao-pic'];
  *     display-friendly full name
  * - airplaneData: an array of objects: 1 object represent 1 airplane whose
  *     metadata key has the metadata value
+ * - planeRating: an object that represents each plane's rating
+ * - updateRatingFn: the callback function on plane rating change
+ * - favoritePlanes: an array of boolean values indicating favorite planes
+ * - updateFavoriteFn: the callback function on favorite planes change
  */
 export default function Dashboard(props) {
     const [view, setView] = useState(DASHBOARD_VIEWS.LIST);
@@ -76,6 +80,10 @@ export default function Dashboard(props) {
                 brandsToDisplay={filteredBrands}
                 typesToDisplay={filteredTypes}
                 filteredMeta={selectedMetadata}
+                planeRating={props.planeRating}
+                updateRatingFn={props.updateRatingFn}
+                favoritePlanes={props.favoritePlanes}
+                updateFavoriteFn={props.updateFavoriteFn}
                 searchTerm={searchTerm}
             />
         </div>

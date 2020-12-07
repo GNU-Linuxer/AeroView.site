@@ -11,9 +11,9 @@ import './css/site-grid.css';
 import './css/site-list.css';
 // Reactstrap depends on bootstrap
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Alert, Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
+import { Alert, Dropdown, DropdownToggle, DropdownMenu } from 'reactstrap';
 // Load other project JavaScript files
-import {ALWAYS_SHOWN_METADATA, DASHBOARD_VIEWS} from "./Dashboard";
+import {ALWAYS_SHOWN_METADATA, DASHBOARD_VIEWS} from './Dashboard';
 
 // Load font awesome icon, MUST add everything if defined in import {***, ***} from '@fortawesome/free-solid-svg-icons'
 library.add(faHeart, faStar, faChevronCircleDown, regularHeart, regularStar);
@@ -24,58 +24,18 @@ export default function ListGridView(props) {
         activeView: The view selected by the user to display
         airplaneDisplayMetaName: An object that maps the shorthand metadata key to display-friendly full name
         airplaneData: An array of objects: 1 object represent 1 airplane whose metadata key has the metadata value
+
+        planeRating: An object that represent the rating of each plane (icao code) has
+        updateRatingFn: a callback function that feeds props.onePlane rating
+
+        favoritePlanes: An array of boolean value that describe whether prop.onePlane is a favorite
+        updateFavoriteFn: a callback function that feeds whether props.onePlane has become (or no longer is) a favorite
+
         brandsToDisplay: An array of strings for brands selected by the user
         typesToDisplay: An array of strings for airplane types selected by the user
         filteredMeta: An array of metadata keys the user chooses to display
         searchTerm: The term entered by the user in the search bar
     */
-
-    // Temporary: set the initial rating of all plane to 0 (if the value changes, the star-rendering will change)
-    // This should read from user data to re-load previously saved rating
-    let initialRating = {};
-    for (let onePlane of props.airplaneData) {
-        initialRating[onePlane["icao-pic"].toLowerCase()] = 0;
-    }
-
-    // Handle change of 1 airplane's star rating
-    const [planeRating, setRating] = useState(initialRating);
-    //console.log(initialRating);
-    const updatePlaneRating = (icao, rating) => {
-        let updatedPlaneRating = { ...planeRating } // object copy
-        //console.log(icao + ' ' + rating);
-        // User can remove rating (0 star) by clicking on the same rating star again
-        if (rating === updatedPlaneRating[icao]) {
-            updatedPlaneRating[icao] = 0;
-        } else {
-            updatedPlaneRating[icao] = rating;
-        }
-        console.log(updatedPlaneRating);
-        setRating(updatedPlaneRating);
-    }
-
-
-    // Handle change of 1 airplane's favorite toggle (all favorite airplanes' all-lowercase icao code is stored in this array)
-    // Temporary: all planes are not favorite
-    // This should read from user data to re-load previously saved rating
-    const [favoritePlanes, setFavoritePlanes] = useState([]);
-    // Value is a boolean value that denote whether a plane (with this icao code) is a favorite (true when is favorite)
-    const updateFavoritePlane = (icao, value) => {
-        let updatedFavoritePlanes = [...favoritePlanes] // Array copy
-        //console.log(icao + ' ' + value);
-        if (value && !(updatedFavoritePlanes.includes(icao))) {
-            updatedFavoritePlanes.push(icao);
-            console.log(updatedFavoritePlanes);
-            setFavoritePlanes(updatedFavoritePlanes);
-        } else if (!value && updatedFavoritePlanes.includes(icao)) {
-            let index = updatedFavoritePlanes.indexOf(icao);
-            updatedFavoritePlanes.splice(index, 1);
-            console.log(updatedFavoritePlanes);
-            setFavoritePlanes(updatedFavoritePlanes);
-        } else {
-            console.warn("updateFavoritePlane: Attempting to" + (value ? ' add duplicate ' : ' remove non-existent') + icao + " from favorite state array");
-        }
-
-    }
 
     let filteredFullDisplayMeta = {};
     // The metadata's order will follow the same order in airplanes.csv file, regardless the order in filteredMeta
@@ -101,11 +61,11 @@ export default function ListGridView(props) {
             typesToDisplay={props.typesToDisplay}
             filteredMeta={props.filteredMeta}
 
-            planeRating={planeRating}
-            updateRatingFn={updatePlaneRating}
+            planeRating={props.planeRating}
+            updateRatingFn={props.updateRatingFn}
 
-            favoritePlanes={favoritePlanes}
-            updateFavoriteFn={updateFavoritePlane}
+            favoritePlanes={props.favoritePlanes}
+            updateFavoriteFn={props.updateFavoriteFn}
             searchTerm={props.searchTerm} />);
     } else if (props.activeView === DASHBOARD_VIEWS.GRID) {
         content = (<DashboardGrid filteredFullDisplayMeta={filteredFullDisplayMeta}
@@ -115,11 +75,11 @@ export default function ListGridView(props) {
             typesToDisplay={props.typesToDisplay}
             filteredMeta={props.filteredMeta}
 
-            planeRating={planeRating}
-            updateRatingFn={updatePlaneRating}
+            planeRating={props.planeRating}
+            updateRatingFn={props.updateRatingFn}
 
-            favoritePlanes={favoritePlanes}
-            updateFavoriteFn={updateFavoritePlane}
+            favoritePlanes={props.favoritePlanes}
+            updateFavoriteFn={props.updateFavoriteFn}
             searchTerm={props.searchTerm} />);
     }
     return (
@@ -527,7 +487,7 @@ function OnePlaneTableRow(props) {
 }
 
 // This function will return a <span> element that contains a set of star rating
-function StarRating(props) {
+export function StarRating(props) {
     /*
         initial: An integer describe the initial rating once this component is loaded
         callBack: An callback function that takes the plane's icao and updated rating as the parameter, passing the rating upwards
