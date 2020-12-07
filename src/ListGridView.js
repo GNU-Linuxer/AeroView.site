@@ -472,7 +472,7 @@ function OnePlaneTableRow(props) {
 }
 
 // This function will return a <span> element that contains a set of star rating
-function StarRating(props) {
+export function StarRating(props) {
     /*
         initial: An integer describe the initial rating once this component is loaded
         callBack: An callback function that takes the plane's icao and updated rating as the parameter, passing the rating upwards
