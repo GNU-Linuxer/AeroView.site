@@ -24,8 +24,13 @@ let excludedMeta = ['make', 'model', 'icao-pic'];
 export function ComparisonPage(props) {
     // displayPlane is an array of icao strings that controls which airplane (and the order) displaying in comparison
     // Load favorite planes (checked the heart button) to populate comparison
-    //const [displayPlane, setDisplayPlane] = useState(props.favoritePlanes);
-    const [displayPlane, setDisplayPlane] = useState(['bcs3', 'a20n', 'mc23', 'a20n']);
+    let defaultSelection;
+    if (props.favoritePlanes.length === 0) {
+        defaultSelection =['b738', 'a20n', 'a359', 'b788', 'mc23', 'a388'];
+    } else {
+        defaultSelection = props.favoritePlanes;
+    }
+    const [displayPlane, setDisplayPlane] = useState(defaultSelection);
     // position (start from 0) determines which column would show this icao airplane
     const updateDisplayPlane = function (icao, position) {
         let updatedFavoritePlanes = [...displayPlane] // Array copy
@@ -182,7 +187,7 @@ function OneComparisonDropdownItem(props) {
             <span>{props.name}</span>
 
             {props.currFavorite ?
-                <FontAwesomeIcon className="favorite-heart-button favorite-heart-list" icon={['far', 'heart']}/> : null}
+                <FontAwesomeIcon className="favorite-heart-button favorite-heart-list" icon={['fas', 'heart']}/> : null}
         </DropdownItem>
     );
 }
