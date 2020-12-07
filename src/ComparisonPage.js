@@ -16,6 +16,7 @@ import {faHeart, faStar, faChevronCircleDown} from '@fortawesome/free-solid-svg-
 import {faHeart as regularHeart, faStar as regularStar} from '@fortawesome/free-regular-svg-icons'
 
 import {StarRating} from './ListGridView.js';
+import {Link} from "react-router-dom";
 
 library.add(faHeart, faStar, faChevronCircleDown, regularHeart, regularStar);
 
@@ -26,7 +27,7 @@ export function ComparisonPage(props) {
     // Load favorite planes (checked the heart button) to populate comparison
     let defaultSelection;
     if (props.favoritePlanes.length === 0) {
-        defaultSelection =['b738', 'a20n', 'a359', 'b788', 'mc23', 'a388'];
+        defaultSelection = ['b738', 'a20n', 'a359', 'b788', 'mc23', 'a388'];
     } else {
         defaultSelection = props.favoritePlanes;
     }
@@ -215,14 +216,16 @@ function RenderGrid(props) {
                 if (onePlane['icao-pic'].toLowerCase() === oneICAO) {
                     //console.log('checkpoint');
                     planeContentElems.push(<div className="chart-cell column">
-                                                <span>{onePlane['make'] + ' ' + onePlane['model']}</span>
-                                                <div><StarRating initial={props.planeRating[onePlane['icao-pic'].toLowerCase()]} totalStars={5}
-                                                                 callBack={(newRating) => props.updateRatingFn(onePlane['icao-pic'].toLowerCase(), newRating)}/>
-                                                </div>
-                                            </div>);
-                    planeContentElems.push(<img className="chart-cell column comparison-tile-image"
-                                                src={"./plane-thumbnail/" + onePlane['icao-pic'].toLowerCase() + ".jpg"}
-                                                alt={"Picture of " + onePlane['make'] + " " + onePlane['model'] + " in " + onePlane['make'] + " livery"}/>);
+                        <span>{onePlane['make'] + ' ' + onePlane['model']}</span>
+                        <div><StarRating initial={props.planeRating[onePlane['icao-pic'].toLowerCase()]} totalStars={5}
+                                         callBack={(newRating) => props.updateRatingFn(onePlane['icao-pic'].toLowerCase(), newRating)}/>
+                        </div>
+                    </div>);
+                    planeContentElems.push(<Link to={'/plane/' + onePlane['icao-pic'].toLowerCase()}>
+                                                <img className="chart-cell column comparison-tile-image"
+                                                     src={"./plane-thumbnail/" + onePlane['icao-pic'].toLowerCase() + ".jpg"}
+                                                     alt={"Picture of " + onePlane['make'] + " " + onePlane['model'] + " in " + onePlane['make'] + " livery"}/>
+                                            </Link>);
                     // Conditionally populate the planeContentElems
                     for (let oneMeta of Object.keys(onePlane)) {
                         if (!excludedMeta.includes(oneMeta)) {
