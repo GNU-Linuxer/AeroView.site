@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 
 // Load custom style sheet
 import './css/site-elements.css';
@@ -33,12 +33,31 @@ export function ComparisonPage(props) {
         setDisplayPlane(updatedFavoritePlanes);
     }
 
+    // When window's width change, number of displaying columns need to change
+    // Code is adapted from https://www.pluralsight.com/guides/re-render-react-component-on-window-resize
+    const [numCol, setNumCol] = React.useState(calculateNumMeta(window.innerWidth));
+
+    useEffect(() => {
+        const debouncedHandleResize = debounce(function handleResize() {
+            setNumCol(calculateNumMeta(window.innerWidth));
+        }, 5) // 5 in mili-second unit means re-render components with a maximum frequency of once per 5ms
+        // Recommend to set to 100 or 1000 for production release
+
+        window.addEventListener('resize', debouncedHandleResize);
+
+        return _ => {
+            window.removeEventListener('resize', debouncedHandleResize);
+
+        }
+    });
+
     return (
         <main className="page-content">
 
             <RenderDropDowns airplaneData={props.airplaneData}
                              displayPlane={displayPlane}
                              updateDisplayPlaneFn={updateDisplayPlane}
+                             numCol={numCol}
 
                              favoritePlanes={props.favoritePlanes}
                              updateFavoriteFn={props.updateFavoriteFn}/>
@@ -47,6 +66,7 @@ export function ComparisonPage(props) {
                 airplaneDisplayMetaName={props.airplaneDisplayMetaName}
                 airplaneData={props.airplaneData}
                 displayPlane={displayPlane}
+                numCol={numCol}
 
                 planeRating={props.planeRating}
                 updateRatingFn={props.updateRatingFn}
@@ -56,11 +76,42 @@ export function ComparisonPage(props) {
     )
 }
 
+// The helper function that limits number of window resizing event frequency
+// Code is adapted from https://www.pluralsight.com/guides/re-render-react-component-on-window-resize
+function debounce(fn, ms) {
+    let timer
+    return _ => {
+        clearTimeout(timer)
+        timer = setTimeout(_ => {
+            timer = null
+            fn.apply(this, arguments)
+        }, ms)
+    };
+}
+
+// This helper function will return an integer representing number of displaying metadata column
+// using the widthInput parameter that denotes the width of screen
+function calculateNumMeta(widthInput) {
+    //console.log(widthInput);
+    // large desktop screen
+    if (widthInput >= 768) {
+        let availableSpace = widthInput - 200;
+        // ECMAScript 6 feature; use Math.floor(decimal); for old browser
+        // 120 means reserving up to 120px width for all metadata column (except make, model, and picture)
+        return (Math.trunc(availableSpace / 260));
+    }
+    // mobile and small desktop screen (the everything else)
+    else {
+        let availableSpace = widthInput - 140;
+        return (Math.trunc(availableSpace / 180));
+    }
+}
+
 function RenderDropDowns(props) {
     let ComparisonDropdownElems = [];
     let limit = 5;
     // Restrict how many columns to display based on available browser width
-    for (let i = 0; i < limit; i = i + 1) {
+    for (let i = 0; i < props.numCol; i = i + 1) {
         let currSelection = props.displayPlane[i];
         // Replace with real airplane name
         if (currSelection !== undefined) {
@@ -138,7 +189,7 @@ function RenderGrid(props) {
     let planeContentElems = [];
     let limit = 5;
     // Restrict how many columns to display based on available browser width
-    for (let i = 0; i < limit; i = i + 1) {
+    for (let i = 0; i < props.numCol; i = i + 1) {
         //console.log(props.displayPlane[i]);
         let oneICAO = props.displayPlane[i];
         if (oneICAO === undefined) {
