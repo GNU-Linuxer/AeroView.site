@@ -19,9 +19,12 @@ export function SiteHeader(props) {
     const mobileView = useMobileView();
     const [buttonActivated, setButtonActivated] = useState(false);
 
+    const toggleButton = () => setButtonActivated(!buttonActivated);
+
     let navButton = <NavButton expanded={buttonActivated}
-            clickCallback={() => setButtonActivated(!buttonActivated)} />;
-    let navLinks = <NavLinks links={props.navLinks} />;
+                               clickCallback={toggleButton} />;
+    let navLinks = <NavLinks links={props.navLinks}
+                             clickCallback={toggleButton} />;
     return (
         <header className="site-header">
             <SiteBranding logo={props.logo} name={props.appName} />
@@ -104,10 +107,12 @@ function NavButton(props) {
 }
 
 /*
- * Returns a '<nav>' element with navigation links.  The navigation links
- * should be contained in array 'links'; each navigation link should be an
- * object with 'name' and 'url' properties, which are for the name of the link
- * shown on the webpage and the link's URL respectively.
+ * Returns a '<nav>' element with navigation links.
+ *
+ * Props:
+ * - navLinks: an array of navigation links, where each link has 'name' and
+ *     'url' properties for the link's display name and target URL
+ * - clickCallback: the function called when a navigation link is clicked
  */
 function NavLinks(props) {
     return (
@@ -116,7 +121,8 @@ function NavLinks(props) {
                 <NavLink key={link.name}
                          exact={link.exact || false}
                          to={link.url}
-                         className="site-nav-link">
+                         className="site-nav-link"
+                         onClick={props.clickCallback}>
                     {link.name}
                 </NavLink>)}
         </nav>
