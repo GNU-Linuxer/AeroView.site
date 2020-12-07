@@ -37,12 +37,22 @@
     height: auto;
 }
 
-/* Plane specification */
+/* Plane data */
 
-.plane-info-spec-container {
+.plane-info-data-container {
     margin-left: 8px;
     margin-right: 8px;
 }
+
+/* Plane widgets */
+
+.plane-info-widgets {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Plane specification */
 
 .plane-info-spec {
     width: 100%;
@@ -73,7 +83,7 @@
         margin-left: 16px;
     }
 
-    .plane-info-spec-container {
+    .plane-info-data-container {
         min-width: 480px;
         margin-right: 16px;
     }

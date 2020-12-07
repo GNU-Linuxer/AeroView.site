@@ -101,7 +101,11 @@ export default function App(props) {
                     {/* Other routes */}
                     <Route path="/plane/:icao">
                         <PlaneInfo airplaneDisplayMetaName={props.airplaneDisplayMetaName}
-                                   airplaneData={props.airplaneData} />
+                                   airplaneData={props.airplaneData}
+                                   ratings={planeRating}
+                                   updateRatingsCallback={updatePlaneRating}
+                                   favorites={favoritePlanes}
+                                   updateFavoritesCallback={updateFavoritePlane} />
                     </Route>
                     <Redirect to="/" />
                 </Switch>
