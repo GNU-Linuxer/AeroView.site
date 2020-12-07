@@ -132,7 +132,7 @@ function RenderDropDowns(props) {
             <OneComparisonDropdown key={"Dropdown number: " + i}
                                    airplaneData={props.airplaneData}
                                    updateDisplayPlaneFn={props.updateDisplayPlaneFn}
-                                   selectedAirplane={currSelection === undefined ? ' ' : currSelection}
+                                   selectedAirplane={currSelection === undefined ? 'Select airplane' : currSelection}
                                    index={i}
 
                                    favoritePlanes={props.favoritePlanes}
@@ -200,9 +200,14 @@ function RenderGrid(props) {
         //console.log(props.displayPlane[i]);
         let oneICAO = props.displayPlane[i];
         if (oneICAO === undefined) {
-            // Populate 18 empty cells if no plane is present.
-            for (let i = 1; i <= 18; i = i + 1) {
-                planeContentElems.push(<p className="chart-cell column">&nbsp;</p>);
+            planeContentElems.push(<p className="chart-cell column" aria-hidden={true}>&nbsp;</p>);
+            planeContentElems.push(<img className="chart-cell column comparison-tile-image"
+                                        src={"./plane-thumbnail/placeholder.png"}
+                                        alt="No airplane is selected, choose an airplane to compare"/>);
+
+            // Populate 16 empty cells if no plane is present.
+            for (let i = 1; i <= 16; i = i + 1) {
+                planeContentElems.push(<p className="chart-cell column" aria-hidden={true}>&nbsp;</p>);
             }
         } else {
             // Find the plane object that matches oneICAO
