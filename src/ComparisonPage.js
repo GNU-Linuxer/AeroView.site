@@ -190,7 +190,7 @@ function RenderGrid(props) {
         //console.log(props.displayPlane[i]);
         let oneICAO = props.displayPlane[i];
         if (oneICAO === undefined) {
-            planeContentElems.push(<EmptyPlaneCol count={16}/>);
+            planeContentElems.push(<EmptyPlaneCol count={16} key={"placeholder column at index " + i}/>);
         } else {
             // Find the plane object that matches oneICAO
             for (let onePlane of props.airplaneData) {
@@ -237,14 +237,16 @@ function EmptyPlaneCol(props) {
         count: number of empty cells (except plane name and picture cell)
     */
     let placeholderContentElems = [];
-    placeholderContentElems.push(<p className="chart-cell column" aria-hidden={true}>&nbsp;</p>);
+    placeholderContentElems.push(<p className="chart-cell column" aria-hidden={true} key="placeholder row 1">&nbsp;</p>);
     placeholderContentElems.push(<img className="chart-cell column comparison-tile-image"
                                 src={"./plane-thumbnail/placeholder.png"}
-                                alt="No airplane is selected, choose an airplane to compare"/>);
+                                alt="No airplane is selected, choose an airplane to compare"
+                                      key="placeholder row 2"/>);
 
     // Populate 16 empty cells if no plane is present.
     for (let i = 1; i <= props.count; i = i + 1) {
-        placeholderContentElems.push(<p className="chart-cell column" aria-hidden={true}>&nbsp;</p>);
+        const keyNum = i + 2;
+        placeholderContentElems.push(<p className="chart-cell column" aria-hidden={true} key={"placeholder row " + keyNum}>&nbsp;</p>);
     }
     return (
         <>
