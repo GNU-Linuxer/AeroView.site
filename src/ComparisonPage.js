@@ -17,6 +17,7 @@ import {faHeart as regularHeart, faStar as regularStar} from '@fortawesome/free-
 
 import {StarRating} from './PlaneWidgets.js';
 import {Link} from "react-router-dom";
+import {debounce} from "./util/delay-refresh";
 
 library.add(faHeart, faStar, faChevronCircleDown, regularHeart, regularStar);
 
@@ -84,18 +85,6 @@ export function ComparisonPage(props) {
     )
 }
 
-// The helper function that limits number of window resizing event frequency
-// Code is adapted from https://www.pluralsight.com/guides/re-render-react-component-on-window-resize
-function debounce(fn, ms) {
-    let timer
-    return _ => {
-        clearTimeout(timer)
-        timer = setTimeout(_ => {
-            timer = null
-            fn.apply(this, arguments)
-        }, ms)
-    };
-}
 
 // This helper function will return an integer representing number of displaying metadata column
 // using the widthInput parameter that denotes the width of screen
@@ -201,61 +190,105 @@ function RenderGrid(props) {
         //console.log(props.displayPlane[i]);
         let oneICAO = props.displayPlane[i];
         if (oneICAO === undefined) {
-            planeContentElems.push(<p className="chart-cell column" aria-hidden={true}>&nbsp;</p>);
-            planeContentElems.push(<img className="chart-cell column comparison-tile-image"
-                                        src={"./plane-thumbnail/placeholder.png"}
-                                        alt="No airplane is selected, choose an airplane to compare"/>);
-
-            // Populate 16 empty cells if no plane is present.
-            for (let i = 1; i <= 16; i = i + 1) {
-                planeContentElems.push(<p className="chart-cell column" aria-hidden={true}>&nbsp;</p>);
-            }
+            planeContentElems.push(<EmptyPlaneCol count={16}/>);
         } else {
             // Find the plane object that matches oneICAO
             for (let onePlane of props.airplaneData) {
                 if (onePlane['icao-pic'].toLowerCase() === oneICAO) {
-                    //console.log('checkpoint');
-                    planeContentElems.push(<div className="chart-cell column">
-                        <span>{onePlane['make'] + ' ' + onePlane['model']}</span>
-                        <div>
-                            <StarRating maxStars={5}
-                                        rating={props.planeRating[onePlane['icao-pic'].toLowerCase()]}
-                                        updateRatingCallback={newRating =>
-                                            props.updateRatingFn(onePlane['icao-pic'].toLowerCase(), newRating)}
-                            />
-                        </div>
-                    </div>);
-                    planeContentElems.push(<Link to={'/plane/' + onePlane['icao-pic'].toLowerCase()}>
-                                                <img className="chart-cell column comparison-tile-image"
-                                                     src={"./plane-thumbnail/" + onePlane['icao-pic'].toLowerCase() + ".jpg"}
-                                                     alt={"Picture of " + onePlane['make'] + " " + onePlane['model'] + " in " + onePlane['make'] + " livery"}/>
-                                            </Link>);
-                    // Conditionally populate the planeContentElems
-                    for (let oneMeta of Object.keys(onePlane)) {
-                        if (!excludedMeta.includes(oneMeta)) {
-                            planeContentElems.push(<p className="chart-cell column">{onePlane[oneMeta]}</p>);
-                        }
-                    }
+                    planeContentElems.push(<OnePlaneCol key={"Column" + i}
+                                                        onePlane={onePlane}
+                                                        planeRating={props.planeRating}
+                                                        updateRatingFn={props.updateRatingFn}/>);
                 }
             }
         }
     }
+
+    return (
+        <div className="chart-content">
+            <HeaderColumn airplaneDisplayMetaName={props.airplaneDisplayMetaName}/>
+            <>
+            {planeContentElems}
+            </>
+        </div>
+    )
+}
+
+function HeaderColumn(props) {
     let headerColumnElems = [];
-    headerColumnElems.push(<p className="chart-cell header-column">Name</p>);
-    headerColumnElems.push(<p className="chart-cell header-column">Picture</p>);
+    headerColumnElems.push(<p key='name' className="chart-cell header-column">Name</p>);
+    headerColumnElems.push(<p key='picture' className="chart-cell header-column">Picture</p>);
     for (let oneMeta of Object.keys(props.airplaneDisplayMetaName)) {
         if (!excludedMeta.includes(oneMeta)) {
             headerColumnElems.push(<p className="chart-cell header-column"
                                       key={oneMeta}>{props.airplaneDisplayMetaName[oneMeta]}</p>);
         }
     }
+
     return (
-        <div className="chart-content">
-
+        <>
             {headerColumnElems}
+        </>
+    )
+}
 
-            {planeContentElems}
+function EmptyPlaneCol(props) {
+    /*props:
+        count: number of empty cells (except plane name and picture cell)
+    */
+    let placeholderContentElems = [];
+    placeholderContentElems.push(<p className="chart-cell column" aria-hidden={true}>&nbsp;</p>);
+    placeholderContentElems.push(<img className="chart-cell column comparison-tile-image"
+                                src={"./plane-thumbnail/placeholder.png"}
+                                alt="No airplane is selected, choose an airplane to compare"/>);
 
-        </div>
+    // Populate 16 empty cells if no plane is present.
+    for (let i = 1; i <= props.count; i = i + 1) {
+        placeholderContentElems.push(<p className="chart-cell column" aria-hidden={true}>&nbsp;</p>);
+    }
+    return (
+        <>
+            {placeholderContentElems}
+        </>
+    )
+}
+
+function OnePlaneCol(props) {
+    /*props:
+        onePlane: an object that represent 1 airplane
+    */
+
+    let planeInfoElems = [];
+
+    // Airplane name and star rating
+    planeInfoElems.push(<div key='name' className="chart-cell column">
+                            <span>{props.onePlane['make'] + ' ' + props.onePlane['model']}</span>
+                            <div>
+                                <StarRating maxStars={5}
+                                            rating={props.planeRating[props.onePlane['icao-pic'].toLowerCase()]}
+                                            updateRatingCallback={newRating =>
+                                                props.updateRatingFn(props.onePlane['icao-pic'].toLowerCase(), newRating)}
+                                />
+                            </div>
+                        </div>);
+
+    // Airplane's picture with a React Router link to detail placeholder page
+    planeInfoElems.push(<Link to={'/plane/' + props.onePlane['icao-pic'].toLowerCase()} key='picture'>
+                            <img className="chart-cell column comparison-tile-image"
+                                 src={"./plane-thumbnail/" + props.onePlane['icao-pic'].toLowerCase() + ".jpg"}
+                                 alt={"Picture of " + props.onePlane['make'] + " " + props.onePlane['model'] + " in " + props.onePlane['make'] + " livery"}/>
+                        </Link>);
+
+    // Rest of Airplane Metadata
+    for (let oneMeta of Object.keys(props.onePlane)) {
+        if (!excludedMeta.includes(oneMeta)) {
+            planeInfoElems.push(<p className="chart-cell column" key={oneMeta}>{props.onePlane[oneMeta]}</p>);
+        }
+    }
+
+    return (
+        <>
+            {planeInfoElems}
+        </>
     )
 }

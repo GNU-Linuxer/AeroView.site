@@ -15,6 +15,7 @@ import {Alert, Dropdown, DropdownToggle, DropdownMenu} from 'reactstrap';
 // Load other project JavaScript files
 import {ALWAYS_SHOWN_METADATA, DASHBOARD_VIEWS} from './Dashboard.js';
 import { FavoriteButton, StarRating } from './PlaneWidgets.js';
+import {debounce} from "./util/delay-refresh";
 import {Link} from "react-router-dom";
 
 // Load font awesome icon, MUST add everything if defined in import {***, ***} from '@fortawesome/free-solid-svg-icons'
@@ -127,27 +128,7 @@ function DashboardGrid(props) {
         searchTerm: The term entered by the user in the search bar
     */
 
-    // Keys in props.filteredFullDisplayMeta controls which dropdown value to display
 
-    //let excludedMeta = ['make', 'model', 'icao-pic'];
-    // let selectedAirplanesFilteredMeta = [];
-    //
-    // // Populate filtered airplane objects
-    // for (let onePlane of props.airplaneData) {
-    //     // Filter planes to display
-    //     if (props.brandsToDisplay.includes(onePlane['make']) && props.typesToDisplay.includes(onePlane['type'])) {
-    //         let filteredMetaPlane = {};
-    //         // Filter metadata to display
-    //         for (let oneMeta of Object.keys(onePlane)) {
-    //             if ((excludedMeta.includes(oneMeta)) || props.filteredMeta.includes(oneMeta)) {
-    //                 filteredMetaPlane[oneMeta] = onePlane[oneMeta];
-    //             }
-    //         }
-    //         selectedAirplanesFilteredMeta.push(filteredMetaPlane);
-    //     }
-    // }
-    // console.log(selectedAirplanesFilteredMeta);
-    // Create All Table Rows for every displaying airplane
     let selectedAirplanesElems = [];
     for (let onePlane of props.airplaneData) {
         let planeName = onePlane["make"] + ' ' + onePlane["model"];
@@ -343,20 +324,6 @@ function DashboardTable(props) {
                                 searchTerm={props.searchTerm}/>
         </table>
     )
-}
-
-
-// The helper function that limits number of window resizing event frequency
-// Code is adapted from https://www.pluralsight.com/guides/re-render-react-component-on-window-resize
-function debounce(fn, ms) {
-    let timer
-    return _ => {
-        clearTimeout(timer)
-        timer = setTimeout(_ => {
-            timer = null
-            fn.apply(this, arguments)
-        }, ms)
-    };
 }
 
 // This helper function will return an integer representing number of displaying metadata column
