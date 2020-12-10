@@ -2,17 +2,7 @@
  * This file contains styling rules for the comparison chart page of the site
  */
 
-/* Chart */
 
-.chart-content {
-    display: grid;
-
-    /* 7 means 7 rows of data (this is a hard-coded value that must be modified when number of metadata differs) */
-    grid-template-rows: repeat(18, auto);
-    grid-auto-flow: column;
-
-    border: 3px solid;
-}
 
 /* WARNING: .dropdown is a reserved class for ReactStrap; rename to comparison-dropdown*/
 .comparison-dropdown {
@@ -41,25 +31,67 @@
     }
 }
 
+/* Chart */
+
+.chart-content {
+    display: grid;
+
+    /* 7 means 7 rows of data (this is a hard-coded value that must be modified when number of metadata differs) */
+    /*grid-template-rows: repeat(18, auto);*/
+    grid-auto-flow: column;
+    /*grid-template-columns: auto;*/
+    /*grid-column: 1;*/
+    /*border: 3px solid;*/
+}
+
 /* Columns */
 
 .header-column {
     background-color: lightgray;
+    display: grid;
+    max-width: 200px;
+    padding-left: 5px;
+    margin-right: 20px;
+    font-weight: bold;
 }
+
+.column {
+    display: grid;
+    max-width: 250px;
+}
+
 
 /* Cells */
 
 .chart-cell {
     margin: 0;
-    padding-top: 1rem;
-    padding-bottom: 1rem;
+    padding: 0.5em;
+    min-height: 75px; /* Line height for rest of cells */
 }
 
-p.chart-cell {
-    padding-left: 0.5rem;
-    padding-right: 0.5rem;
+/* Special setting for name and picture rows*/
+.name-row {
+    min-height: 90px;
 }
 
+.picture-row {
+    min-height: 160px;
+}
+
+/* Try to position Name and Picture text vertically center */
+.header-column .name-row {
+    padding-top: 20px;
+}
+
+.header-column .picture-row {
+    padding-top: 60px;
+}
+
+/* Larger font size for plane name */
+.column .name-row {
+    font-size: 1.25em;
+    font-weight: bold;
+}
 
 .comparison-tile-image {
     width: 100%;

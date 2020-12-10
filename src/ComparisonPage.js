@@ -99,8 +99,8 @@ function calculateNumMeta(widthInput) {
     }
     // mobile and small desktop screen (the everything else)
     else {
-        let availableSpace = widthInput - 140;
-        return (Math.trunc(availableSpace / 180));
+        let availableSpace = widthInput - 190;
+        return (Math.trunc(availableSpace / 210));
     }
 }
 
@@ -216,19 +216,19 @@ function RenderGrid(props) {
 
 function HeaderColumn(props) {
     let headerColumnElems = [];
-    headerColumnElems.push(<p key='name' className="chart-cell header-column">Name</p>);
-    headerColumnElems.push(<p key='picture' className="chart-cell header-column">Picture</p>);
+    headerColumnElems.push(<div key='name' className="chart-cell name-row">Name</div>);
+    headerColumnElems.push(<div key='picture' className="chart-cell picture-row">Picture</div>);
     for (let oneMeta of Object.keys(props.airplaneDisplayMetaName)) {
         if (!excludedMeta.includes(oneMeta)) {
-            headerColumnElems.push(<p className="chart-cell header-column"
-                                      key={oneMeta}>{props.airplaneDisplayMetaName[oneMeta]}</p>);
+            headerColumnElems.push(<div className="chart-cell"
+                                      key={oneMeta}>{props.airplaneDisplayMetaName[oneMeta]}</div>);
         }
     }
 
     return (
-        <>
+        <span className='header-column'>
             {headerColumnElems}
-        </>
+        </span>
     )
 }
 
@@ -237,8 +237,10 @@ function EmptyPlaneCol(props) {
         count: number of empty cells (except plane name and picture cell)
     */
     let placeholderContentElems = [];
-    placeholderContentElems.push(<p className="chart-cell column" aria-hidden={true} key="placeholder row 1">&nbsp;</p>);
-    placeholderContentElems.push(<img className="chart-cell column comparison-tile-image"
+    placeholderContentElems.push(<p className="chart-cell name-row"
+                                    aria-hidden={true}
+                                    key="placeholder row 1">&nbsp;</p>);
+    placeholderContentElems.push(<img className="chart-cell comparison-tile-image picture-row"
                                 src={"./plane-thumbnail/placeholder.png"}
                                 alt="No airplane is selected, choose an airplane to compare"
                                       key="placeholder row 2"/>);
@@ -246,12 +248,12 @@ function EmptyPlaneCol(props) {
     // Populate 16 empty cells if no plane is present.
     for (let i = 1; i <= props.count; i = i + 1) {
         const keyNum = i + 2;
-        placeholderContentElems.push(<p className="chart-cell column" aria-hidden={true} key={"placeholder row " + keyNum}>&nbsp;</p>);
+        placeholderContentElems.push(<p className="chart-cell" aria-hidden={true} key={"placeholder row " + keyNum}>&nbsp;</p>);
     }
     return (
-        <>
+        <span className="column">
             {placeholderContentElems}
-        </>
+        </span>
     )
 }
 
@@ -263,7 +265,7 @@ function OnePlaneCol(props) {
     let planeInfoElems = [];
 
     // Airplane name and star rating
-    planeInfoElems.push(<div key='name' className="chart-cell column">
+    planeInfoElems.push(<div key='name' className="chart-cell name-row">
                             <span>{props.onePlane['make'] + ' ' + props.onePlane['model']}</span>
                             <div>
                                 <StarRating maxStars={5}
@@ -276,7 +278,7 @@ function OnePlaneCol(props) {
 
     // Airplane's picture with a React Router link to detail placeholder page
     planeInfoElems.push(<Link to={'/plane/' + props.onePlane['icao-pic'].toLowerCase()} key='picture'>
-                            <img className="chart-cell column comparison-tile-image"
+                            <img className="chart-cell comparison-tile-image picture-row"
                                  src={"./plane-thumbnail/" + props.onePlane['icao-pic'].toLowerCase() + ".jpg"}
                                  alt={"Picture of " + props.onePlane['make'] + " " + props.onePlane['model'] + " in " + props.onePlane['make'] + " livery"}/>
                         </Link>);
@@ -284,13 +286,13 @@ function OnePlaneCol(props) {
     // Rest of Airplane Metadata
     for (let oneMeta of Object.keys(props.onePlane)) {
         if (!excludedMeta.includes(oneMeta)) {
-            planeInfoElems.push(<p className="chart-cell column" key={oneMeta}>{props.onePlane[oneMeta]}</p>);
+            planeInfoElems.push(<p className="chart-cell" key={oneMeta}>{props.onePlane[oneMeta]}</p>);
         }
     }
 
     return (
-        <>
+        <span className="column">
             {planeInfoElems}
-        </>
+        </span>
     )
 }
