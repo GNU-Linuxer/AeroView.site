@@ -10,6 +10,7 @@ import { useMobileView } from './util/media-query.js';
 import './css/site-elements.css';
 import './css/plane-info.css';
 import { StarRating, FavoriteButton } from "./PlaneWidgets";
+import {Alert} from "reactstrap";
 
 /*
  * An array of metadata keys that are hidden from the page
@@ -172,9 +173,9 @@ function Specification(props) {
  */
 function PlaneNotFoundMessage(props) {
     return (
-        <p className="plane-info-err-msg">
-            Could not find plane with ICAO Code: {props.icao}
-        </p>
+        <Alert color="danger">
+            <div>Could not find plane with ICAO Code: <strong>{props.icao}</strong></div>
+        </Alert>
     );
 }
 
