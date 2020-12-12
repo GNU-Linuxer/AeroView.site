@@ -44,7 +44,8 @@ export default function PlaneInfo(props) {
                 <Jumbotron title="Plane Information"
                            backgroundImage="/img/main-photo.jpg" />
                 <main className="page-content">
-                    <PlaneNotFoundMessage icao={planeICAOCode} />
+                    {/*I'm not sure whether status={404} will let React Router respond 404 on non-existent ICAO code*/}
+                    <PlaneNotFoundMessage icao={planeICAOCode} status={404}/>
                 </main>
             </div>
         );
