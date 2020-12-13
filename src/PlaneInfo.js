@@ -41,8 +41,6 @@ const HIDDEN_METADATA = ["make", "model", "icao-pic"];
  *     favorite status is changed
  */
 export default function PlaneInfo(props) {
-
-
     // Need to implement window-resize useEffect(), as the note-taking textbox position depend on window size
     const [numCol, setNumCol] = React.useState(0);
     useEffect(() => {
@@ -58,7 +56,6 @@ export default function PlaneInfo(props) {
 
         }
     });
-
 
     let planeICAOCode = useParams()["icao"];
     let planeInfo = props.airplaneData.filter(
@@ -89,7 +86,7 @@ export default function PlaneInfo(props) {
             <main className="plane-info-content">
                 <div className="plane-info-left-column">
                     <PlaneImage planeInfo={planeInfo} planeName={planeName} />
-                    {window.innerWidth >=768 ? <NoteEditor/> : null}
+                    {window.innerWidth >=1024 ? <NoteEditor/> : null}
                 </div>
                 <div className="plane-info-data-container">
                     <Widgets rating={props.ratings[lowerCaseICAO]}
@@ -99,7 +96,7 @@ export default function PlaneInfo(props) {
                     <Specification airplaneDisplayMetaName={props.airplaneDisplayMetaName}
                                    planeInfo={planeInfo} />
                 </div>
-                {window.innerWidth <768 ? <NoteEditor/> : null}
+                {window.innerWidth <1024 ? <NoteEditor/> : null}
             </main>
         </div>
     );
@@ -246,7 +243,7 @@ function NoteEditor(props){
     };
 
     return (
-        <div>
+        <div className='plane-info-note-editor'>
             <SunEditor ref={editorRef}
                        setContents={content}
                        setOptions={options}
