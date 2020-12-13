@@ -27,19 +27,26 @@
 
 /*Desktop: Style the left column in the plane info page*/
 .plane-info-left-column {
+    display: flex;
+    justify-content: center; /* Ensure all content is center-positioned */
+    flex-wrap: wrap;
     max-width: 50%;
+    margin: 8px;
 }
 
 /* Plane image */
 
+/* Ensure the airplane picture is at the center of its parent container*/
 .plane-info-plane-img-container {
-    margin: 8px;
+
 }
 
 .plane-info-plane-img {
-    display: block;
+    /*text-align: center;*/
+    /*display: block;*/
     width: 100%;
     height: auto;
+    margin-bottom: 30px;
 }
 
 /* Plane data */
@@ -85,7 +92,7 @@
     }
 
     .plane-info-plane-img-container {
-        margin-left: 16px;
+
     }
 
     .plane-info-data-container {

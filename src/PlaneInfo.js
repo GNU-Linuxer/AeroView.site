@@ -14,7 +14,9 @@ import {Alert} from "reactstrap";
 
 //SunEditor
 import SunEditor from 'suneditor-react';
-import 'suneditor/dist/css/suneditor.min.css'; // Import Sun Editor's CSS File
+import 'suneditor/dist/css/suneditor.min.css';
+
+import {debounce} from "./util/delay-refresh";
 
 /*
  * An array of metadata keys that are hidden from the page
@@ -39,6 +41,25 @@ const HIDDEN_METADATA = ["make", "model", "icao-pic"];
  *     favorite status is changed
  */
 export default function PlaneInfo(props) {
+
+
+    // Need to implement window-resize useEffect(), as the note-taking textbox position depend on window size
+    const [numCol, setNumCol] = React.useState(0);
+    useEffect(() => {
+        const debouncedHandleResize = debounce(function handleResize() {
+            setNumCol(window.innerWidth);
+        }, 5) // 5 in mili-second unit means re-render components with a maximum frequency of once per 5ms
+        // Recommend to set to 100 or 1000 for production release
+
+        window.addEventListener('resize', debouncedHandleResize);
+
+        return _ => {
+            window.removeEventListener('resize', debouncedHandleResize);
+
+        }
+    });
+
+
     let planeICAOCode = useParams()["icao"];
     let planeInfo = props.airplaneData.filter(
         plane => plane["icao"] === planeICAOCode.toUpperCase())[0];
@@ -60,6 +81,7 @@ export default function PlaneInfo(props) {
         props.updateRatingsCallback(lowerCaseICAO, newRating);
     const toggleFavorite = () =>
         props.updateFavoritesCallback(lowerCaseICAO);
+
     return (
         <div>
             <Jumbotron title={planeName}
@@ -67,7 +89,7 @@ export default function PlaneInfo(props) {
             <main className="plane-info-content">
                 <div className="plane-info-left-column">
                     <PlaneImage planeInfo={planeInfo} planeName={planeName} />
-                    <NoteEditor/>
+                    {window.innerWidth >=768 ? <NoteEditor/> : null}
                 </div>
                 <div className="plane-info-data-container">
                     <Widgets rating={props.ratings[lowerCaseICAO]}
@@ -77,6 +99,7 @@ export default function PlaneInfo(props) {
                     <Specification airplaneDisplayMetaName={props.airplaneDisplayMetaName}
                                    planeInfo={planeInfo} />
                 </div>
+                {window.innerWidth <768 ? <NoteEditor/> : null}
             </main>
         </div>
     );
@@ -205,8 +228,8 @@ function NoteEditor(props){
     const options ={
         height: 200,
         //Available parameter can be found at https://github.com/JiHong88/SunEditor/blob/master/README.md#2-load-all-plugins
-        buttonList: [['undo', 'redo'], ['formatBlock', 'font', 'fontSize'], ['bold', 'underline', 'italic', 'strike', 'link', 'removeFormat'], ['align', 'list'],['outdent', 'indent'], ['print']]
-        // Other option
+        buttonList: [['undo', 'redo'], ['formatBlock', 'font', 'fontSize'], ['bold', 'underline', 'italic', 'strike', 'link', 'removeFormat'], ['align', 'list'],['outdent', 'indent'], ['print']],
+        stickyToolbar: false
     }
 
     useEffect(() => {
@@ -228,7 +251,7 @@ function NoteEditor(props){
                        setContents={content}
                        setOptions={options}
                        placeholder="Take a note on Boeing 737-800..."
-                       setDefaultStyle="font-family: sans-serif; font-size: 12px;"
+                       setDefaultStyle="font-family: sans-serif; font-size: 16px;"
                        onChange={handleContentChange}/>
         </div>
     );
