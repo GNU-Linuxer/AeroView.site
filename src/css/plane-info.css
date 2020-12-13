@@ -25,6 +25,11 @@
     margin-bottom: 8px;
 }
 
+/*Desktop: Style the left column in the plane info page*/
+.plane-info-left-column {
+    max-width: 50%;
+}
+
 /* Plane image */
 
 .plane-info-plane-img-container {

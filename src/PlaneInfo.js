@@ -3,7 +3,7 @@
  * information.
  */
 
-import React from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import { useParams } from 'react-router-dom';
 import { useMobileView } from './util/media-query.js';
 
@@ -11,6 +11,10 @@ import './css/site-elements.css';
 import './css/plane-info.css';
 import { StarRating, FavoriteButton } from "./PlaneWidgets";
 import {Alert} from "reactstrap";
+
+//SunEditor
+import SunEditor from 'suneditor-react';
+import 'suneditor/dist/css/suneditor.min.css'; // Import Sun Editor's CSS File
 
 /*
  * An array of metadata keys that are hidden from the page
@@ -61,7 +65,10 @@ export default function PlaneInfo(props) {
             <Jumbotron title={planeName}
                        backgroundImage={getPlaneImagePath(planeInfo)} />
             <main className="plane-info-content">
-                <PlaneImage planeInfo={planeInfo} planeName={planeName} />
+                <div className="plane-info-left-column">
+                    <PlaneImage planeInfo={planeInfo} planeName={planeName} />
+                    <NoteEditor/>
+                </div>
                 <div className="plane-info-data-container">
                     <Widgets rating={props.ratings[lowerCaseICAO]}
                              updateRatingCallback={updateRating}
@@ -189,4 +196,40 @@ function PlaneNotFoundMessage(props) {
  */
 function getPlaneImagePath(planeInfo) {
     return `/plane-thumbnail/${planeInfo["icao-pic"].toLowerCase()}.jpg`;
+}
+
+function NoteEditor(props){
+    const editorRef = useRef();
+    const [content, setContent] = useState('Initial content!');
+
+    const options ={
+        height: 200,
+        //Available parameter can be found at https://github.com/JiHong88/SunEditor/blob/master/README.md#2-load-all-plugins
+        buttonList: [['undo', 'redo'], ['formatBlock', 'font', 'fontSize'], ['bold', 'underline', 'italic', 'strike', 'link', 'removeFormat'], ['align', 'list'],['outdent', 'indent'], ['print']]
+        // Other option
+    }
+
+    useEffect(() => {
+        // Get underlining core object here
+        // Notice that useEffect is been used because you have to make sure the editor is rendered.
+        //console.log(editorRef.current.editor.core);
+    }, []);
+
+    // Functions that handle textbox content change
+    // Note: the SunEditor will call onChange 1 seconds after user stops typing
+    const handleContentChange = function(newContent) {
+        console.log(newContent);
+        setContent(newContent);
+    };
+
+    return (
+        <div>
+            <SunEditor ref={editorRef}
+                       setContents={content}
+                       setOptions={options}
+                       placeholder="Take a note on Boeing 737-800..."
+                       setDefaultStyle="font-family: sans-serif; font-size: 12px;"
+                       onChange={handleContentChange}/>
+        </div>
+    );
 }
