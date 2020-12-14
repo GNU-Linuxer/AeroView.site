@@ -208,6 +208,7 @@ function FilterSelector(props) {
                         toggle={() => setButtonActivated(!buttonActivated)}>
             <DropdownToggle tag="button">
                 <FontAwesomeIcon icon={faFilter} />
+                <span className="button-description">Filter</span>
             </DropdownToggle>
             <DropdownMenu right tag="ul" className="checkbox-menu filter-dropdown-menu">
                 <DropdownItem header>Type</DropdownItem>
@@ -244,6 +245,7 @@ function MetadataSelector(props) {
                         toggle={() => setButtonActivated(!buttonActivated)}>
             <DropdownToggle tag="button">
                 <FontAwesomeIcon icon={faEllipsisV} />
+                <span className="button-description">Options</span>
             </DropdownToggle>
             <DropdownMenu right tag="ul" className="checkbox-menu option-dropdown-menu">
                 <DropdownItem header>Metadata to display</DropdownItem>
