@@ -1,0 +1,7 @@
+.splash {
+    /* Move anything in the splash container to the center of window */
+    position: absolute;
+    /* Make slight offset for width of container itself */
+    left: calc(50% - 12px);
+    top: calc(50% - 12px);
+}

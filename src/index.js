@@ -3,6 +3,10 @@ import ReactDOM from 'react-dom';
 import App from './App.js';
 import * as d3 from 'd3-fetch';
 
+import Splash from './Splash.js';
+
+ReactDOM.render(<Splash />, document.getElementById('root'));
+
 let airplanes = {
     airplaneDisplayMetaName: {}, //{make: "Make", model: "Model", series: "Production Series",...s}
     airplaneData: [], // 0: {make: "Airbus", model: "A220-300", …} 1: {make: "Airbus", model: "A320neo", …}
@@ -16,9 +20,9 @@ d3.csv('/data/airplanes.csv')
         airplanes.airplaneDisplayMetaName = text[0];
         airplanes.airplaneData = text.slice(1, text.length);
     }).then(function () {
-        //console.log(airplanes);
-        ReactDOM.render(<App airplaneDisplayMetaName={airplanes.airplaneDisplayMetaName} airplaneData={airplanes.airplaneData} />, document.getElementById('root'));
+        ReactDOM.render(
+            <App airplaneDisplayMetaName={airplanes.airplaneDisplayMetaName}
+                 airplaneData={airplanes.airplaneData} />,
+            document.getElementById('root')
+        );
     });
-
-
-
