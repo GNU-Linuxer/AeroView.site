@@ -10,13 +10,18 @@ import { useMobileView } from './util/media-query.js';
 import './css/site-elements.css';
 import './css/plane-info.css';
 import { StarRating, FavoriteButton } from "./PlaneWidgets";
-import {Alert} from "reactstrap";
+
+
+// Reactstrap depends on bootstrap
+import 'bootstrap/dist/css/bootstrap.min.css';
+import {Alert} from 'reactstrap';
 
 //SunEditor
 import SunEditor from 'suneditor-react';
 import 'suneditor/dist/css/suneditor.min.css';
 
 import {debounce} from "./util/delay-refresh";
+import RunwayValidation from "./RunwayValidation";
 
 /*
  * An array of metadata keys that are hidden from the page
@@ -41,21 +46,17 @@ const HIDDEN_METADATA = ["make", "model", "icao-pic"];
  *     favorite status is changed
  */
 export default function PlaneInfo(props) {
-    // Need to implement window-resize useEffect(), as the note-taking textbox position depend on window size
-    const [numCol, setNumCol] = React.useState(0);
-    useEffect(() => {
-        const debouncedHandleResize = debounce(function handleResize() {
-            setNumCol(window.innerWidth);
-        }, 5) // 5 in mili-second unit means re-render components with a maximum frequency of once per 5ms
-        // Recommend to set to 100 or 1000 for production release
 
-        window.addEventListener('resize', debouncedHandleResize);
+    // Jason: initial content and new content should directly interact with FireBase user database
 
-        return _ => {
-            window.removeEventListener('resize', debouncedHandleResize);
 
-        }
-    });
+    // Functions that handle note-taking textbox content change
+    // Use the initialState to load user previously-saved data
+    const [content, setContent] = useState('');
+    const handleContentChange = function(newContent) {
+        console.log(newContent);
+        setContent(newContent);
+    };
 
     let planeICAOCode = useParams()["icao"];
     let planeInfo = props.airplaneData.filter(
@@ -86,7 +87,9 @@ export default function PlaneInfo(props) {
             <main className="plane-info-content">
                 <div className="plane-info-left-column">
                     <PlaneImage planeInfo={planeInfo} planeName={planeName} />
-                    {window.innerWidth >=1024 ? <NoteEditor/> : null}
+                    <span className='d-none d-lg-block' >
+                        <NoteEditor content={content} handleContentChangeFn={handleContentChange} planeName={planeName}/>
+                    </span>
                 </div>
                 <div className="plane-info-data-container">
                     <Widgets rating={props.ratings[lowerCaseICAO]}
@@ -95,8 +98,14 @@ export default function PlaneInfo(props) {
                              updateFavorCallback={toggleFavorite} />
                     <Specification airplaneDisplayMetaName={props.airplaneDisplayMetaName}
                                    planeInfo={planeInfo} />
+                    <span className='d-none d-lg-block'>
+                        <RunwayValidation icao={lowerCaseICAO} airplaneData={props.airplaneData}/>
+                    </span>
                 </div>
-                {window.innerWidth <1024 ? <NoteEditor/> : null}
+                <span className='d-lg-none'>
+                    <NoteEditor content={content} handleContentChangeFn={handleContentChange} planeName={planeName}/>
+                    <RunwayValidation icao={lowerCaseICAO} airplaneData={props.airplaneData}/>
+                </span>
             </main>
         </div>
     );
@@ -219,8 +228,13 @@ function getPlaneImagePath(planeInfo) {
 }
 
 function NoteEditor(props){
+    /* props:
+        content: the content that should pass to editor's textbox
+        handleContentChangeFn: the callback function that handles content change
+        planeName: airplane's full name (example: Boeing 737-800)
+     */
     const editorRef = useRef();
-    const [content, setContent] = useState('Initial content!');
+
 
     const options ={
         height: 200,
@@ -234,22 +248,16 @@ function NoteEditor(props){
         // Notice that useEffect is been used because you have to make sure the editor is rendered.
         //console.log(editorRef.current.editor.core);
     }, []);
-
-    // Functions that handle textbox content change
-    // Note: the SunEditor will call onChange 1 seconds after user stops typing
-    const handleContentChange = function(newContent) {
-        console.log(newContent);
-        setContent(newContent);
-    };
-
+    /*Note: the SunEditor will call onChange 1 seconds after user stops typing*/
     return (
         <div className='plane-info-note-editor'>
             <SunEditor ref={editorRef}
-                       setContents={content}
+                       setContents={props.content}
                        setOptions={options}
-                       placeholder="Take a note on Boeing 737-800..."
+                       placeholder={"Take a note on "+ props.planeName}
                        setDefaultStyle="font-family: sans-serif; font-size: 16px;"
-                       onChange={handleContentChange}/>
+
+                       onChange={props.handleContentChangeFn}/>
         </div>
     );
 }
