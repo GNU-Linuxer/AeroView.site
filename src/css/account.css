@@ -6,7 +6,7 @@ body > div:nth-child(6) > div > div.modal.fade.show {
   top: 5%;
 }
 
-div {
+#root > div > div > main > div > div:nth-child(1) {
   text-align: center;
 }
 
