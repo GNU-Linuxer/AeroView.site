@@ -87,6 +87,7 @@
 @media (min-width: 1024px) {
     .runway-validation-parent-container {
         max-width: 600px;
+        margin-left: 0;
     }
 }
 
