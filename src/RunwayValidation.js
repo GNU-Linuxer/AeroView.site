@@ -8,6 +8,15 @@ import {default as runway} from './data/airport-icao-longest-runway-ft.json';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {Alert} from 'reactstrap';
 
+// Font-awesome embed
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
+import {library} from '@fortawesome/fontawesome-svg-core'
+import {faHeart, faStar, faChevronCircleDown} from '@fortawesome/free-solid-svg-icons'
+import {faHeart as regularHeart, faStar as regularStar} from '@fortawesome/free-regular-svg-icons'
+
+library.add(faHeart, faStar, faChevronCircleDown, regularHeart, regularStar);
+
+
 // This component will load airport name and runway data to present (to user) whether a plane input can take off and run on this airport
 
 const METER_TO_FEET= 3.28; // 1 meter ≈ 3.28 feet
@@ -85,18 +94,23 @@ function SearchAirport(props) {
     const[value, setValue] = useState('');
     const[suggestions, setSuggestions] = useState([]);
 
-    let onChange = (event, { newValue }) => {
+    const onChange = (event, { newValue }) => {
         setValue(newValue);
     };
 
+    // This function will clear the input and suggestion
+    const clearInput = function() {
+        setValue('');
+    }
+
     // Autosuggest will call this function every time you need to update suggestions.
     // You already implemented this logic above, so just use it.
-    let onSuggestionsFetchRequested = ({ value }) => {
+    const onSuggestionsFetchRequested = ({ value }) => {
         setSuggestions(getSuggestions(value));
     }
 
     // Autosuggest will call this function every time you need to clear suggestions.
-    let onSuggestionsClearRequested = () => {
+    const onSuggestionsClearRequested = () => {
         setSuggestions([]);
     }
 
@@ -114,24 +128,33 @@ function SearchAirport(props) {
         const inputLength = inputValue.length;
 
         let suggestionArr = []; // Arrays of objects
-        const MAX_SUGGESTION = 10;
+        let numSuggestion = 0;
+        if (window.innerWidth >= 576) {
+            numSuggestion = 10;
+        } else {
+            // Limit the suggestion number on mobile phones
+            numSuggestion = 5;
+        }
         let counter = 0;
         if (inputLength !== 0) {
-            // first, check whether user is typing an ICAO code (this shall be first result)
-            for (let oneKey of Object.keys(airportName)) {
-                //console.log(oneKey);
-                //console.log(airportName[oneKey]);
-                //console.log(typeof(airportName[oneKey]));
-                if (counter >= MAX_SUGGESTION) {
-                    break; // Terminate for-loop early if we reach maximum number of suggestion
-                } else if (airportName[oneKey].startsWith(value)){
-                    suggestionArr.push({icao: oneKey, name: airportName[oneKey]});
-                    counter = counter + 1;
+            // SKIP the ICAO-priority search on mobile phones
+            if (window.innerWidth >= 576) {
+                // first, check whether user is typing an ICAO code (this shall be first result)
+                for (let oneKey of Object.keys(airportName)) {
+                    //console.log(oneKey);
+                    //console.log(airportName[oneKey]);
+                    //console.log(typeof(airportName[oneKey]));
+                    if (counter >= numSuggestion) {
+                        break; // Terminate for-loop early if we reach maximum number of suggestion
+                    } else if (airportName[oneKey].startsWith(value)){
+                        suggestionArr.push({icao: oneKey, name: airportName[oneKey]});
+                        counter = counter + 1;
+                    }
                 }
             }
             // then, check whether user's input contains airport name
             for (let oneKey of Object.keys(airportName)) {
-                if (counter >= MAX_SUGGESTION) {
+                if (counter >= numSuggestion) {
                     break;
                     // Compare only to the airport name after — (long dash), such as "Seattle Tacoma International Airport" in "KSEA — Seattle Tacoma International Airport"
                     // Ignore case when comparing user input to value
@@ -176,18 +199,28 @@ function SearchAirport(props) {
         props.buttonCallBackFn(suggestion['icao']); // this function's argument is the case-sensitive airport icao code
     }
 
+    const renderInputComponent = inputProps => (
+        <div>
+            <input {...inputProps} />
+            <button onClick={clearInput} className='clear-button'>X</button>
+        </div>
+    );
 
     // Finally, render it!
         return (
-            <Autosuggest
-                suggestions={suggestions}
-                onSuggestionsFetchRequested={onSuggestionsFetchRequested}
-                onSuggestionsClearRequested={onSuggestionsClearRequested}
-                onSuggestionSelected={onSuggestionSelected}
-                getSuggestionValue={getSuggestionValue}
-                renderSuggestion={renderSuggestion}
-                inputProps={inputProps}
-            />
+            <span>
+                <Autosuggest
+                    suggestions={suggestions}
+                    onSuggestionsFetchRequested={onSuggestionsFetchRequested}
+                    onSuggestionsClearRequested={onSuggestionsClearRequested}
+                    onSuggestionSelected={onSuggestionSelected}
+                    getSuggestionValue={getSuggestionValue}
+                    renderInputComponent={renderInputComponent}
+                    renderSuggestion={renderSuggestion}
+                    inputProps={inputProps}
+                />
+                {/*<button onClick={clearInput} className='clear-button'>X</button>*/}
+            </span>
         );
 }
 
@@ -219,7 +252,7 @@ function DisplayResult(props) {
 
         const canLand = landingFt < airportRunwayFt;
         returnElem.push(<Alert color={canLand ? 'success' : 'danger'} key='landing'>
-            <div>{props.fullName + " "}<strong>{canLand ? 'can' : 'can not'}</strong>{" takeoff in " + airport}</div>
+            <div>{props.fullName + " "}<strong>{canLand ? 'can' : 'can not'}</strong>{" land in " + airport}</div>
         </Alert>);
     }
     return(
