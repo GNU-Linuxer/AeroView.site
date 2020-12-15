@@ -85,12 +85,13 @@ export default function PlaneInfo(props) {
             <Jumbotron title={planeName}
                        backgroundImage={getPlaneImagePath(planeInfo)} />
             <main className="plane-info-content">
-                <div className="plane-info-left-column">
+                <span className="plane-info-left-column">
                     <PlaneImage planeInfo={planeInfo} planeName={planeName} />
                     <span className='d-none d-lg-block' >
                         <NoteEditor content={content} handleContentChangeFn={handleContentChange} planeName={planeName}/>
                     </span>
-                </div>
+                </span>
+
                 <div className="plane-info-data-container">
                     <Widgets rating={props.ratings[lowerCaseICAO]}
                              updateRatingCallback={updateRating}

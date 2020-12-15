@@ -15,6 +15,7 @@
     width: 300px;
     height: 30px;
     padding: 8px 8px;
+    margin-right: 8px;
     /* Leave some space between text input and result*/
     margin-bottom: 20px;
     font-weight: 300;
@@ -76,16 +77,16 @@
 @media (min-width: 576px){
     .react-autosuggest__input {
         /* The input textbox should be wider on devices larger than mobile*/
-        width: 500px;
+        width: 97%;
     }
     .react-autosuggest__suggestions-container--open {
-        width: 500px;
+        width: 97%;
     }
 }
 
 @media (min-width: 1024px) {
     .runway-validation-parent-container {
-        max-width: 500px;
+        max-width: 600px;
     }
 }
 
