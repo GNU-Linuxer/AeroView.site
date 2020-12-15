@@ -53,7 +53,8 @@ function ContentContainer(props) {
     }
 
     let returnElem = [];
-    returnElem.push(<p key='introduction'>Type an ICAO code or airport name (partial name is OK)</p>);
+    returnElem.push(<h1 key='title'>{"Airports"}</h1>);
+    returnElem.push(<p key='introduction'>{"Find whether " + props.fullName + " can take off and land at your favorite airport"}</p>);
     returnElem.push(<SearchAirport buttonCallBackFn={buttonCallBack} key='search airport'/>);
     // Only render the comparison result when there's something selected
     if (airportICAO.length > 0) {
@@ -101,7 +102,7 @@ function SearchAirport(props) {
 
     // Autosuggest will pass through all these props to the input.
     const inputProps = {
-            placeholder: 'Type anything...',
+            placeholder: 'Type anything: airport name, code...',
             value,
             onChange: onChange
         };
@@ -113,7 +114,7 @@ function SearchAirport(props) {
         const inputLength = inputValue.length;
 
         let suggestionArr = []; // Arrays of objects
-        const MAX_SUGGESTION = 8;
+        const MAX_SUGGESTION = 10;
         let counter = 0;
         if (inputLength !== 0) {
             // first, check whether user is typing an ICAO code (this shall be first result)
@@ -121,7 +122,7 @@ function SearchAirport(props) {
                 //console.log(oneKey);
                 //console.log(airportName[oneKey]);
                 //console.log(typeof(airportName[oneKey]));
-                if (counter > MAX_SUGGESTION) {
+                if (counter >= MAX_SUGGESTION) {
                     break; // Terminate for-loop early if we reach maximum number of suggestion
                 } else if (airportName[oneKey].startsWith(value)){
                     suggestionArr.push({icao: oneKey, name: airportName[oneKey]});
@@ -130,7 +131,7 @@ function SearchAirport(props) {
             }
             // then, check whether user's input contains airport name
             for (let oneKey of Object.keys(airportName)) {
-                if (counter > MAX_SUGGESTION) {
+                if (counter >= MAX_SUGGESTION) {
                     break;
                     // Compare only to the airport name after — (long dash), such as "Seattle Tacoma International Airport" in "KSEA — Seattle Tacoma International Airport"
                     // Ignore case when comparing user input to value
@@ -198,27 +199,29 @@ function DisplayResult(props) {
         landing: the plane's landing distance in meter
      */
 
-
-    const AIRPORT_RUNWAY_FT = parseInt(runway[props.icao]);
-    console.log(AIRPORT_RUNWAY_FT);
-    console.log(props.takeoff);
-
-    const TAKEOFF_FT = props.takeoff * METER_TO_FEET;
-    const LANDING_FT = props.landing * METER_TO_FEET;
-
     let returnElem = [];
-    if (TAKEOFF_FT < AIRPORT_RUNWAY_FT) {
-        returnElem.push(<Alert color='success' key='can takeoff'><div>{props.fullName + " can takeoff in this airport."}</div></Alert>);
+    const airport = airportName[props.icao].substring(airportName[props.icao].indexOf('—') + 1)
+    // Sometimes we have airport data but no runway data
+    if (runway[props.icao] === undefined) {
+        returnElem.push(<Alert color='info' key='airport not found'><div>Sorry, we <strong>don't have runway data</strong>{" for " + airport}</div></Alert>);
     } else {
-        returnElem.push(<Alert color='danger' key='can not takeoff'><div>{props.fullName + " can not takeoff in this airport."}</div></Alert>);
-    }
+        const airportRunwayFt = parseInt(runway[props.icao]);
+        //console.log(airportRunwayFt);
+        //console.log(props.takeoff);
 
-    if (LANDING_FT < AIRPORT_RUNWAY_FT) {
-        returnElem.push(<Alert color='success' key='can land'><div>{props.fullName + " can land in this airport."}</div></Alert>);
-    } else {
-        returnElem.push(<Alert color='danger' key='can not land'><div>{props.fullName + " can not land in this airport."}</div></Alert>);
-    }
+        const takeoffFt = props.takeoff * METER_TO_FEET;
+        const landingFt = props.landing * METER_TO_FEET;
 
+        const canTakeoff = takeoffFt < airportRunwayFt;
+        returnElem.push(<Alert color={canTakeoff ? 'success' : 'danger'} key='takeoff'>
+                            <div>{props.fullName + " "}<strong>{canTakeoff ? 'can' : 'can not'}</strong>{" takeoff in " + airport}</div>
+                        </Alert>);
+
+        const canLand = landingFt < airportRunwayFt;
+        returnElem.push(<Alert color={canLand ? 'success' : 'danger'} key='landing'>
+            <div>{props.fullName + " "}<strong>{canLand ? 'can' : 'can not'}</strong>{" takeoff in " + airport}</div>
+        </Alert>);
+    }
     return(
         <>
             {returnElem}
