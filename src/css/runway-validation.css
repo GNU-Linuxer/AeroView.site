@@ -4,7 +4,7 @@
     margin-top: 30px;
     margin-left: 8px;
     margin-right: 8px;
-    min-height: 250px;
+    min-height: 280px;
 }
 
 .react-autosuggest__container {
@@ -15,11 +15,15 @@
     width: 300px;
     height: 30px;
     padding: 8px 8px;
+    margin-right: 8px;
+    /* Leave some space between text input and result*/
+    margin-bottom: 20px;
     font-weight: 300;
     font-size: 16px;
     border: 1px solid #aaa;
     border-radius: 4px;
 }
+
 
 .react-autosuggest__input--focused {
     outline: none;
@@ -65,12 +69,35 @@
     background-color: #eeeeee;
 }
 
-.react-autosuggest__suggestion:hover {
+.react-autosuggest__suggestion--highlighted, .react-autosuggest__suggestion--highlighted:nth-of-type(even) {
     background-color: hsl(205, 100%, 35%);
     color: white;
+}
+
+@media (min-width: 576px){
+    .react-autosuggest__input {
+        /* The input textbox should be wider on devices larger than mobile*/
+        width: 93%;
+    }
+    .react-autosuggest__suggestions-container--open {
+        width: 93%;
+    }
+}
+
+@media (min-width: 1024px) {
+    .runway-validation-parent-container {
+        max-width: 600px;
+        margin-left: 0;
+    }
 }
 
 /* Bold ICAO name while keep the airport's full name as regular form*/
 .suggestionICAO {
     font-weight: 650;
+}
+
+/* The button to clear out all input text*/
+.clear-button {
+    border: none;
+    background-color: #ffffff;
 }
