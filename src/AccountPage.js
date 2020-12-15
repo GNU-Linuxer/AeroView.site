@@ -62,7 +62,9 @@ export function AccountPage() {
   } else {
     // Render sign out button
     content = (
-      <button className="btn btn-warning" onClick={handleSignOut}>Log Out {user.displayName}</button>
+      <div>
+        <button className="btn btn-warning" onClick={handleSignOut}>Log Out {user.displayName}</button>
+      </div>
     )
   }
 

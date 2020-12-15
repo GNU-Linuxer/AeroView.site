@@ -13,3 +13,11 @@ body > div:nth-child(6) > div > div.modal.fade.show {
 button.btn.btn-primary {
   margin-bottom: 1.5rem;
 }
+
+#root > div > div > main > div > div:nth-child(2) {
+  text-align: center;
+}
+
+button.btn.btn-warning {
+  margin-bottom: 1.5rem;
+}
