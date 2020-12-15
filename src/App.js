@@ -6,7 +6,24 @@ import Dashboard, { DASHBOARD_VIEWS } from './Dashboard.js';
 import PlaneInfo from './PlaneInfo.js';
 import { SiteHeader, PageJumbotron, SiteFooter } from './SiteElements.js';
 import { ComparisonPage } from './ComparisonPage.js';
+import { AccountPage } from './AccountPage.js';
 import { toggleElementInArray } from './util/array.js';
+
+import firebase from 'firebase/app';
+import 'firebase/auth';
+import 'firebase/database';
+
+const firebaseConfig = {
+    apiKey: "AIzaSyCufuelOrGrQigpl6vIQsSk7qzzlyCT52E",
+    authDomain: "aeroview-info340-au20.firebaseapp.com",
+    projectId: "aeroview-info340-au20",
+    storageBucket: "aeroview-info340-au20.appspot.com",
+    messagingSenderId: "474928151841",
+    appId: "1:474928151841:web:8359733a387620c0911260"
+};
+
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
 
 export default function App(props) {
     /*  airplaneDisplayMetaName: An object that maps the shorthand metadata key to display-friendly full name
@@ -77,6 +94,10 @@ export default function App(props) {
                 favoritePlanes={favoritePlanes}
                 updateFavoriteFn={updateFavoritePlane} />
         },
+        {
+            name: "Account", title: "Create an account or log in", url: "/account",
+            view: <AccountPage />
+        }
     ];
 
     return (
@@ -92,7 +113,7 @@ export default function App(props) {
                             exact={route.exact || false}
                             path={route.url}>
                             <div>
-                                <PageJumbotron title={route.title}/>
+                                <PageJumbotron title={route.title} />
                                 <main className="page-content">
                                     {route.view}
                                 </main>
@@ -101,11 +122,11 @@ export default function App(props) {
                     {/* Other routes */}
                     <Route path="/plane/:icao">
                         <PlaneInfo airplaneDisplayMetaName={props.airplaneDisplayMetaName}
-                                   airplaneData={props.airplaneData}
-                                   ratings={planeRating}
-                                   updateRatingsCallback={updatePlaneRating}
-                                   favorites={favoritePlanes}
-                                   updateFavoritesCallback={updateFavoritePlane} />
+                            airplaneData={props.airplaneData}
+                            ratings={planeRating}
+                            updateRatingsCallback={updatePlaneRating}
+                            favorites={favoritePlanes}
+                            updateFavoritesCallback={updateFavoritePlane} />
                     </Route>
                     <Redirect to="/" />
                 </Switch>
