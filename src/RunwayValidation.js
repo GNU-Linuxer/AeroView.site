@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import Autosuggest from 'react-autosuggest';
-// TODO: load external .json files using AJAX request
+
 import {default as airportName} from './data/airport-icao-name.json';
 import {default as runway} from './data/airport-icao-longest-runway-ft.json';
 
