@@ -1,3 +1,15 @@
 #firebaseui_container {
   margin-bottom: 1rem;
 }
+
+body > div:nth-child(6) > div > div.modal.fade.show {
+  top: 5%;
+}
+
+div {
+  text-align: center;
+}
+
+button.btn.btn-primary {
+  margin-bottom: 1.5rem;
+}

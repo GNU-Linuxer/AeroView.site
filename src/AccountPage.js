@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 
 import './css/account.css'
 
@@ -67,7 +68,30 @@ export function AccountPage() {
 
   return (
     <div>
+      <AccountModal />
       {content}
     </div>
   )
+}
+
+export const AccountModal = () => {
+  const [modal, setModal] = useState(false);
+
+  const toggle = () => setModal(!modal);
+
+  return (
+    <div>
+      <Button color="primary" onClick={toggle}>Account Features</Button>
+      <Modal isOpen={modal} toggle={toggle} className="is-open">
+        <ModalHeader toggle={toggle}>Account Features</ModalHeader>
+        <ModalBody>
+          By creating an account on AeroView, you'll be able to save your plane filter options, favorite airplanes and star ratings, private notes for each airplane, and your comparison table columns!
+          To create an account, just input your email in the sign-in form below
+        </ModalBody>
+        <ModalFooter>
+          <Button color="primary" onClick={toggle}>Sounds Good!</Button>
+        </ModalFooter>
+      </Modal>
+    </div>
+  );
 }
