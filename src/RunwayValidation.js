@@ -19,7 +19,7 @@ library.add(faHeart, faStar, faChevronCircleDown, regularHeart, regularStar);
 
 // This component will load airport name and runway data to present (to user) whether a plane input can take off and run on this airport
 
-const METER_TO_FEET= 3.28; // 1 meter ≈ 3.28 feet
+const METER_TO_FEET = 3.28; // 1 meter ≈ 3.28 feet
 
 export default function RunwayValidation(props) {
     /* props:
@@ -30,16 +30,16 @@ export default function RunwayValidation(props) {
 
 
     // Fetch this airplane's takeoff and landing distance
-    let takeoff=0;
-    let landing=0;
+    let takeoff = 0;
+    let landing = 0;
     let fullName = '';
 
-    for(let onePlane of props.airplaneData) {
-       if (onePlane['icao-pic'].toLowerCase() === props.icao) {
-           takeoff = onePlane['takeoff_dis']; // unit is in metric meter
-           landing = onePlane['land_dis']; // unit is in metric meter
-           fullName = onePlane['make'] + ' ' + onePlane['model'];
-       }
+    for (let onePlane of props.airplaneData) {
+        if (onePlane['icao-pic'].toLowerCase() === props.icao) {
+            takeoff = onePlane['takeoff_dis']; // unit is in metric meter
+            landing = onePlane['land_dis']; // unit is in metric meter
+            fullName = onePlane['make'] + ' ' + onePlane['model'];
+        }
     }
 
     return (
@@ -53,21 +53,23 @@ function ContentContainer(props) {
         takeoff: the plane's takeoff distance in meter
         landing: the plane's landing distance in meter
      */
-    const[airportICAO, setAirportICAO] = useState('');
+    const [airportICAO, setAirportICAO] = useState('');
 
 
     // Note the icao is the airport's icao code (case-sensitive)
-    const buttonCallBack = function(icao) {
+    const buttonCallBack = function (icao) {
         setAirportICAO(icao);
     }
 
     let returnElem = [];
     returnElem.push(<h1 key='title'>{"Airports"}</h1>);
-    returnElem.push(<p key='introduction'>{"Find whether " + props.fullName + " can take off and land at your favorite airport"}</p>);
+    returnElem.push(<p
+        key='introduction'>{"Find whether " + props.fullName + " can take off and land at your favorite airport"}</p>);
     returnElem.push(<SearchAirport buttonCallBackFn={buttonCallBack} key='search airport'/>);
     // Only render the comparison result when there's something selected
     if (airportICAO.length > 0) {
-        returnElem.push(<DisplayResult icao={airportICAO} fullName={props.fullName} takeoff={props.takeoff} landing={props.landing} key='comparison result'/>);
+        returnElem.push(<DisplayResult icao={airportICAO} fullName={props.fullName} takeoff={props.takeoff}
+                                       landing={props.landing} key='comparison result'/>);
     }
 
     return (
@@ -91,21 +93,21 @@ function SearchAirport(props) {
     // Suggestions also need to be provided to the Autosuggest,
     // and they are initially empty because the Autosuggest is closed.
 
-    const[value, setValue] = useState('');
-    const[suggestions, setSuggestions] = useState([]);
+    const [value, setValue] = useState('');
+    const [suggestions, setSuggestions] = useState([]);
 
-    const onChange = (event, { newValue }) => {
+    const onChange = (event, {newValue}) => {
         setValue(newValue);
     };
 
     // This function will clear the input and suggestion
-    const clearInput = function() {
+    const clearInput = function () {
         setValue('');
     }
 
     // Autosuggest will call this function every time you need to update suggestions.
     // You already implemented this logic above, so just use it.
-    const onSuggestionsFetchRequested = ({ value }) => {
+    const onSuggestionsFetchRequested = ({value}) => {
         setSuggestions(getSuggestions(value));
     }
 
@@ -116,14 +118,14 @@ function SearchAirport(props) {
 
     // Autosuggest will pass through all these props to the input.
     const inputProps = {
-            placeholder: 'Type anything: airport name, code...',
-            value,
-            onChange: onChange
-        };
+        placeholder: 'Type anything: airport name, code...',
+        value,
+        onChange: onChange
+    };
 
 
     // Teach Autosuggest how to calculate suggestions for any given input value.
-    const getSuggestions = function(value) {
+    const getSuggestions = function (value) {
         const inputValue = value.trim();
         const inputLength = inputValue.length;
 
@@ -137,19 +139,16 @@ function SearchAirport(props) {
         }
         let counter = 0;
         if (inputLength !== 0) {
-            // SKIP the ICAO-priority search on mobile phones
-            if (window.innerWidth >= 576) {
-                // first, check whether user is typing an ICAO code (this shall be first result)
-                for (let oneKey of Object.keys(airportName)) {
-                    //console.log(oneKey);
-                    //console.log(airportName[oneKey]);
-                    //console.log(typeof(airportName[oneKey]));
-                    if (counter >= numSuggestion) {
-                        break; // Terminate for-loop early if we reach maximum number of suggestion
-                    } else if (airportName[oneKey].startsWith(value)){
-                        suggestionArr.push({icao: oneKey, name: airportName[oneKey]});
-                        counter = counter + 1;
-                    }
+            // first, check whether user is typing an ICAO code (this shall be first result)
+            for (let oneKey of Object.keys(airportName)) {
+                //console.log(oneKey);
+                //console.log(airportName[oneKey]);
+                //console.log(typeof(airportName[oneKey]));
+                if (counter >= numSuggestion) {
+                    break; // Terminate for-loop early if we reach maximum number of suggestion
+                } else if (airportName[oneKey].toLowerCase().startsWith(value.toLowerCase())) {
+                    suggestionArr.push({icao: oneKey, name: airportName[oneKey]});
+                    counter = counter + 1;
                 }
             }
             // then, check whether user's input contains airport name
@@ -158,7 +157,7 @@ function SearchAirport(props) {
                     break;
                     // Compare only to the airport name after — (long dash), such as "Seattle Tacoma International Airport" in "KSEA — Seattle Tacoma International Airport"
                     // Ignore case when comparing user input to value
-                } else if (airportName[oneKey].substring(airportName[oneKey].indexOf('—') + 1).toLowerCase().includes(value.toLowerCase())){
+                } else if (airportName[oneKey].substring(airportName[oneKey].indexOf('—') + 1).toLowerCase().includes(value.toLowerCase())) {
                     suggestionArr.push({icao: oneKey, name: airportName[oneKey]});
                     counter = counter + 1;
                 }
@@ -171,15 +170,15 @@ function SearchAirport(props) {
     // When suggestion is clicked, Autosuggest needs to populate the input
     // based on the clicked suggestion. Teach Autosuggest how to calculate the
     // input value for every given suggestion.
-    const getSuggestionValue = function(suggestion) {
+    const getSuggestionValue = function (suggestion) {
         // Example value: KSEA  Seattle Tacoma International Airport
         return suggestion.name.substring(0, suggestion.name.indexOf('—') - 1) + " " + suggestion.name.substring(suggestion.name.indexOf('—') + 1);
     }
 
     // Use your imagination to render suggestions.
-    const renderSuggestion = function(suggestion){
+    const renderSuggestion = function (suggestion) {
         // Note that suggestion is ONE suggestion object only (NOT an array of candidate objects)
-        return(
+        return (
             <span>
                 <span className='suggestionICAO'>
                     {suggestion.name.substring(0, suggestion.name.indexOf('—') - 1)}
@@ -193,7 +192,7 @@ function SearchAirport(props) {
     }
 
     // How to handle when user clicks on a suggestion
-    const onSuggestionSelected = function(event, { suggestion, suggestionValue, suggestionIndex, sectionIndex, method }) {
+    const onSuggestionSelected = function (event, {suggestion, suggestionValue, suggestionIndex, sectionIndex, method}) {
         event.preventDefault();
         //console.log(suggestion);
         props.buttonCallBackFn(suggestion['icao']); // this function's argument is the case-sensitive airport icao code
@@ -207,8 +206,8 @@ function SearchAirport(props) {
     );
 
     // Finally, render it!
-        return (
-            <span>
+    return (
+        <span>
                 <Autosuggest
                     suggestions={suggestions}
                     onSuggestionsFetchRequested={onSuggestionsFetchRequested}
@@ -219,9 +218,9 @@ function SearchAirport(props) {
                     renderSuggestion={renderSuggestion}
                     inputProps={inputProps}
                 />
-                {/*<button onClick={clearInput} className='clear-button'>X</button>*/}
+            {/*<button onClick={clearInput} className='clear-button'>X</button>*/}
             </span>
-        );
+    );
 }
 
 function DisplayResult(props) {
@@ -236,7 +235,9 @@ function DisplayResult(props) {
     const airport = airportName[props.icao].substring(airportName[props.icao].indexOf('—') + 1)
     // Sometimes we have airport data but no runway data
     if (runway[props.icao] === undefined) {
-        returnElem.push(<Alert color='info' key='airport not found'><div>Sorry, we <strong>don't have runway data</strong>{" for " + airport}</div></Alert>);
+        returnElem.push(<Alert color='info' key='airport not found'>
+            <div>Sorry, we <strong>don't have runway data</strong>{" for " + airport}</div>
+        </Alert>);
     } else {
         const airportRunwayFt = parseInt(runway[props.icao]);
         //console.log(airportRunwayFt);
@@ -247,15 +248,16 @@ function DisplayResult(props) {
 
         const canTakeoff = takeoffFt < airportRunwayFt;
         returnElem.push(<Alert color={canTakeoff ? 'success' : 'danger'} key='takeoff'>
-                            <div>{props.fullName + " "}<strong>{canTakeoff ? 'can' : 'can not'}</strong>{" takeoff in " + airport}</div>
-                        </Alert>);
+            <div>{props.fullName + " "}<strong>{canTakeoff ? 'can takeoff' : 'can not takeoff'}</strong>{" in " + airport}
+            </div>
+        </Alert>);
 
         const canLand = landingFt < airportRunwayFt;
         returnElem.push(<Alert color={canLand ? 'success' : 'danger'} key='landing'>
-            <div>{props.fullName + " "}<strong>{canLand ? 'can' : 'can not'}</strong>{" land in " + airport}</div>
+            <div>{props.fullName + " "}<strong>{canLand ? 'can land' : 'can not land'}</strong>{" in " + airport}</div>
         </Alert>);
     }
-    return(
+    return (
         <>
             {returnElem}
         </>
