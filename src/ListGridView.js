@@ -1,26 +1,28 @@
 import React, {useEffect, useState} from 'react';
-//import ReactDOM from 'react-dom';
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
-import {library} from '@fortawesome/fontawesome-svg-core'
-import {faHeart, faStar, faChevronCircleDown} from '@fortawesome/free-solid-svg-icons'
-import {faHeart as regularHeart, faStar as regularStar} from '@fortawesome/free-regular-svg-icons'
+
 // Load custom style sheet
 import './css/dashboard-filter.css';
 import './css/site-elements.css';
 import './css/site-grid.css';
 import './css/site-list.css';
-// Reactstrap depends on bootstrap
+
+// Reactstrap depends on Bootstrap's stylesheet
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {Alert, Dropdown, DropdownToggle, DropdownMenu} from 'reactstrap';
+
 // Load other project JavaScript files
 import {ALWAYS_SHOWN_METADATA, DASHBOARD_VIEWS} from './Dashboard.js';
 import { FavoriteButton, StarRating } from './PlaneWidgets.js';
 import {debounce} from "./util/delay-refresh";
 import {Link} from "react-router-dom";
 
+// Load Font Awesome
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
+import {library} from '@fortawesome/fontawesome-svg-core'
+import {faHeart, faStar, faChevronCircleDown} from '@fortawesome/free-solid-svg-icons'
+import {faHeart as regularHeart, faStar as regularStar} from '@fortawesome/free-regular-svg-icons'
 // Load font awesome icon, MUST add everything if defined in import {***, ***} from '@fortawesome/free-solid-svg-icons'
 library.add(faHeart, faStar, faChevronCircleDown, regularHeart, regularStar);
-
 
 export default function ListGridView(props) {
     /*  props:
@@ -46,53 +48,56 @@ export default function ListGridView(props) {
         if (props.filteredMeta.includes(oneMeta)) {
             filteredFullDisplayMeta[oneMeta] = props.airplaneDisplayMetaName[oneMeta];
         }
-        //console.log(filteredFullDisplayMeta);
     }
 
     // DashboardTable will call this function that determines whether to render TooManyMetaAlert component
     const [alertVisible, setAlertVisible] = useState(false);
-    const updateAlertVisibility = (value) => {
+    const updateAlertVisibility = value => {
         setAlertVisible(value);
     }
 
     let content;
     if (props.activeView === DASHBOARD_VIEWS.LIST) {
-        content = (<DashboardTable filteredFullDisplayMeta={filteredFullDisplayMeta}
-                                   airplaneData={props.airplaneData}
+        content = (
+            <DashboardTable filteredFullDisplayMeta={filteredFullDisplayMeta}
+                            airplaneData={props.airplaneData}
 
-                                   updateAlertVisibility={updateAlertVisibility}
+                            updateAlertVisibility={updateAlertVisibility}
 
-                                   brandsToDisplay={props.brandsToDisplay}
-                                   typesToDisplay={props.typesToDisplay}
-                                   filteredMeta={props.filteredMeta}
+                            brandsToDisplay={props.brandsToDisplay}
+                            typesToDisplay={props.typesToDisplay}
+                            filteredMeta={props.filteredMeta}
 
-                                   planeRating={props.planeRating}
-                                   updateRatingFn={props.updateRatingFn}
+                            planeRating={props.planeRating}
+                            updateRatingFn={props.updateRatingFn}
 
-                                   favoritePlanes={props.favoritePlanes}
-                                   updateFavoriteFn={props.updateFavoriteFn}
-                                   searchTerm={props.searchTerm}/>);
+                            favoritePlanes={props.favoritePlanes}
+                            updateFavoriteFn={props.updateFavoriteFn}
+                            searchTerm={props.searchTerm} />
+        );
     } else if (props.activeView === DASHBOARD_VIEWS.GRID) {
-        content = (<DashboardGrid filteredFullDisplayMeta={filteredFullDisplayMeta}
-                                  airplaneData={props.airplaneData}
+        content = (
+            <DashboardGrid filteredFullDisplayMeta={filteredFullDisplayMeta}
+                           airplaneData={props.airplaneData}
 
-                                  brandsToDisplay={props.brandsToDisplay}
-                                  typesToDisplay={props.typesToDisplay}
-                                  filteredMeta={props.filteredMeta}
+                           brandsToDisplay={props.brandsToDisplay}
+                           typesToDisplay={props.typesToDisplay}
+                           filteredMeta={props.filteredMeta}
 
-                                  planeRating={props.planeRating}
-                                  updateRatingFn={props.updateRatingFn}
+                           planeRating={props.planeRating}
+                           updateRatingFn={props.updateRatingFn}
 
-                                  favoritePlanes={props.favoritePlanes}
-                                  updateFavoriteFn={props.updateFavoriteFn}
-                                  searchTerm={props.searchTerm}/>);
+                           favoritePlanes={props.favoritePlanes}
+                           updateFavoriteFn={props.updateFavoriteFn}
+                           searchTerm={props.searchTerm} />
+        );
     }
     return (
         <div className="dashboard-content">
             {alertVisible && props.activeView === DASHBOARD_VIEWS.LIST ? <TooManyMetaAlert/> : ''}
             {content}
         </div>
-    )
+    );
 }
 
 // Too Many Metadata Alert
@@ -135,15 +140,17 @@ function DashboardGrid(props) {
         if (props.brandsToDisplay.includes(onePlane['make']) &&
             props.typesToDisplay.includes(onePlane['type']) &&
             planeName.toLowerCase().indexOf(props.searchTerm.toLowerCase()) !== -1) {
-            selectedAirplanesElems.push(<OneGridCard key={onePlane["icao-pic"]}
-                                                     filteredFullDisplayMeta={props.filteredFullDisplayMeta}
-                                                     onePlane={onePlane}
+            selectedAirplanesElems.push(
+                <OneGridCard key={onePlane["icao-pic"]}
+                             filteredFullDisplayMeta={props.filteredFullDisplayMeta}
+                             onePlane={onePlane}
 
-                                                     currRating={props.planeRating[onePlane['icao-pic'].toLowerCase()]}
-                                                     updateRatingFn={props.updateRatingFn}
+                             currRating={props.planeRating[onePlane['icao-pic'].toLowerCase()]}
+                             updateRatingFn={props.updateRatingFn}
 
-                                                     currFavorite={props.favoritePlanes.includes(onePlane['icao-pic'].toLowerCase())}
-                                                     updateFavoriteFn={props.updateFavoriteFn}/>);
+                             currFavorite={props.favoritePlanes.includes(onePlane['icao-pic'].toLowerCase())}
+                             updateFavoriteFn={props.updateFavoriteFn} />
+            );
         }
     }
 
@@ -151,7 +158,7 @@ function DashboardGrid(props) {
         <div className="plane-container">
             {selectedAirplanesElems}
         </div>
-    )
+    );
 }
 
 function OneGridCard(props) {
@@ -192,7 +199,7 @@ function OneGridCard(props) {
             <OneGridPlaneDropdown filteredFullDisplayMeta={props.filteredFullDisplayMeta}
                                   onePlane={props.onePlane}/>
         </div>
-    )
+    );
 }
 
 function OneGridPlaneDropdown(props) {
@@ -202,12 +209,13 @@ function OneGridPlaneDropdown(props) {
     */
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const toggle = () => setDropdownOpen(prevState => !prevState);
-    //console.log(props.onePlane);
     let tableRowsElem = [];
     for (let oneMeta of Object.keys(props.filteredFullDisplayMeta)) {
-        tableRowsElem.push(<GridDropdownItem key={oneMeta}
-                                             Metadata={props.filteredFullDisplayMeta[oneMeta]}
-                                             Value={props.onePlane[oneMeta]}/>)
+        tableRowsElem.push(
+            <GridDropdownItem key={oneMeta}
+                              metadata={props.filteredFullDisplayMeta[oneMeta]}
+                              value={props.onePlane[oneMeta]} />
+        );
     }
     return (
         <Dropdown isOpen={dropdownOpen} toggle={toggle} direction="down">
@@ -234,15 +242,15 @@ function OneGridPlaneDropdown(props) {
 
 function GridDropdownItem(props) {
     /*props:
-            Metadata: A string represent the full display metadata
-            Value: A string that represent the value of props.Metadata
+            metadata: A string represent the full display metadata
+            value: A string that represent the value of props.metadata
     */
     return (
         <tr>
-            <td className="plane-grid-dropdown-meta">{props.Metadata}</td>
-            <td>{props.Value}</td>
+            <td className="plane-grid-dropdown-meta">{props.metadata}</td>
+            <td>{props.value}</td>
         </tr>
-    )
+    );
 }
 
 function DashboardTable(props) {
@@ -269,7 +277,7 @@ function DashboardTable(props) {
     const [numCol, setNumCol] = React.useState(calculateNumMeta(window.innerWidth));
 
     useEffect(() => {
-        const debouncedHandleResize = debounce(function handleResize() {
+        const debouncedHandleResize = debounce(() => {
             setNumCol(calculateNumMeta(window.innerWidth));
         }, 100) // 100 in mili-second unit means re-render components with a maximum frequency of once per 5ms
         // Recommend to set to 100 or 1000 for production release
@@ -278,15 +286,12 @@ function DashboardTable(props) {
 
         return _ => {
             window.removeEventListener('resize', debouncedHandleResize);
-
-        }
+        };
     });
-    //console.log(numCol);
 
     let counter = 1;
     let filteredDisplayMetaElem = [];
     let shouldShowAlert = false;
-    //props.updateAlertVisibility(false);
     for (let oneMeta of Object.keys(props.filteredFullDisplayMeta)) {
         if ((props.filteredMeta.includes(oneMeta)) && counter <= numCol) {
             filteredDisplayMetaElem.push(<th key={oneMeta}>{props.filteredFullDisplayMeta[oneMeta]}</th>);
@@ -295,12 +300,12 @@ function DashboardTable(props) {
         } // No metadata is able to show in a window with a width <=425 (mobile screen), will not render TooManyMetaAlert in this situation
         else if (Object.keys(props.filteredFullDisplayMeta).length >= numCol && window.outerWidth > 425) {
             // The Too many selected metadata warning will only display in list view (The first child under <div className="dashboard-content">)
-            //console.log('about to render TooManyMetaAlert');
             shouldShowAlert = true;
         }
     }
 
-    // props.updateAlertVisibility should enter to React's lifecycle by placing this call within useEffect()
+    // Placing this call in useEffect() because
+    // props.updateAlertVisibility should enter React's lifecycle
     useEffect(() => {
         props.updateAlertVisibility(shouldShowAlert);
     });
@@ -323,13 +328,12 @@ function DashboardTable(props) {
                                 updateFavoriteFn={props.updateFavoriteFn}
                                 searchTerm={props.searchTerm}/>
         </table>
-    )
+    );
 }
 
 // This helper function will return an integer representing number of displaying metadata column
 // using the widthInput parameter that denotes the width of screen
 function calculateNumMeta(widthInput) {
-    //console.log(widthInput);
     // large desktop screen
     if (widthInput >= 768) {
         let availableSpace = widthInput - 56 - 65 - 96 - 300;
@@ -359,7 +363,7 @@ function DashboardTableHead(props) {
             {props.filteredDisplayMetaElem}
         </tr>
         </thead>
-    )
+    );
 }
 
 function DashboardTableBody(props) {
@@ -408,22 +412,24 @@ function DashboardTableBody(props) {
     // Create All Table Rows for every displaying airplane
     let selectedAirplanesElems = [];
     for (let onePlane of selectedAirplanesFilteredMeta) {
-        selectedAirplanesElems.push(<OnePlaneTableRow key={onePlane["icao-pic"]}
-                                                      excludedMeta={excludedMeta}
-                                                      onePlane={onePlane}
+        selectedAirplanesElems.push(
+            <OnePlaneTableRow key={onePlane["icao-pic"]}
+                              excludedMeta={excludedMeta}
+                              onePlane={onePlane}
 
-                                                      currRating={props.planeRating[onePlane['icao-pic'].toLowerCase()]}
-                                                      updateRatingFn={props.updateRatingFn}
+                              currRating={props.planeRating[onePlane['icao-pic'].toLowerCase()]}
+                              updateRatingFn={props.updateRatingFn}
 
-                                                      currFavorite={props.favoritePlanes.includes(onePlane['icao-pic'].toLowerCase())}
-                                                      updateFavoriteFn={props.updateFavoriteFn}/>)
+                              currFavorite={props.favoritePlanes.includes(onePlane['icao-pic'].toLowerCase())}
+                              updateFavoriteFn={props.updateFavoriteFn} />
+        );
     }
 
     return (
         <tbody>
         {selectedAirplanesElems}
         </tbody>
-    )
+    );
 }
 
 function OnePlaneTableRow(props) {
@@ -443,7 +449,7 @@ function OnePlaneTableRow(props) {
     let tdElems = [];
     for (let oneMeta of Object.keys(props.onePlane)) {
         if (!props.excludedMeta.includes(oneMeta)) {
-            tdElems.push(<td key={oneMeta}>{props.onePlane[oneMeta]}</td>)
+            tdElems.push(<td key={oneMeta}>{props.onePlane[oneMeta]}</td>);
         }
     }
 
@@ -475,5 +481,5 @@ function OnePlaneTableRow(props) {
             </td>
             {tdElems}
         </tr>
-    )
+    );
 }
