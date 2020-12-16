@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
 
+import * as d3 from 'd3-fetch';
+
+import React, {useEffect, useState} from 'react';
 import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
 
 import Dashboard, { DASHBOARD_VIEWS } from './Dashboard.js';
@@ -8,8 +10,51 @@ import { SiteHeader, PageJumbotron, SiteFooter } from './SiteElements.js';
 import { ComparisonPage } from './ComparisonPage.js';
 import { toggleElementInArray } from './util/array.js';
 import ScrollToTop from './util/ScrollToTop.js';
+import ReactDOM from "react-dom";
+import './css/splash.css'; // the css that defines progress bar before airplane data finished AJAXing
+import {Progress} from "reactstrap";
 
-export default function App(props) {
+export default function App() {
+    const [airplaneDisplayMetaName, setAirplaneDisplayMetaName] = useState({});
+    const [airplaneData, setAirplaneData] = useState([]);
+    const [progress, setProgress] =  useState(25);
+
+    useEffect(()=> {
+        // Load airplane data, will be in an array of objects, whereas 1 object means 1 airplane
+        // The first object describe how shorthand key correspond to full metadata name, such as {cruise_range: "Cruise Range (N miles)"}
+        d3.csv('/data/airplanes.csv')
+            .then(function (text) {
+                setProgress(75);
+                setAirplaneDisplayMetaName(text[0]); //{make: "Make", model: "Model", series: "Production Series",...s}
+                setAirplaneData(text.slice(1, text.length)); // 0: {make: "Airbus", model: "A220-300", …} 1: {make: "Airbus", model: "A320neo", …}
+            }).then(function () {
+            // Show 75% for 0.3 second before proceeding for user-friendliness
+            setTimeout(()=>{ setProgress(100);}, 300);
+            // Show 100% for 1 second before proceeding for user-friendliness
+            setTimeout(()=>{ setProgress(-1);}, 1000);
+            });
+        // This 50% will be immediately called after d3 begins processing the csv
+        setProgress(50);
+    }, []);
+
+    // Return loading screen if not finished processing airplane data
+    if (progress !== -1) {
+        return (
+            <>
+                <SiteHeader appName="AeroView" logo="/img/branding-logo.svg" showNavLink={false} />
+                <PageJumbotron title='Loading airplanes data...'/>
+                <main>
+                    <Progress className="progress-bar-landing" value={progress} />
+                </main>
+                <SiteFooter/>
+            </>
+        )
+    }
+
+    return (<AppLoaded airplaneDisplayMetaName={airplaneDisplayMetaName} airplaneData={airplaneData}/>);
+}
+
+function AppLoaded(props) {
     /*  airplaneDisplayMetaName: An object that maps the shorthand metadata key to display-friendly full name
         airplaneData: An array of objects: 1 object represent 1 airplane whose metadata key has the metadata value
      */

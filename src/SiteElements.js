@@ -12,9 +12,9 @@ import { useMobileView } from './util/media-query.js';
  * Props:
  * - appName: the name of the app
  * - logo: path to the app's logo file
- * - navLinks: an array of navigation links, where each link has 'name' and
+ * - showNavLink: a boolean value (default to true if not specified) that determines whether we show the navigation link
+ * - navLinks: (optional if showNavLink is false) an array of navigation links, where each link has 'name' and
  *     'url' properties for the link's display name and target URL
- * - showNavLink: a boolean value (default to true) that determines whether we show the navigation link
  */
 export function SiteHeader(props) {
     const mobileView = useMobileView();
