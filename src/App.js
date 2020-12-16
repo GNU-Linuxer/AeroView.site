@@ -12,8 +12,8 @@ import { ComparisonPage } from './ComparisonPage.js';
 import { toggleElementInArray } from './util/array.js';
 import ScrollToTop from './util/ScrollToTop.js';
 
-// The stylesheet for progress bar before airplane data finished loading
-import './css/splash.css';
+// The stylesheet for loading screen shown before airplane data is available
+import './css/loading-screen.css';
 
 export default function App() {
     // State variables for updating data after loading completes
