@@ -91,17 +91,17 @@ export function ComparisonPage(props) {
 // using the widthInput parameter that denotes the width of screen
 function calculateNumMeta(widthInput) {
     //console.log(widthInput);
-    // large desktop screen
-    if (widthInput >= 768) {
+    // tablet and desktop screen
+    if (widthInput >= 576) {
         let availableSpace = widthInput - 200;
         // ECMAScript 6 feature; use Math.floor(decimal); for old browser
         // 120 means reserving up to 120px width for all metadata column (except make, model, and picture)
         return (Math.trunc(availableSpace / 260));
     }
-    // mobile and small desktop screen (the everything else)
+    // mobile
     else {
-        let availableSpace = widthInput - 190;
-        return (Math.trunc(availableSpace / 210));
+        let availableSpace = widthInput - 130;
+        return (Math.trunc(availableSpace / 160));
     }
 }
 
@@ -268,7 +268,7 @@ function OnePlaneCol(props) {
     // Airplane name and star rating
     planeInfoElems.push(<div key='name' className="chart-cell name-row">
                             <span>{props.onePlane['make'] + ' ' + props.onePlane['model']}</span>
-                            <div>
+                            <div className='comparison-page-star'>
                                 <StarRating maxStars={5}
                                             rating={props.planeRating[props.onePlane['icao-pic'].toLowerCase()]}
                                             updateRatingCallback={newRating =>

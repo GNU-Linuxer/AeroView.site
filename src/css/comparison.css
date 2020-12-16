@@ -35,13 +35,7 @@
 
 .chart-content {
     display: grid;
-
-    /* 7 means 7 rows of data (this is a hard-coded value that must be modified when number of metadata differs) */
-    /*grid-template-rows: repeat(18, auto);*/
     grid-auto-flow: column;
-    /*grid-template-columns: auto;*/
-    /*grid-column: 1;*/
-    /*border: 3px solid;*/
 }
 
 /* Columns */
@@ -49,7 +43,7 @@
 .header-column {
     background-color: lightgray;
     display: grid;
-    max-width: 200px;
+    max-width: 120px;
     padding-left: 5px;
     margin-right: 20px;
     font-weight: bold;
@@ -66,16 +60,16 @@
 .chart-cell {
     margin: 0;
     padding: 0.5em;
-    min-height: 75px; /* Line height for rest of cells */
+    min-height: 100px; /* Line height for rest of cells (larger value for mobile device to take account metadata text overflow that cause mis-alignment to cells) */
 }
 
 /* Special setting for name and picture rows*/
 .name-row {
-    min-height: 90px;
+    min-height: 100px;
 }
 
 .picture-row {
-    min-height: 160px;
+    min-height: 100px;
 }
 
 /* Try to position Name and Picture text vertically center */
@@ -84,13 +78,7 @@
 }
 
 .header-column .picture-row {
-    padding-top: 60px;
-}
-
-/* Larger font size for plane name */
-.column .name-row {
-    font-size: 1.25em;
-    font-weight: bold;
+    padding-top: 40px;
 }
 
 .comparison-tile-image {
@@ -98,9 +86,53 @@
     height: 100px;
     object-fit: cover;
 }
+/* Reduce the star size to prevent overflow*/
+@media (max-width: 576px) {
+    .comparison-page-star {
+        font-size: 85%;
+    }
+}
+
+/* Media quaries*/
+@media (min-width: 576px) {
+    .header-column {
+        /* The header column should be wider on tablet and larger screen*/
+        max-width: 200px;
+    }
+
+    .name-row {
+        min-height: 90px;
+    }
+
+
+    .header-column .picture-row {
+        padding-top: 40px;
+    }
+
+    /* Larger font size for plane name */
+    .column .name-row {
+        font-size: 1.25em;
+        font-weight: bold;
+    }
+
+    .chart-cell {
+        min-height: 75px; /* Line height for rest of cells */
+    }
+
+    .picture-row {
+        min-height: 100px;
+    }
+
+}
 
 @media (min-width: 1024px) {
     .comparison-tile-image {
         height: 150px;
+    }
+    .header-column .picture-row {
+        padding-top: 60px;
+    }
+    .picture-row {
+        min-height: 150px;
     }
 }
