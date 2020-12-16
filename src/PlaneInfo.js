@@ -5,7 +5,6 @@
 
 import React, {useState, useRef, useEffect} from 'react';
 import { useParams } from 'react-router-dom';
-import { useMobileView } from './util/media-query.js';
 
 import './css/site-elements.css';
 import './css/plane-info.css';
