@@ -6,7 +6,7 @@
 import React, {useState, useRef, useEffect} from 'react';
 import { useParams } from 'react-router-dom';
 
-import './css/site-elements.css';
+// import './css/site-elements.css';
 import './css/plane-info.css';
 import { StarRating, FavoriteButton } from "./PlaneWidgets";
 import {PageJumbotron} from "./SiteElements";
