@@ -80,7 +80,7 @@ export default function PlaneInfo(props) {
 
     return (
         <div>
-            <PageJumbotron title="Plane Information"
+            <PageJumbotron title={planeName}
                            image={getPlaneImagePath(planeInfo)}/>
             <main className="plane-info-content">
                 <span className="plane-info-left-column">
