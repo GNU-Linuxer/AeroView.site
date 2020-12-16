@@ -107,7 +107,6 @@ function calculateNumMeta(widthInput) {
 
 function RenderDropDowns(props) {
     let ComparisonDropdownElems = [];
-    let limit = 5;
     // Restrict how many columns to display based on available browser width
     for (let i = 0; i < props.numCol; i = i + 1) {
         let currSelection = props.displayPlane[i];
@@ -185,7 +184,6 @@ function OneComparisonDropdownItem(props) {
 
 function RenderGrid(props) {
     let planeContentElems = [];
-    let limit = 9;
     // Restrict how many columns to display based on available browser width
     for (let i = 0; i < props.numCol; i = i + 1) {
         //console.log(props.displayPlane[i]);

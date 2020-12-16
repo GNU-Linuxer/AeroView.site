@@ -1,4 +1,3 @@
-
 import * as d3 from 'd3-fetch';
 
 import React, {useEffect, useState} from 'react';
@@ -10,7 +9,7 @@ import { SiteHeader, PageJumbotron, SiteFooter } from './SiteElements.js';
 import { ComparisonPage } from './ComparisonPage.js';
 import { toggleElementInArray } from './util/array.js';
 import ScrollToTop from './util/ScrollToTop.js';
-import ReactDOM from "react-dom";
+
 import './css/splash.css'; // the css that defines progress bar before airplane data finished AJAXing
 import {Progress} from "reactstrap";
 

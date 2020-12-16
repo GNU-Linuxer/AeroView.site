@@ -204,7 +204,7 @@ function FilterSelector(props) {
     let types = [...new Set(props.airplaneData.map(plane => plane.type))];
 
     return (
-        <ButtonDropdown isOpen={buttonActivated}
+        <ButtonDropdown isOpen={buttonActivated} direction='down'
                         toggle={() => setButtonActivated(!buttonActivated)}>
             <DropdownToggle tag="button">
                 <FontAwesomeIcon icon={faFilter} />
@@ -241,7 +241,7 @@ function MetadataSelector(props) {
     let metaKeys = Object.keys(props.airplaneData[0]);
 
     return (
-        <ButtonDropdown isOpen={buttonActivated}
+        <ButtonDropdown isOpen={buttonActivated} direction='down'
                         toggle={() => setButtonActivated(!buttonActivated)}>
             <DropdownToggle tag="button">
                 <FontAwesomeIcon icon={faEllipsisV} />
