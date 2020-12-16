@@ -31,10 +31,11 @@ export default function App() {
                 setAirplaneDisplayMetaName(text[0]); //{make: "Make", model: "Model", series: "Production Series",...s}
                 setAirplaneData(text.slice(1, text.length)); // 0: {make: "Airbus", model: "A220-300", …} 1: {make: "Airbus", model: "A320neo", …}
             }).then(() => {
-            // Show 75% for 0.3 second before proceeding for user-friendliness
+            // Show 75% for 0.2 second before proceeding for user-friendliness
+            // Reason: loading page can't stay too short for a very fast device (users are curious what's the loading page look like)
             setTimeout(() => {
                 setProgress(100);
-            }, 300);
+            }, 200);
             // Show 100% for 1 second before proceeding for user-friendliness
             setTimeout(() => {
                 setProgress(-1);
