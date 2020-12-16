@@ -14,6 +14,7 @@ import { useMobileView } from './util/media-query.js';
  * - logo: path to the app's logo file
  * - navLinks: an array of navigation links, where each link has 'name' and
  *     'url' properties for the link's display name and target URL
+ * - showNavLink: a boolean value (default to true) that determines whether we show the navigation link
  */
 export function SiteHeader(props) {
     const mobileView = useMobileView();
@@ -21,17 +22,23 @@ export function SiteHeader(props) {
 
     const toggleButton = () => setButtonActivated(!buttonActivated);
 
-    let navButton = <NavButton expanded={buttonActivated}
+    let showNavLink = true;
+    if (props.showNavLink !== undefined){
+        showNavLink = props.showNavLink;
+    }
+
+    const navButton = <NavButton expanded={buttonActivated}
                                clickCallback={toggleButton} />;
-    let navLinks = <NavLinks links={props.navLinks}
+    const navLinks = <NavLinks links={props.navLinks}
                              clickCallback={toggleButton} />;
+    const navLinksContainer = (<div className="site-nav-widget">
+                                    {mobileView && navButton}
+                                    {(buttonActivated || !mobileView) && navLinks}
+                                </div>)
     return (
         <header className="site-header">
             <SiteBranding logo={props.logo} name={props.appName} />
-            <div className="site-nav-widget">
-                {mobileView && navButton}
-                {(buttonActivated || !mobileView) && navLinks}
-            </div>
+            {showNavLink ? navLinksContainer : null}
         </header>
     );
 }
