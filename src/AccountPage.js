@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
+import { PlaneInfo } from './PlaneInfo';
 
 import './css/account.css'
 
@@ -23,47 +24,27 @@ const uiConfig = {
   },
 };
 
-export function AccountPage() {
+export function AccountPage(props) {
   const [errorMessage, setErrorMessage] = useState(undefined);
-  const [user, setUser] = useState(undefined);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const authUnregisterFunction = firebase.auth().onAuthStateChanged((firebaseUser) => {
-
-      if (firebaseUser) {
-        console.log("logged in as " + firebaseUser.displayName);
-        setUser(firebaseUser);
-        setIsLoading(false);
-      } else {
-        console.log("logged out!");
-        setUser(null);
-        setIsLoading(false);
-      }
-    })
-
-    return function cleanup() {
-      authUnregisterFunction();
-    }
-
-  }, []) // only run hook on first load
 
   const handleSignOut = () => {
     setErrorMessage(null);
     firebase.auth().signOut();
   }
 
-  let content = null;
+  let accountPageContent = null;
 
-  if (!user) {
-    content = (
+  console.log(props.currentUser);
+
+  if (!props.currentUser) {
+    accountPageContent = (
       <StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={firebase.auth()} />
     )
   } else {
     // Render sign out button
-    content = (
+    accountPageContent = (
       <div>
-        <button className="btn btn-warning" onClick={handleSignOut}>Log Out {user.displayName}</button>
+        <button className="btn btn-warning" onClick={handleSignOut}>Log Out {props.currentUser.displayName}</button>
       </div>
     )
   }
@@ -71,7 +52,7 @@ export function AccountPage() {
   return (
     <div>
       <AccountModal />
-      {content}
+      {accountPageContent}
     </div>
   )
 }

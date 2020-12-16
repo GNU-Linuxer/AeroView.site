@@ -17,9 +17,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 export function FavoriteButton(props) {
     return (
         <button className={`favorite-heart-button ${props.className}`}
-                onClick={() => props.updateFavorCallback()}>
+            onClick={() => props.updateFavorCallback()}>
             {/* Switch between 'far' and 'fas' to select outlined star or solid star */}
-            <FontAwesomeIcon icon={props.favor ? ['fas', 'heart'] : ['far', 'heart']}/>
+            <FontAwesomeIcon icon={props.favor ? ['fas', 'heart'] : ['far', 'heart']} />
         </button>
     );
 }
@@ -37,7 +37,7 @@ export function StarRating(props) {
     let StarElems = [];
     for (let i = 1; i <= props.maxStars; i = i + 1) {
         StarElems.push(<Star key={i} ordinal={i} selected={props.rating >= i}
-                             clickCallback={props.updateRatingCallback}/>);
+            clickCallback={props.updateRatingCallback} />);
     }
 
     return (
@@ -58,8 +58,8 @@ export function StarRating(props) {
 function Star(props) {
     return (
         <button className="star-rating-button"
-                onClick={() => props.clickCallback(props.ordinal)}>
-            <FontAwesomeIcon icon={props.selected ? ['fas', 'star'] : ['far', 'star']}/>
+            onClick={() => props.clickCallback(props.ordinal)}>
+            <FontAwesomeIcon icon={props.selected ? ['fas', 'star'] : ['far', 'star']} />
         </button>
     );
 }

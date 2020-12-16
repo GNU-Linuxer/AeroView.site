@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
 
 import Dashboard, { DASHBOARD_VIEWS } from './Dashboard.js';
-import PlaneInfo from './PlaneInfo.js';
+import { PlaneInfo } from './PlaneInfo.js';
 import { SiteHeader, PageJumbotron, SiteFooter } from './SiteElements.js';
 import { ComparisonPage } from './ComparisonPage.js';
 import { AccountPage } from './AccountPage.js';
@@ -12,6 +12,7 @@ import { toggleElementInArray } from './util/array.js';
 import firebase from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/database';
+
 
 const firebaseConfig = {
     apiKey: "AIzaSyCufuelOrGrQigpl6vIQsSk7qzzlyCT52E",
@@ -25,7 +26,7 @@ const firebaseConfig = {
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 
-export default function App(props) {
+export function App(props) {
     /*  airplaneDisplayMetaName: An object that maps the shorthand metadata key to display-friendly full name
         airplaneData: An array of objects: 1 object represent 1 airplane whose metadata key has the metadata value
      */
@@ -33,12 +34,50 @@ export default function App(props) {
     // To preserve dashboard view, it must be an app-level state defined here
     const [dashboardView, setDashboardView] = useState(DASHBOARD_VIEWS.LIST);
 
+    const [user, setUser] = useState(undefined);
+    const [errorMessage, setErrorMessage] = useState(undefined);
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        const authUnregisterFunction = firebase.auth().onAuthStateChanged((firebaseUser) => {
+
+            if (firebaseUser) {
+                console.log("logged in as " + firebaseUser.displayName);
+                setUser(firebaseUser);
+                setIsLoading(false);
+            } else {
+                console.log("logged out!");
+                setUser(null);
+                setIsLoading(false);
+            }
+        })
+
+        return function cleanup() {
+            authUnregisterFunction();
+        }
+
+    }, []) // only run hook on first load
+
     // Handle change of 1 airplane's favorite toggle (all favorite airplanes' all-lowercase icao code is stored in this array)
     // Temporary: all planes are not favorite
     // This should read from user data to re-load previously saved rating
     const [favoritePlanes, setFavoritePlanes] = useState([]);
-    const updateFavoritePlane = icao => setFavoritePlanes(
-        toggleElementInArray(icao, favoritePlanes));
+    const updateFavoritePlane = icao => {
+        setFavoritePlanes(toggleElementInArray(icao, favoritePlanes));
+        console.log(favoritePlanes);
+
+        if (icao !== undefined) {
+            const newUserFavoriteData = {
+                userID: user.uid,
+                userName: user.displayName,
+                // starRating: planeRating,
+                favoritePlanes: favoritePlanes
+            }
+
+            const usersRef = firebase.database().ref('users/favoritePlanes');
+            usersRef.push(newUserFavoriteData);
+        }
+    }
 
     // Temporary: set the initial rating of all plane to 0 (if the value changes, the star-rendering will change)
     // This should read from user data to re-load previously saved rating
@@ -59,8 +98,18 @@ export default function App(props) {
         } else {
             updatedPlaneRating[icao] = rating;
         }
-        console.log(updatedPlaneRating);
+        //console.log(updatedPlaneRating);
         setRating(updatedPlaneRating);
+
+        const newUserRatingData = {
+            userID: user.uid,
+            userName: user.displayName,
+            starRating: updatedPlaneRating,
+            // favoritePlanes: favoritePlanes
+        }
+
+        const usersRef = firebase.database().ref('users/starRatings');
+        usersRef.push(newUserRatingData);
     }
 
     let routesForNav = [
@@ -96,7 +145,7 @@ export default function App(props) {
         },
         {
             name: "Account", title: "Create an account or log in", url: "/account",
-            view: <AccountPage />
+            view: <AccountPage currentUser={user} />
         }
     ];
 
@@ -126,7 +175,8 @@ export default function App(props) {
                             ratings={planeRating}
                             updateRatingsCallback={updatePlaneRating}
                             favorites={favoritePlanes}
-                            updateFavoritesCallback={updateFavoritePlane} />
+                            updateFavoritesCallback={updateFavoritePlane}
+                            currentUser={user} />
                     </Route>
                     <Redirect to="/" />
                 </Switch>

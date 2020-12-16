@@ -3,7 +3,8 @@
  * information.
  */
 
-import React, {useState, useRef, useEffect} from 'react';
+import React, { useState, useRef, useEffect } from 'react';
+import firebase from 'firebase/app';
 import { useParams } from 'react-router-dom';
 import { useMobileView } from './util/media-query.js';
 
@@ -14,7 +15,7 @@ import { StarRating, FavoriteButton } from "./PlaneWidgets";
 
 // Reactstrap depends on bootstrap
 import 'bootstrap/dist/css/bootstrap.min.css';
-import {Alert} from 'reactstrap';
+import { Alert } from 'reactstrap';
 
 //SunEditor
 import SunEditor from 'suneditor-react';
@@ -44,15 +45,37 @@ const HIDDEN_METADATA = ["make", "model", "icao-pic"];
  *     which takes a single argument for the ICAO code of the plane whose
  *     favorite status is changed
  */
-export default function PlaneInfo(props) {
+export function PlaneInfo(props) {
 
     // Jason: initial content and new content should directly interact with FireBase user database
+    console.log(props.favorites);
+    console.log(props.ratings);
+
+    console.log(props.currentUser);
+
+    const [favPlanes, setFavPlanes] = useState('');
+    const [note, setNote] = useState('');
+    const [comparisons, setComparisons] = useState('');
+
+    // console.log(favoritePlanes);
+
+    // if (favoritePlanes.length > 0) {
+    //     const newUserFavoriteData = {
+    //         userID: user.uid,
+    //         userName: user.displayName,
+    //         // starRating: planeRating,
+    //         favoritePlanes: favoritePlanes
+    //     }
+
+    //     const usersRef = firebase.database().ref('users/favoritePlanes');
+    //     usersRef.push(newUserFavoriteData);
+    // }
 
 
     // Functions that handle note-taking textbox content change
     // Use the initialState to load user previously-saved data
     const [content, setContent] = useState('');
-    const handleContentChange = function(newContent) {
+    const handleContentChange = function (newContent) {
         console.log(newContent);
         setContent(newContent);
     };
@@ -64,10 +87,10 @@ export default function PlaneInfo(props) {
         return (
             <div>
                 <Jumbotron title="Plane Information"
-                           backgroundImage="/img/main-photo.jpg" />
+                    backgroundImage="/img/main-photo.jpg" />
                 <main className="page-content">
                     {/*I'm not sure whether status={404} will let React Router respond 404 on non-existent ICAO code*/}
-                    <PlaneNotFoundMessage icao={planeICAOCode} status={404}/>
+                    <PlaneNotFoundMessage icao={planeICAOCode} status={404} />
                 </main>
             </div>
         );
@@ -82,29 +105,30 @@ export default function PlaneInfo(props) {
     return (
         <div>
             <Jumbotron title={planeName}
-                       backgroundImage={getPlaneImagePath(planeInfo)} />
+                backgroundImage={getPlaneImagePath(planeInfo)} />
             <main className="plane-info-content">
                 <span className="plane-info-left-column">
                     <PlaneImage planeInfo={planeInfo} planeName={planeName} />
                     <span className='d-none d-lg-block' >
-                        <NoteEditor content={content} handleContentChangeFn={handleContentChange} planeName={planeName}/>
+                        <NoteEditor content={content} handleContentChangeFn={handleContentChange} planeName={planeName} />
                     </span>
                 </span>
 
                 <div className="plane-info-data-container">
                     <Widgets rating={props.ratings[lowerCaseICAO]}
-                             updateRatingCallback={updateRating}
-                             favor={props.favorites.includes(lowerCaseICAO)}
-                             updateFavorCallback={toggleFavorite} />
+                        updateRatingCallback={updateRating}
+                        favor={props.favorites.includes(lowerCaseICAO)}
+                        updateFavorCallback={toggleFavorite}
+                    />
                     <Specification airplaneDisplayMetaName={props.airplaneDisplayMetaName}
-                                   planeInfo={planeInfo} />
+                        planeInfo={planeInfo} />
                     <span className='d-none d-lg-block'>
-                        <RunwayValidation icao={lowerCaseICAO} airplaneData={props.airplaneData}/>
+                        <RunwayValidation icao={lowerCaseICAO} airplaneData={props.airplaneData} />
                     </span>
                 </div>
                 <span className='d-lg-none'>
-                    <NoteEditor content={content} handleContentChangeFn={handleContentChange} planeName={planeName}/>
-                    <RunwayValidation icao={lowerCaseICAO} airplaneData={props.airplaneData}/>
+                    <NoteEditor content={content} handleContentChangeFn={handleContentChange} planeName={planeName} />
+                    <RunwayValidation icao={lowerCaseICAO} airplaneData={props.airplaneData} />
                 </span>
             </main>
         </div>
@@ -144,8 +168,8 @@ function PlaneImage(props) {
     return (
         <div className="plane-info-plane-img-container">
             <img className="plane-info-plane-img"
-                 src={getPlaneImagePath(props.planeInfo)}
-                 alt={props.planeName} />
+                src={getPlaneImagePath(props.planeInfo)}
+                alt={props.planeName} />
         </div>
     );
 }
@@ -166,10 +190,12 @@ function Widgets(props) {
     return (
         <div className="plane-info-widgets">
             <StarRating maxStars={5}
-                        rating={props.rating}
-                        updateRatingCallback={props.updateRatingCallback} />
+                rating={props.rating}
+                updateRatingCallback={props.updateRatingCallback}
+            />
             <FavoriteButton favor={props.favor}
-                            updateFavorCallback={props.updateFavorCallback} />
+                updateFavorCallback={props.updateFavorCallback}
+            />
         </div>
     );
 }
@@ -227,7 +253,7 @@ function getPlaneImagePath(planeInfo) {
     return `/plane-thumbnail/${planeInfo["icao-pic"].toLowerCase()}.jpg`;
 }
 
-function NoteEditor(props){
+function NoteEditor(props) {
     /* props:
         content: the content that should pass to editor's textbox
         handleContentChangeFn: the callback function that handles content change
@@ -236,10 +262,10 @@ function NoteEditor(props){
     const editorRef = useRef();
 
 
-    const options ={
+    const options = {
         height: 200,
         //Available parameter can be found at https://github.com/JiHong88/SunEditor/blob/master/README.md#2-load-all-plugins
-        buttonList: [['undo', 'redo'], ['formatBlock', 'font', 'fontSize'], ['bold', 'underline', 'italic', 'strike', 'link', 'removeFormat'], ['align', 'list'],['outdent', 'indent'], ['print']],
+        buttonList: [['undo', 'redo'], ['formatBlock', 'font', 'fontSize'], ['bold', 'underline', 'italic', 'strike', 'link', 'removeFormat'], ['align', 'list'], ['outdent', 'indent'], ['print']],
         stickyToolbar: false
     }
 
@@ -252,12 +278,12 @@ function NoteEditor(props){
     return (
         <div className='plane-info-note-editor'>
             <SunEditor ref={editorRef}
-                       setContents={props.content}
-                       setOptions={options}
-                       placeholder={"Take a note on "+ props.planeName}
-                       setDefaultStyle="font-family: sans-serif; font-size: 16px;"
+                setContents={props.content}
+                setOptions={options}
+                placeholder={"Take a note on " + props.planeName}
+                setDefaultStyle="font-family: sans-serif; font-size: 16px;"
 
-                       onChange={props.handleContentChangeFn}/>
+                onChange={props.handleContentChangeFn} />
         </div>
     );
 }
