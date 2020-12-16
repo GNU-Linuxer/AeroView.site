@@ -50,7 +50,7 @@ export function ComparisonPage(props) {
     useEffect(() => {
         const debouncedHandleResize = debounce(function handleResize() {
             setNumCol(calculateNumMeta(window.innerWidth));
-        }, 5) // 5 in mili-second unit means re-render components with a maximum frequency of once per 5ms
+        }, 100) // 100 in mili-second unit means re-render components with a maximum frequency of once per 5ms
         // Recommend to set to 100 or 1000 for production release
 
         window.addEventListener('resize', debouncedHandleResize);

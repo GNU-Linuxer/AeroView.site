@@ -90,7 +90,6 @@ function AppLoaded(props) {
         console.log(updatedPlaneRating);
         setRating(updatedPlaneRating);
     }
-
     let routesForNav = [
         {
             name: "Dashboard", title: "Airplane Dashboard", url: "/",

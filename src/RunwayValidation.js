@@ -21,9 +21,10 @@ export default function RunwayValidation(props) {
     const [takeoff, setTakeoff] = useState(0);
     const [landing, setLanding] = useState(0);
     const [fullName, setFullName] = useState('');
-    const [isRunwayDataLoaded, setIsRunwayDataLoaded] =  useState(false);
-    const [isAirportDataLoaded, setIsAirportDataLoaded] =  useState(false);
-    const [isAirplaneDataLoaded, setIsAirplaneDataLoaded] =  useState(false);
+    // On developer console, each fetch call is called twice, lengthen the time for device on slow 3G network
+    const [isRunwayDataLoaded, setIsRunwayDataLoaded] = useState(false);
+    const [isAirportDataLoaded, setIsAirportDataLoaded] = useState(false);
+    const [isAirplaneDataLoaded, setIsAirplaneDataLoaded] = useState(false);
 
     useEffect(() => {
         // Fetch the longest airport runway data
@@ -34,6 +35,8 @@ export default function RunwayValidation(props) {
             .then((data) => {
                 setRunway(data);
             }).then(() => setIsRunwayDataLoaded(true));
+        // Immediately set this value to true to prevent calling this fetch again
+
 
         // Fetch the airport name data
         fetch("/data/airport-icao-name.json")
@@ -43,6 +46,7 @@ export default function RunwayValidation(props) {
             .then((data) => {
                 setAirportName(data);
             }).then(() => setIsAirportDataLoaded(true));
+        // Immediately set this value to true to prevent calling this fetch again
 
         // Fetch this airplane's takeoff and landing distance
         for (let onePlane of props.airplaneData) {
@@ -53,21 +57,22 @@ export default function RunwayValidation(props) {
             }
         }
         setIsAirplaneDataLoaded(true);
-    },[]);
+    }, [props.airplaneData, props.icao]);
 
     // Render a spinner when any of the data is still loading
     if (!(isRunwayDataLoaded && isAirportDataLoaded && isAirplaneDataLoaded)) {
         return (
             <div className="runway-validation-spinner">
                 <h1> Loading Runway Data...</h1>
-                <Spinner color="primary" className="splash-spinner" />
+                <Spinner color="primary" className="splash-spinner"/>
             </div>
         );
     }
 
     // Once data is loaded, return the actual component
     return (
-        <ContentContainer fullName={fullName} takeoff={takeoff} landing={landing} runway={runway} airportName={airportName}/>
+        <ContentContainer fullName={fullName} takeoff={takeoff} landing={landing} runway={runway}
+                          airportName={airportName}/>
     );
 }
 
@@ -93,7 +98,8 @@ function ContentContainer(props) {
     returnElem.push(<h1 key='title'>{"Airports"}</h1>);
     returnElem.push(<p
         key='introduction'>{"Find whether " + props.fullName + " can take off and land at your favorite airport"}</p>);
-    returnElem.push(<SearchAirport selectAirportFn={selectAirport} clearAirportFn={clearAirport} key='search airport' airportName={props.airportName}/>);
+    returnElem.push(<SearchAirport selectAirportFn={selectAirport} clearAirportFn={clearAirport} key='search airport'
+                                   airportName={props.airportName}/>);
     // Only render the comparison result when there's something selected
     if (airportICAO.length > 0) {
         returnElem.push(<DisplayResult icao={airportICAO}
@@ -166,7 +172,7 @@ function SearchAirport(props) {
         const inputLength = inputValue.length;
 
         let suggestionArr = []; // Arrays of objects
-        let numSuggestion = 0;
+        let numSuggestion;
         if (window.innerWidth >= 576) {
             numSuggestion = 10;
         } else {
