@@ -3,20 +3,6 @@
  * page.
  */
 
-/* Jumbotron */
-
-.plane-info-jumbotron {
-    font-size: 1.5rem;
-    font-weight: bold;
-    text-align: center;
-    color: white;
-    background-color: hsl(205, 100%, 25%);
-    /* Leave space for site header bar */
-    margin-top: 56px;
-    /* Add padding to top and bottom */
-    padding: 1.25em;
-}
-
 /* Root content container */
 
 .plane-info-content {
@@ -83,19 +69,6 @@
 /* Media queries */
 
 @media (min-width: 768px) {
-    .plane-info-jumbotron {
-        font-size: 2.75rem;
-        background-position: center;
-        background-size: cover;
-        /* Leave space between jumbotron and main content */
-        margin-bottom: 24px;
-    }
-
-
-    .plane-info-plane-img-container {
-
-    }
-
     .plane-info-data-container {
         min-width: 480px;
         margin-right: 16px;
