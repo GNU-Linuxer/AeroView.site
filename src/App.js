@@ -66,7 +66,7 @@ export default function App() {
 function LoadingPage(props) {
     return (
         <>
-            <SiteHeader appName="AeroView" logo="/img/branding-logo.svg" showNavLink={false} />
+            <SiteHeader appName="AeroView" logo="/img/branding-logo.svg" navLinks={[]} />
             <PageJumbotron title='Loading airplanes data...'/>
             <main>
                 <Progress className="progress-bar-landing" value={props.progress} />
