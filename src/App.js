@@ -74,7 +74,7 @@ export function App(props) {
                 favoritePlanes: favoritePlanes
             }
 
-            const usersRef = firebase.database().ref('users/favoritePlanes');
+            const usersRef = firebase.database().ref("users/" + user.uid);
             usersRef.push(newUserFavoriteData);
         }
     }
@@ -108,7 +108,7 @@ export function App(props) {
             // favoritePlanes: favoritePlanes
         }
 
-        const usersRef = firebase.database().ref('users/starRatings');
+        const usersRef = firebase.database().ref('users');
         usersRef.push(newUserRatingData);
     }
 
