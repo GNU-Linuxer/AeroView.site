@@ -24,7 +24,11 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-firebase.initializeApp(firebaseConfig);
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+} else {
+    firebase.app();
+}
 
 export function App(props) {
     /*  airplaneDisplayMetaName: An object that maps the shorthand metadata key to display-friendly full name
@@ -63,20 +67,12 @@ export function App(props) {
     // This should read from user data to re-load previously saved rating
     const [favoritePlanes, setFavoritePlanes] = useState([]);
     const updateFavoritePlane = icao => {
-        setFavoritePlanes(toggleElementInArray(icao, favoritePlanes));
+        const newFavoritePlane = toggleElementInArray(icao, favoritePlanes);
         console.log(favoritePlanes);
 
-        if (icao !== undefined) {
-            const newUserFavoriteData = {
-                userID: user.uid,
-                userName: user.displayName,
-                // starRating: planeRating,
-                favoritePlanes: favoritePlanes
-            }
-
-            const usersRef = firebase.database().ref("users/" + user.uid);
-            usersRef.push(newUserFavoriteData);
-        }
+        const usersRef = firebase.database().ref("users/" + user.uid + "/favoritePlane/");
+        usersRef.set(newFavoritePlane);
+        setFavoritePlanes(newFavoritePlane);
     }
 
     // Temporary: set the initial rating of all plane to 0 (if the value changes, the star-rendering will change)
@@ -101,15 +97,9 @@ export function App(props) {
         //console.log(updatedPlaneRating);
         setRating(updatedPlaneRating);
 
-        const newUserRatingData = {
-            userID: user.uid,
-            userName: user.displayName,
-            starRating: updatedPlaneRating,
-            // favoritePlanes: favoritePlanes
-        }
 
-        const usersRef = firebase.database().ref('users');
-        usersRef.push(newUserRatingData);
+        const usersRef = firebase.database().ref('users/' + user.uid + "/starRating/");
+        usersRef.set(updatedPlaneRating);
     }
 
     let routesForNav = [
