@@ -3,13 +3,24 @@
  * information.
  */
 
-import React from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import { useParams } from 'react-router-dom';
 import { useMobileView } from './util/media-query.js';
 
 import './css/site-elements.css';
 import './css/plane-info.css';
 import { StarRating, FavoriteButton } from "./PlaneWidgets";
+
+
+// Reactstrap depends on bootstrap
+import 'bootstrap/dist/css/bootstrap.min.css';
+import {Alert} from 'reactstrap';
+
+//SunEditor
+import SunEditor from 'suneditor-react';
+import 'suneditor/dist/css/suneditor.min.css';
+
+import RunwayValidation from "./RunwayValidation";
 
 /*
  * An array of metadata keys that are hidden from the page
@@ -34,6 +45,18 @@ const HIDDEN_METADATA = ["make", "model", "icao-pic"];
  *     favorite status is changed
  */
 export default function PlaneInfo(props) {
+
+    // Jason: initial content and new content should directly interact with FireBase user database
+
+
+    // Functions that handle note-taking textbox content change
+    // Use the initialState to load user previously-saved data
+    const [content, setContent] = useState('');
+    const handleContentChange = function(newContent) {
+        console.log(newContent);
+        setContent(newContent);
+    };
+
     let planeICAOCode = useParams()["icao"];
     let planeInfo = props.airplaneData.filter(
         plane => plane["icao"] === planeICAOCode.toUpperCase())[0];
@@ -43,7 +66,8 @@ export default function PlaneInfo(props) {
                 <Jumbotron title="Plane Information"
                            backgroundImage="/img/main-photo.jpg" />
                 <main className="page-content">
-                    <PlaneNotFoundMessage icao={planeICAOCode} />
+                    {/*I'm not sure whether status={404} will let React Router respond 404 on non-existent ICAO code*/}
+                    <PlaneNotFoundMessage icao={planeICAOCode} status={404}/>
                 </main>
             </div>
         );
@@ -54,12 +78,19 @@ export default function PlaneInfo(props) {
         props.updateRatingsCallback(lowerCaseICAO, newRating);
     const toggleFavorite = () =>
         props.updateFavoritesCallback(lowerCaseICAO);
+
     return (
         <div>
             <Jumbotron title={planeName}
                        backgroundImage={getPlaneImagePath(planeInfo)} />
             <main className="plane-info-content">
-                <PlaneImage planeInfo={planeInfo} planeName={planeName} />
+                <span className="plane-info-left-column">
+                    <PlaneImage planeInfo={planeInfo} planeName={planeName} />
+                    <span className='d-none d-lg-block' >
+                        <NoteEditor content={content} handleContentChangeFn={handleContentChange} planeName={planeName}/>
+                    </span>
+                </span>
+
                 <div className="plane-info-data-container">
                     <Widgets rating={props.ratings[lowerCaseICAO]}
                              updateRatingCallback={updateRating}
@@ -67,7 +98,14 @@ export default function PlaneInfo(props) {
                              updateFavorCallback={toggleFavorite} />
                     <Specification airplaneDisplayMetaName={props.airplaneDisplayMetaName}
                                    planeInfo={planeInfo} />
+                    <span className='d-none d-lg-block'>
+                        <RunwayValidation icao={lowerCaseICAO} airplaneData={props.airplaneData}/>
+                    </span>
                 </div>
+                <span className='d-lg-none'>
+                    <NoteEditor content={content} handleContentChangeFn={handleContentChange} planeName={planeName}/>
+                    <RunwayValidation icao={lowerCaseICAO} airplaneData={props.airplaneData}/>
+                </span>
             </main>
         </div>
     );
@@ -172,9 +210,9 @@ function Specification(props) {
  */
 function PlaneNotFoundMessage(props) {
     return (
-        <p className="plane-info-err-msg">
-            Could not find plane with ICAO Code: {props.icao}
-        </p>
+        <Alert color="danger">
+            <div>Could not find plane with ICAO Code: <strong>{props.icao}</strong></div>
+        </Alert>
     );
 }
 
@@ -187,4 +225,39 @@ function PlaneNotFoundMessage(props) {
  */
 function getPlaneImagePath(planeInfo) {
     return `/plane-thumbnail/${planeInfo["icao-pic"].toLowerCase()}.jpg`;
+}
+
+function NoteEditor(props){
+    /* props:
+        content: the content that should pass to editor's textbox
+        handleContentChangeFn: the callback function that handles content change
+        planeName: airplane's full name (example: Boeing 737-800)
+     */
+    const editorRef = useRef();
+
+
+    const options ={
+        height: 200,
+        //Available parameter can be found at https://github.com/JiHong88/SunEditor/blob/master/README.md#2-load-all-plugins
+        buttonList: [['undo', 'redo'], ['formatBlock', 'font', 'fontSize'], ['bold', 'underline', 'italic', 'strike', 'link', 'removeFormat'], ['align', 'list'],['outdent', 'indent'], ['print']],
+        stickyToolbar: false
+    }
+
+    useEffect(() => {
+        // Get underlining core object here
+        // Notice that useEffect is been used because you have to make sure the editor is rendered.
+        //console.log(editorRef.current.editor.core);
+    }, []);
+    /*Note: the SunEditor will call onChange 1 seconds after user stops typing*/
+    return (
+        <div className='plane-info-note-editor'>
+            <SunEditor ref={editorRef}
+                       setContents={props.content}
+                       setOptions={options}
+                       placeholder={"Take a note on "+ props.planeName}
+                       setDefaultStyle="font-family: sans-serif; font-size: 16px;"
+
+                       onChange={props.handleContentChangeFn}/>
+        </div>
+    );
 }

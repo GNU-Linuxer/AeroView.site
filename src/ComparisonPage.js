@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from 'react';
+import './css/runway-validation.css';
 
 // Load custom style sheet
 import './css/site-elements.css';
@@ -184,7 +185,7 @@ function OneComparisonDropdownItem(props) {
 
 function RenderGrid(props) {
     let planeContentElems = [];
-    let limit = 5;
+    let limit = 9;
     // Restrict how many columns to display based on available browser width
     for (let i = 0; i < props.numCol; i = i + 1) {
         //console.log(props.displayPlane[i]);

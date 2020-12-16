@@ -7,6 +7,7 @@ import PlaneInfo from './PlaneInfo.js';
 import { SiteHeader, PageJumbotron, SiteFooter } from './SiteElements.js';
 import { ComparisonPage } from './ComparisonPage.js';
 import { toggleElementInArray } from './util/array.js';
+import ScrollToTop from './util/ScrollToTop.js';
 
 export default function App(props) {
     /*  airplaneDisplayMetaName: An object that maps the shorthand metadata key to display-friendly full name
@@ -81,6 +82,7 @@ export default function App(props) {
 
     return (
         <BrowserRouter>
+            <ScrollToTop>
             <div className="react-container">
                 <SiteHeader appName="AeroView"
                     logo="/img/branding-logo.svg"
@@ -111,6 +113,7 @@ export default function App(props) {
                 </Switch>
                 <SiteFooter />
             </div>
+            </ScrollToTop>
         </BrowserRouter>
     );
 }

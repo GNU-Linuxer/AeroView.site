@@ -25,15 +25,28 @@
     margin-bottom: 8px;
 }
 
-/* Plane image */
-
-.plane-info-plane-img-container {
+/*Desktop: Style the left column in the plane info page*/
+.plane-info-left-column {
+    display: flex;
+    justify-content: center; /* Ensure all content is center-positioned */
+    flex-wrap: wrap;
+    max-width: 100%;
     margin: 8px;
 }
 
+/* Plane image */
+
+/* Ensure the airplane picture is at the center of its parent container*/
+.plane-info-plane-img-container {
+    display: flex;
+    justify-content: center; /* Ensure all content is center-positioned */
+}
+
 .plane-info-plane-img {
-    display: block;
-    width: 100%;
+    /*text-align: center;*/
+    /*display: block;*/
+    width: 80%;
+    max-width: 450px;
     height: auto;
 }
 
@@ -62,6 +75,11 @@
     background-color: #eee;
 }
 
+/* Plane note-taking*/
+.plane-info-note-editor {
+    margin: 30px 8px 8px 8px;
+}
+
 /* Media queries */
 
 @media (min-width: 768px) {
@@ -73,14 +91,9 @@
         margin-bottom: 24px;
     }
 
-    .plane-info-content {
-        flex-direction: row;
-        justify-content: center;
-        margin-bottom: 24px;
-    }
 
     .plane-info-plane-img-container {
-        margin-left: 16px;
+
     }
 
     .plane-info-data-container {
@@ -92,5 +105,14 @@
 @media (min-width: 1024px) {
     .plane-info-plane-img-container {
         width: 600px;
+    }
+    .plane-info-content {
+        flex-direction: row;
+        justify-content: center;
+        margin-bottom: 24px;
+    }
+
+    .plane-info-left-column{
+        max-width: 50%;
     }
 }
