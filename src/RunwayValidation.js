@@ -93,7 +93,7 @@ function ContentContainer(props) {
     const clearAirport = () => setAirportICAO('');
 
     // Note the icao is the airport's icao code (case-sensitive)
-    const selectAirport = function (icao) {
+    const selectAirport = icao => {
         setAirportICAO(icao);
     }
 
@@ -144,7 +144,7 @@ function SearchAirport(props) {
     };
 
     // This function will clear the input and suggestion
-    const clearInput = function () {
+    const clearInput = () => {
         props.clearAirportFn();
         setValue('');
     }
@@ -169,7 +169,7 @@ function SearchAirport(props) {
 
 
     // Teach Autosuggest how to calculate suggestions for any given input value.
-    const getSuggestions = function (value) {
+    const getSuggestions = value => {
         const inputValue = value.trim();
         const inputLength = inputValue.length;
 
@@ -185,9 +185,6 @@ function SearchAirport(props) {
         if (inputLength !== 0) {
             // first, check whether user is typing an ICAO code (this shall be first result)
             for (let oneKey of Object.keys(props.airportName)) {
-                //console.log(oneKey);
-                //console.log(airportName[oneKey]);
-                //console.log(typeof(airportName[oneKey]));
                 if (counter >= numSuggestion) {
                     break; // Terminate for-loop early if we reach maximum number of suggestion
                 } else if (props.airportName[oneKey].toLowerCase().startsWith(value.toLowerCase())) {
@@ -214,13 +211,13 @@ function SearchAirport(props) {
     // When suggestion is clicked, Autosuggest needs to populate the input
     // based on the clicked suggestion. Teach Autosuggest how to calculate the
     // input value for every given suggestion.
-    const getSuggestionValue = function (suggestion) {
+    const getSuggestionValue = suggestion => {
         // Example value: KSEA  Seattle Tacoma International Airport
         return suggestion.name.substring(0, suggestion.name.indexOf('—') - 1) + " " + suggestion.name.substring(suggestion.name.indexOf('—') + 1);
     }
 
     // Use your imagination to render suggestions.
-    const renderSuggestion = function (suggestion) {
+    const renderSuggestion = suggestion => {
         // Note that suggestion is ONE suggestion object only (NOT an array of candidate objects)
         return (
             <span>
@@ -236,9 +233,14 @@ function SearchAirport(props) {
     }
 
     // How to handle when user clicks on a suggestion
-    const onSuggestionSelected = function (event, {suggestion, suggestionValue, suggestionIndex, sectionIndex, method}) {
+    const onSuggestionSelected = (event, {
+        suggestion,
+        suggestionValue,
+        suggestionIndex,
+        sectionIndex,
+        method
+    }) => {
         event.preventDefault();
-        //console.log(suggestion);
         props.selectAirportFn(suggestion['icao']); // this function's argument is the case-sensitive airport icao code
     }
 
@@ -252,18 +254,18 @@ function SearchAirport(props) {
     // Finally, render it!
     return (
         <span>
-                <Autosuggest
-                    suggestions={suggestions}
-                    onSuggestionsFetchRequested={onSuggestionsFetchRequested}
-                    onSuggestionsClearRequested={onSuggestionsClearRequested}
-                    onSuggestionSelected={onSuggestionSelected}
-                    getSuggestionValue={getSuggestionValue}
-                    renderInputComponent={renderInputComponent}
-                    renderSuggestion={renderSuggestion}
-                    inputProps={inputProps}
-                />
+            <Autosuggest
+                suggestions={suggestions}
+                onSuggestionsFetchRequested={onSuggestionsFetchRequested}
+                onSuggestionsClearRequested={onSuggestionsClearRequested}
+                onSuggestionSelected={onSuggestionSelected}
+                getSuggestionValue={getSuggestionValue}
+                renderInputComponent={renderInputComponent}
+                renderSuggestion={renderSuggestion}
+                inputProps={inputProps}
+            />
             {/*<button onClick={clearInput} className='clear-button'>X</button>*/}
-            </span>
+        </span>
     );
 }
 
@@ -286,8 +288,6 @@ function DisplayResult(props) {
         </Alert>);
     } else {
         const airportRunwayFt = parseInt(props.runway[props.icao]);
-        //console.log(airportRunwayFt);
-        //console.log(props.takeoff);
 
         const takeoffFt = props.takeoff * METER_TO_FEET;
         const landingFt = props.landing * METER_TO_FEET;
