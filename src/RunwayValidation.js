@@ -1,21 +1,9 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import Autosuggest from 'react-autosuggest';
-
-import {default as airportName} from './data/airport-icao-name.json';
-import {default as runway} from './data/airport-icao-longest-runway-ft.json';
 
 // Reactstrap depends on bootstrap
 import 'bootstrap/dist/css/bootstrap.min.css';
-import {Alert} from 'reactstrap';
-
-// Font-awesome embed
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
-import {library} from '@fortawesome/fontawesome-svg-core'
-import {faHeart, faStar, faChevronCircleDown} from '@fortawesome/free-solid-svg-icons'
-import {faHeart as regularHeart, faStar as regularStar} from '@fortawesome/free-regular-svg-icons'
-
-library.add(faHeart, faStar, faChevronCircleDown, regularHeart, regularStar);
-
+import {Alert, Spinner} from 'reactstrap';
 
 // This component will load airport name and runway data to present (to user) whether a plane input can take off and run on this airport
 
@@ -28,22 +16,58 @@ export default function RunwayValidation(props) {
             Note: this airplane's takeoff and distance are in meter per original source
      */
 
+    const [runway, setRunway] = useState({});
+    const [airportName, setAirportName] = useState({});
+    const [takeoff, setTakeoff] = useState(0);
+    const [landing, setLanding] = useState(0);
+    const [fullName, setFullName] = useState('');
+    const [isRunwayDataLoaded, setIsRunwayDataLoaded] =  useState(false);
+    const [isAirportDataLoaded, setIsAirportDataLoaded] =  useState(false);
+    const [isAirplaneDataLoaded, setIsAirplaneDataLoaded] =  useState(false);
 
-    // Fetch this airplane's takeoff and landing distance
-    let takeoff = 0;
-    let landing = 0;
-    let fullName = '';
+    useEffect(() => {
+        // Fetch the longest airport runway data
+        fetch("/data/airport-icao-longest-runway-ft.json")
+            .then(res => {
+                return res.json();
+            })
+            .then((data) => {
+                setRunway(data);
+            }).then(() => setIsRunwayDataLoaded(true));
 
-    for (let onePlane of props.airplaneData) {
-        if (onePlane['icao-pic'].toLowerCase() === props.icao) {
-            takeoff = onePlane['takeoff_dis']; // unit is in metric meter
-            landing = onePlane['land_dis']; // unit is in metric meter
-            fullName = onePlane['make'] + ' ' + onePlane['model'];
+        // Fetch the airport name data
+        fetch("/data/airport-icao-name.json")
+            .then(res => {
+                return res.json();
+            })
+            .then((data) => {
+                setAirportName(data);
+            }).then(() => setIsAirportDataLoaded(true));
+
+        // Fetch this airplane's takeoff and landing distance
+        for (let onePlane of props.airplaneData) {
+            if (onePlane['icao-pic'].toLowerCase() === props.icao) {
+                setTakeoff(onePlane['takeoff_dis']); // unit is in metric meter
+                setLanding(onePlane['land_dis']); // unit is in metric meter
+                setFullName(onePlane['make'] + ' ' + onePlane['model']);
+            }
         }
+        setIsAirplaneDataLoaded(true);
+    },[]);
+
+    // Render a spinner when any of the data is still loading
+    if (!(isRunwayDataLoaded && isAirportDataLoaded && isAirplaneDataLoaded)) {
+        return (
+            <div className="runway-validation-spinner">
+                <h1> Loading Runway Data...</h1>
+                <Spinner color="primary" className="splash-spinner" />
+            </div>
+        );
     }
 
+    // Once data is loaded, return the actual component
     return (
-        <ContentContainer fullName={fullName} takeoff={takeoff} landing={landing}/>
+        <ContentContainer fullName={fullName} takeoff={takeoff} landing={landing} runway={runway} airportName={airportName}/>
     );
 }
 
@@ -52,12 +76,16 @@ function ContentContainer(props) {
         fullName: the airplane's full name
         takeoff: the plane's takeoff distance in meter
         landing: the plane's landing distance in meter
+        runway: an Object representing airport's icao code and its longest runway data
+        airportName: an Object representing airport's icao code and their names
      */
     const [airportICAO, setAirportICAO] = useState('');
 
+    // Clear out the airport icao selection when called
+    const clearAirport = () => setAirportICAO('');
 
     // Note the icao is the airport's icao code (case-sensitive)
-    const buttonCallBack = function (icao) {
+    const selectAirport = function (icao) {
         setAirportICAO(icao);
     }
 
@@ -65,11 +93,16 @@ function ContentContainer(props) {
     returnElem.push(<h1 key='title'>{"Airports"}</h1>);
     returnElem.push(<p
         key='introduction'>{"Find whether " + props.fullName + " can take off and land at your favorite airport"}</p>);
-    returnElem.push(<SearchAirport buttonCallBackFn={buttonCallBack} key='search airport'/>);
+    returnElem.push(<SearchAirport selectAirportFn={selectAirport} clearAirportFn={clearAirport} key='search airport' airportName={props.airportName}/>);
     // Only render the comparison result when there's something selected
     if (airportICAO.length > 0) {
-        returnElem.push(<DisplayResult icao={airportICAO} fullName={props.fullName} takeoff={props.takeoff}
-                                       landing={props.landing} key='comparison result'/>);
+        returnElem.push(<DisplayResult icao={airportICAO}
+                                       fullName={props.fullName}
+                                       takeoff={props.takeoff}
+                                       landing={props.landing}
+                                       airportName={props.airportName}
+                                       runway={props.runway}
+                                       key='comparison result'/>);
     }
 
     return (
@@ -84,7 +117,9 @@ function ContentContainer(props) {
 // Use modern function syntax to create component
 function SearchAirport(props) {
     /* props:
-        buttonCallBackFn: a callback function reference when an item is clicked
+        selectAirportFn: a callback function reference when a suggestion item is clicked
+        clearAirportFn: a callback function reference when x button is clicked
+        airportName: an Object representing airport's icao code and their names
      */
 
     // Autosuggest is a controlled component.
@@ -102,6 +137,7 @@ function SearchAirport(props) {
 
     // This function will clear the input and suggestion
     const clearInput = function () {
+        props.clearAirportFn();
         setValue('');
     }
 
@@ -140,25 +176,25 @@ function SearchAirport(props) {
         let counter = 0;
         if (inputLength !== 0) {
             // first, check whether user is typing an ICAO code (this shall be first result)
-            for (let oneKey of Object.keys(airportName)) {
+            for (let oneKey of Object.keys(props.airportName)) {
                 //console.log(oneKey);
                 //console.log(airportName[oneKey]);
                 //console.log(typeof(airportName[oneKey]));
                 if (counter >= numSuggestion) {
                     break; // Terminate for-loop early if we reach maximum number of suggestion
-                } else if (airportName[oneKey].toLowerCase().startsWith(value.toLowerCase())) {
-                    suggestionArr.push({icao: oneKey, name: airportName[oneKey]});
+                } else if (props.airportName[oneKey].toLowerCase().startsWith(value.toLowerCase())) {
+                    suggestionArr.push({icao: oneKey, name: props.airportName[oneKey]});
                     counter = counter + 1;
                 }
             }
             // then, check whether user's input contains airport name
-            for (let oneKey of Object.keys(airportName)) {
+            for (let oneKey of Object.keys(props.airportName)) {
                 if (counter >= numSuggestion) {
                     break;
                     // Compare only to the airport name after — (long dash), such as "Seattle Tacoma International Airport" in "KSEA — Seattle Tacoma International Airport"
                     // Ignore case when comparing user input to value
-                } else if (airportName[oneKey].substring(airportName[oneKey].indexOf('—') + 1).toLowerCase().includes(value.toLowerCase())) {
-                    suggestionArr.push({icao: oneKey, name: airportName[oneKey]});
+                } else if (props.airportName[oneKey].substring(props.airportName[oneKey].indexOf('—') + 1).toLowerCase().includes(value.toLowerCase())) {
+                    suggestionArr.push({icao: oneKey, name: props.airportName[oneKey]});
                     counter = counter + 1;
                 }
             }
@@ -195,7 +231,7 @@ function SearchAirport(props) {
     const onSuggestionSelected = function (event, {suggestion, suggestionValue, suggestionIndex, sectionIndex, method}) {
         event.preventDefault();
         //console.log(suggestion);
-        props.buttonCallBackFn(suggestion['icao']); // this function's argument is the case-sensitive airport icao code
+        props.selectAirportFn(suggestion['icao']); // this function's argument is the case-sensitive airport icao code
     }
 
     const renderInputComponent = inputProps => (
@@ -229,17 +265,19 @@ function DisplayResult(props) {
         fullName: the airplane's full name
         takeoff: the plane's takeoff distance in meter
         landing: the plane's landing distance in meter
+        runway: an Object representing airport's icao code and its longest runway data
+        airportName: an Object representing airport's icao code and their names
      */
 
     let returnElem = [];
-    const airport = airportName[props.icao].substring(airportName[props.icao].indexOf('—') + 1)
+    const airport = props.airportName[props.icao].substring(props.airportName[props.icao].indexOf('—') + 1)
     // Sometimes we have airport data but no runway data
-    if (runway[props.icao] === undefined) {
+    if (props.runway[props.icao] === undefined) {
         returnElem.push(<Alert color='info' key='airport not found'>
             <div>Sorry, we <strong>don't have runway data</strong>{" for " + airport}</div>
         </Alert>);
     } else {
-        const airportRunwayFt = parseInt(runway[props.icao]);
+        const airportRunwayFt = parseInt(props.runway[props.icao]);
         //console.log(airportRunwayFt);
         //console.log(props.takeoff);
 

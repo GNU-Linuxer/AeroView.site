@@ -1,4 +1,9 @@
 /*The Autosuggest CSS rules is adapted from https://react-autosuggest.js.org/*/
+.runway-validation-spinner {
+    margin-top: 30px;
+    margin-left: 8px;
+    margin-right: 8px;
+}
 
 .runway-validation-parent-container {
     margin-top: 30px;
