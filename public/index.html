@@ -17,7 +17,6 @@
       user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
     -->
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json">
-    <link href="%PUBLIC_URL%/css/splash-preload.css" rel="stylesheet">
     <!--
       Notice the use of %PUBLIC_URL% in the tags above.
       It will be replaced with the URL of the `public` folder during the build.
@@ -28,15 +27,22 @@
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
 
+    <!--
+      The stylesheet for spinner shown on the page before React is loaded
+    -->
+    <link rel="stylesheet" href="%PUBLIC_URL%/css/splash-preload.css">
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
+    <!-- React components inserted into the following 'div' -->
     <div id="root">
-      <!--   A Spinner before React loads (primarily for low-end mobile / poor network condition to access our site)   -->
+      <!--
+        A Spinner before React loads (primarily for low-end mobile /
+        poor network condition to access our site)
+      -->
       <div class="loader-container">
           <div class="loader"></div>
       </div>
-      <!-- React components inserted here -->
     </div>
   </body>
 </html>

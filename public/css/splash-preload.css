@@ -1,6 +1,20 @@
+/*
+ * This file contains style for the splash screen shown before React
+ * initializes.
+ *
+ * Because it is needed before React loads, it is placed here under the
+ * 'public' directory instead of 'src'.
+ */
+
 .loader-container {
     text-align: center;
+    /* Move the loader spinner to center of the window */
+    position: absolute;
+    /* Move by half of window size minus the spinner's radius */
+    left: calc(50% - 66px);
+    top: calc(50% - 66px);
 }
+
 .loader {
     display: inline-block;
     border: 16px solid #f3f3f3; /* Light grey */
