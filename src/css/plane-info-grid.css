@@ -85,9 +85,19 @@
         grid-auto-flow: row;
         margin-bottom: 8px;
     }
+    /* Make the image more centered on screen width between 800px and 1023px (inclusive)*/
+    .plane-info-plane-img {
+        margin-top: 15%;
+    }
 
     .plane-info-data-container {
         margin-right: 16px;
+    }
+}
+
+@media (min-width: 1024px) {
+    .plane-info-plane-img {
+        margin-top: 5%;
     }
 }
 
