@@ -1,7 +1,6 @@
 /*The Autosuggest CSS rules is adapted from https://react-autosuggest.js.org/*/
-.runway-validation-spinner {
-    margin-top: 30px;
-    margin-left: 8px;
+.runway-validation-progress {
+    width: 100%;
     margin-right: 8px;
 }
 
@@ -10,6 +9,10 @@
     margin-left: 8px;
     margin-right: 8px;
     min-height: 280px;
+}
+
+.runway-validation-intro-text {
+    /*max-width: 450px;*/
 }
 
 .react-autosuggest__container {
@@ -93,6 +96,10 @@
     .runway-validation-parent-container {
         max-width: 600px;
         margin-left: 0;
+    }
+    /* Fix the text-overflow after progress bar finish loading by constrain the text's width*/
+    .runway-validation-intro-text, .runway-validation-result {
+        max-width: 450px;
     }
 }
 

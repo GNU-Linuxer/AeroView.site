@@ -5,7 +5,7 @@ import Autosuggest from 'react-autosuggest';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {Alert, Progress} from 'reactstrap';
 
-import './css/runway-validation-grid.css'
+import './css/runway-validation.css'
 
 // This component will load airport name and runway data to present (to user) whether a plane input can take off and run on this airport
 
@@ -25,7 +25,7 @@ export default function RunwayValidation(props) {
     const [fullName, setFullName] = useState('');
     // On developer console, each fetch call is called twice, lengthen the time for device on slow 3G network
     // The percentage of loading progress; -1 indicates loading completes
-    const [progress, setProgress] =  useState(20);
+    const [progress, setProgress] =  useState(25);
 
     useEffect(() => {
         // Fetch the longest airport runway data
@@ -35,7 +35,7 @@ export default function RunwayValidation(props) {
             })
             .then((data) => {
                 setRunway(data);
-            }).then(() => setProgress(progress=> progress + 20));
+            }).then(() => setProgress(progress=> progress + 25));
 
         // Fetch the airport name data
         fetch("/data/airport-icao-name.json")
@@ -44,9 +44,7 @@ export default function RunwayValidation(props) {
             })
             .then((data) => {
                 setAirportName(data);
-            }).then(() => setProgress(progress=> progress + 20));
-
-        setProgress(progress=> progress + 20);
+            }).then(() => setProgress(progress=> progress + 25));
 
         // Fetch this airplane's takeoff and landing distance
         for (let onePlane of props.airplaneData) {
@@ -56,7 +54,7 @@ export default function RunwayValidation(props) {
                 setFullName(onePlane['make'] + ' ' + onePlane['model']);
             }
         }
-        setProgress(progress=> progress + 20);
+        setProgress(progress=> progress + 25);
     }, [props.airplaneData, props.icao]);
 
     if (progress === 100) {
@@ -100,8 +98,7 @@ function ContentContainer(props) {
 
     let returnElem = [];
     returnElem.push(<h1 key='title'>{"Airports"}</h1>);
-    returnElem.push(<p
-        key='introduction'>{"Find whether " + props.fullName + " can take off and land at your favorite airport"}</p>);
+    returnElem.push(<p className='runway-validation-intro-text' key='introduction'>{'Find whether ' + props.fullName + " can take off and land at your favorite airport"}</p>);
     returnElem.push(<SearchAirport selectAirportFn={selectAirport} clearAirportFn={clearAirport} key='search airport'
                                    airportName={props.airportName}/>);
     // Only render the comparison result when there's something selected
@@ -306,8 +303,8 @@ function DisplayResult(props) {
         </Alert>);
     }
     return (
-        <>
+        <div className='runway-validation-result'>
             {returnElem}
-        </>
+        </div>
     );
 }
