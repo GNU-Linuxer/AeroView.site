@@ -3,7 +3,9 @@ import Autosuggest from 'react-autosuggest';
 
 // Reactstrap depends on bootstrap
 import 'bootstrap/dist/css/bootstrap.min.css';
-import {Alert, Spinner} from 'reactstrap';
+import {Alert, Progress} from 'reactstrap';
+
+import './css/runway-validation.css'
 
 // This component will load airport name and runway data to present (to user) whether a plane input can take off and run on this airport
 
@@ -22,9 +24,8 @@ export default function RunwayValidation(props) {
     const [landing, setLanding] = useState(0);
     const [fullName, setFullName] = useState('');
     // On developer console, each fetch call is called twice, lengthen the time for device on slow 3G network
-    const [isRunwayDataLoaded, setIsRunwayDataLoaded] = useState(false);
-    const [isAirportDataLoaded, setIsAirportDataLoaded] = useState(false);
-    const [isAirplaneDataLoaded, setIsAirplaneDataLoaded] = useState(false);
+    // The percentage of loading progress; -1 indicates loading completes
+    const [progress, setProgress] =  useState(15);
 
     useEffect(() => {
         // Fetch the longest airport runway data
@@ -34,9 +35,7 @@ export default function RunwayValidation(props) {
             })
             .then((data) => {
                 setRunway(data);
-            }).then(() => setIsRunwayDataLoaded(true));
-        // Immediately set this value to true to prevent calling this fetch again
-
+            }).then(() => setProgress(progress=> progress + 30));
 
         // Fetch the airport name data
         fetch("/data/airport-icao-name.json")
@@ -45,8 +44,7 @@ export default function RunwayValidation(props) {
             })
             .then((data) => {
                 setAirportName(data);
-            }).then(() => setIsAirportDataLoaded(true));
-        // Immediately set this value to true to prevent calling this fetch again
+            }).then(() => setProgress(progress=> progress + 30));
 
         // Fetch this airplane's takeoff and landing distance
         for (let onePlane of props.airplaneData) {
@@ -56,15 +54,20 @@ export default function RunwayValidation(props) {
                 setFullName(onePlane['make'] + ' ' + onePlane['model']);
             }
         }
-        setIsAirplaneDataLoaded(true);
+        setProgress(progress=> progress + 25);
     }, [props.airplaneData, props.icao]);
 
-    // Render a spinner when any of the data is still loading
-    if (!(isRunwayDataLoaded && isAirportDataLoaded && isAirplaneDataLoaded)) {
+    // Show 100% for 0.8 second before proceeding for user-friendliness
+    if (progress === 100) {
+        setTimeout(() => {setProgress(-1);}, 800);
+    }
+
+    // Return loading screen if not finished processing airplane data
+    if (progress !== -1) {
         return (
-            <div className="runway-validation-spinner">
+            <div className='runway-validation-loading'>
                 <h1> Loading Runway Data...</h1>
-                <Spinner color="primary" className="splash-spinner"/>
+                <Progress className='runway-validation-progress' value={progress} />
             </div>
         );
     }
@@ -96,8 +99,7 @@ function ContentContainer(props) {
 
     let returnElem = [];
     returnElem.push(<h1 key='title'>{"Airports"}</h1>);
-    returnElem.push(<p
-        key='introduction'>{"Find whether " + props.fullName + " can take off and land at your favorite airport"}</p>);
+    returnElem.push(<p className='runway-validation-intro-text' key='introduction'>{'Find whether ' + props.fullName + " can take off and land at your favorite airport"}</p>);
     returnElem.push(<SearchAirport selectAirportFn={selectAirport} clearAirportFn={clearAirport} key='search airport'
                                    airportName={props.airportName}/>);
     // Only render the comparison result when there's something selected
@@ -112,9 +114,9 @@ function ContentContainer(props) {
     }
 
     return (
-        <div className='runway-validation-parent-container'>
+        <>
             {returnElem}
-        </div>
+        </>
     );
 }
 
@@ -241,7 +243,7 @@ function SearchAirport(props) {
     }
 
     const renderInputComponent = inputProps => (
-        <div>
+        <div className='runway-validation-input-container'>
             <input {...inputProps} />
             <button onClick={clearInput} className='clear-button'>X</button>
         </div>
@@ -302,8 +304,8 @@ function DisplayResult(props) {
         </Alert>);
     }
     return (
-        <>
+        <div className='runway-validation-result'>
             {returnElem}
-        </>
+        </div>
     );
 }

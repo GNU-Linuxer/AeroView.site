@@ -6,8 +6,8 @@
 import React, {useState, useRef, useEffect} from 'react';
 import { useParams } from 'react-router-dom';
 
-import './css/site-elements.css';
-import './css/plane-info.css';
+// import './css/site-elements.css';
+import './css/plane-info-grid.css';
 import { StarRating, FavoriteButton } from "./PlaneWidgets";
 import {PageJumbotron} from "./SiteElements";
 
@@ -83,12 +83,8 @@ export default function PlaneInfo(props) {
             <PageJumbotron title={planeName}
                            image={getPlaneImagePath(planeInfo)}/>
             <main className="plane-info-content">
-                <span className="plane-info-left-column">
-                    <PlaneImage planeInfo={planeInfo} planeName={planeName} />
-                    <span className='d-none d-lg-block' >
-                        <NoteEditor content={content} handleContentChangeFn={handleContentChange} planeName={planeName}/>
-                    </span>
-                </span>
+
+                <PlaneImage planeInfo={planeInfo} planeName={planeName} />
 
                 <div className="plane-info-data-container">
                     <Widgets rating={props.ratings[lowerCaseICAO]}
@@ -97,14 +93,15 @@ export default function PlaneInfo(props) {
                              updateFavorCallback={toggleFavorite} />
                     <Specification airplaneDisplayMetaName={props.airplaneDisplayMetaName}
                                    planeInfo={planeInfo} />
-                    <span className='d-none d-lg-block'>
-                        <RunwayValidation icao={lowerCaseICAO} airplaneData={props.airplaneData}/>
-                    </span>
                 </div>
-                <span className='d-lg-none'>
+
+                <div className='note-editor-parent-container'>
                     <NoteEditor content={content} handleContentChangeFn={handleContentChange} planeName={planeName}/>
+                </div>
+
+                <div className='runway-validation-parent-container'>
                     <RunwayValidation icao={lowerCaseICAO} airplaneData={props.airplaneData}/>
-                </span>
+                </div>
             </main>
         </div>
     );
