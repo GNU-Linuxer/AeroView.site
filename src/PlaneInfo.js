@@ -205,10 +205,11 @@ function NoteEditor(props) {
         handleContentChangeFn: the callback function that handles content change
         planeName: airplane's full name (example: Boeing 737-800)
      */
+    console.log(props.content);
     const editorRef = useRef();
     let initialEditorContent = '';
-    if (props.content.length >=  0) {
-        initialEditorContent = props.content;
+    if (props.content['icao'] !== undefined) {
+        initialEditorContent = props.content['icao'];
     }
 
     const [editorContent, setEditorContent] = useState(initialEditorContent);

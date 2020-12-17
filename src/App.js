@@ -44,7 +44,6 @@ export default function App() {
     // const [errorMessage, setErrorMessage] = useState(undefined);
     // const [isLoading, setIsLoading] = useState(true);
 
-
     useEffect(() => {
         // Load airplane data, will be in an array of objects, whereas 1 object means 1 airplane
         // The first object describe how shorthand key correspond to full metadata name, such as {cruise_range: "Cruise Range (N miles)"}
@@ -197,9 +196,22 @@ function AppLoaded(props) {
         usersRef.set(updatedPlaneRating);
     }
 
-    //console.log(props.user);
+
 
     const [content, setContent] = useState('');
+
+    useEffect(() => {
+        //console.log(props.user);
+        const noteRef = firebase.database().ref('users/' + props.user.uid + '/privateNotes/');
+        noteRef.once('value', (snapshot) => {
+            const result = snapshot.val();
+            console.log(result);
+            if (result !== undefined) {
+                setContent(result);
+            }
+        });
+    }, []);
+
     // Functions that handle note-taking textbox content change
     // Use the initialState to load user previously-saved data
     const handleContentChange = (icao, newContent) => {
@@ -207,7 +219,7 @@ function AppLoaded(props) {
         //console.log(newContent);
         //console.log('change detected ');
 
-        console.log(icao);
+        //console.log(icao);
 
         updatedContent[icao] = newContent;
 
