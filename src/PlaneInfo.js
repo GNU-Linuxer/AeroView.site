@@ -6,11 +6,11 @@
 import React, { useState, useRef, useEffect } from 'react';
 import firebase from 'firebase/app';
 import { useParams } from 'react-router-dom';
-import { useMobileView } from './util/media-query.js';
 
-import './css/site-elements.css';
-import './css/plane-info.css';
+// import './css/site-elements.css';
+import './css/plane-info-grid.css';
 import { StarRating, FavoriteButton } from "./PlaneWidgets";
+import {PageJumbotron} from "./SiteElements";
 
 
 // Reactstrap depends on bootstrap
@@ -59,8 +59,7 @@ export function PlaneInfo(props) {
     if (planeInfo === undefined) {
         return (
             <div>
-                <Jumbotron title="Plane Information"
-                    backgroundImage="/img/main-photo.jpg" />
+                <PageJumbotron title="Plane Information"/>
                 <main className="page-content">
                     {/*I'm not sure whether status={404} will let React Router respond 404 on non-existent ICAO code*/}
                     <PlaneNotFoundMessage icao={planeICAOCode} status={404} />
@@ -77,58 +76,31 @@ export function PlaneInfo(props) {
 
     return (
         <div>
-            <Jumbotron title={planeName}
-                backgroundImage={getPlaneImagePath(planeInfo)} />
+            <PageJumbotron title={planeName}
+                           image={getPlaneImagePath(planeInfo)}/>
             <main className="plane-info-content">
-                <span className="plane-info-left-column">
-                    <PlaneImage planeInfo={planeInfo} planeName={planeName} />
-                    <span className='d-none d-lg-block' >
-                        <NoteEditor content={props.content[lowerCaseICAO]} handleContentChangeFn={props.handleContentChangeFn} planeName={planeName} />
-                    </span>
-                </span>
-
+                <PlaneImage planeInfo={planeInfo} planeName={planeName} />
                 <div className="plane-info-data-container">
                     <Widgets rating={props.ratings[lowerCaseICAO]}
                         updateRatingCallback={updateRating}
                         favor={props.favorites.includes(lowerCaseICAO)}
                         updateFavorCallback={toggleFavorite}
                     />
-                    <Specification airplaneDisplayMetaName={props.airplaneDisplayMetaName}
-                        planeInfo={planeInfo} />
-                    <span className='d-none d-lg-block'>
-                        <RunwayValidation icao={lowerCaseICAO} airplaneData={props.airplaneData} />
-                    </span>
+                    <Specification airplaneDisplayMetaName={props.airplaneDisplayMetaName} planeInfo={planeInfo} />
                 </div>
-                <span className='d-lg-none'>
-                    <NoteEditor icao={lowerCaseICAO} content={props.content} handleContentChangeFn={props.handleContentChangeFn} planeName={planeName} />
-                    <RunwayValidation icao={lowerCaseICAO} airplaneData={props.airplaneData} />
-                </span>
+
+                <div className='note-editor-parent-container'>
+                    <NoteEditor content={props.content} handleContentChangeFn={props.handleContentChangeFn} planeName={planeName}/>
+                </div>
+
+                <div className='runway-validation-parent-container'>
+                    <RunwayValidation icao={lowerCaseICAO} airplaneData={props.airplaneData}/>
+                </div>
             </main>
         </div>
     );
 };
 
-/*
- * Returns an HTML element for customized jumbotron of the plane information
- * page.
- *
- * Props:
- * - title: the title shown on top of the jumbotron
- * - backgroundImage: the jumbotron's background image on desktop views
- */
-function Jumbotron(props) {
-    const mobileView = useMobileView();
-    let style = mobileView ? {} : {
-        backgroundImage: `linear-gradient(
-            hsla(205, 100%, 25%, 0.8), hsla(205, 100%, 25%, 0.8)),
-            url(${props.backgroundImage})`
-    };
-    return (
-        <div className="plane-info-jumbotron" style={style}>
-            {props.title}
-        </div>
-    );
-}
 
 /*
  * Returns the image element for the plane information page.
@@ -210,7 +182,7 @@ function Specification(props) {
 function PlaneNotFoundMessage(props) {
     return (
         <Alert color="danger">
-            <div>Could not find plane with ICAO Code: <strong>{props.icao}</strong></div>
+            <div>Could not find airplane with ICAO Code: <strong>{props.icao}</strong></div>
         </Alert>
     );
 }

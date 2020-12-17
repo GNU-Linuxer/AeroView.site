@@ -204,10 +204,11 @@ function FilterSelector(props) {
     let types = [...new Set(props.airplaneData.map(plane => plane.type))];
 
     return (
-        <ButtonDropdown isOpen={buttonActivated}
+        <ButtonDropdown isOpen={buttonActivated} direction='down'
                         toggle={() => setButtonActivated(!buttonActivated)}>
             <DropdownToggle tag="button">
                 <FontAwesomeIcon icon={faFilter} />
+                <span className="button-description">Filter</span>
             </DropdownToggle>
             <DropdownMenu right tag="ul" className="checkbox-menu filter-dropdown-menu">
                 <DropdownItem header>Type</DropdownItem>
@@ -240,10 +241,11 @@ function MetadataSelector(props) {
     let metaKeys = Object.keys(props.airplaneData[0]);
 
     return (
-        <ButtonDropdown isOpen={buttonActivated}
+        <ButtonDropdown isOpen={buttonActivated} direction='down'
                         toggle={() => setButtonActivated(!buttonActivated)}>
             <DropdownToggle tag="button">
                 <FontAwesomeIcon icon={faEllipsisV} />
+                <span className="button-description">Options</span>
             </DropdownToggle>
             <DropdownMenu right tag="ul" className="checkbox-menu option-dropdown-menu">
                 <DropdownItem header>Metadata to display</DropdownItem>

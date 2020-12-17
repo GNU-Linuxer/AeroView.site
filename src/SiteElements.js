@@ -25,13 +25,16 @@ export function SiteHeader(props) {
                                clickCallback={toggleButton} />;
     let navLinks = <NavLinks links={props.navLinks}
                              clickCallback={toggleButton} />;
+    let navWidget = (
+        <div className="site-nav-widget">
+            {mobileView && navButton}
+            {(buttonActivated || !mobileView) && navLinks}
+        </div>
+    );
     return (
         <header className="site-header">
             <SiteBranding logo={props.logo} name={props.appName} />
-            <div className="site-nav-widget">
-                {mobileView && navButton}
-                {(buttonActivated || !mobileView) && navLinks}
-            </div>
+            {props.navLinks.length > 0 && navWidget}
         </header>
     );
 }
@@ -41,13 +44,18 @@ export function SiteHeader(props) {
  *
  * Props:
  * - title: the title of page shown on the jumbotron
+ * - image: a String of relative path to image file (if specified, otherwise default to /img/main-photo.jpg)
  */
 export function PageJumbotron(props) {
     const mobileView = useMobileView();
+    let backgroundImage = "url(/img/main-photo.jpg)";
+    if (props.image !== undefined) {
+        backgroundImage = "url("+ props.image + ")";
+    }
     let style = mobileView ? {} : {
         backgroundImage: "linear-gradient(hsla(205, 100%, 25%, 0.8)," +
             "hsla(205, 100%, 25%, 0.8))," +
-            "url(/img/main-photo.jpg)"
+            backgroundImage
     };
     return (
         <div className="page-title" style={style}>{props.title}</div>

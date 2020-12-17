@@ -1,0 +1,117 @@
+/*
+ * This file contains styles for special elements on the plane information
+ * page.
+ * Use css grid for experiment
+ */
+
+/* Root content container */
+
+.plane-info-content {
+    display: block;
+}
+
+
+/* Plane image */
+
+/* Ensure the airplane picture is at the center of its parent container*/
+/* Safari: can't use display: flex or otherwise there will be too much margin*/
+.plane-info-plane-img-container {
+    display: block;
+    text-align: center;
+}
+
+.plane-info-plane-img {
+    /*text-align: center;*/
+    /*display: block;*/
+    margin-top: 5%;
+    width: 80%;
+    height: auto;
+    object-fit: scale-down;
+}
+
+/* Plane data */
+
+.plane-info-data-container {
+    margin-left: 8px;
+    margin-right: 8px;
+}
+
+/* Plane widgets (star rating and favorite) */
+
+.plane-info-widgets {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Plane specification */
+
+.plane-info-spec {
+    width: 100%;
+}
+
+.plane-info-spec tr:nth-of-type(even) {
+    background-color: #eee;
+}
+
+/* Plane note-taking*/
+/* For note-taking, flexbox works fine*/
+.note-editor-parent-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.plane-info-note-editor {
+    margin: 30px 8px 8px 8px;
+}
+
+/* Runway Validation container*/
+.runway-validation-parent-container {
+    margin-top: 30px;
+    margin-left: 8px;
+    margin-right: 8px;
+    min-height: 280px;
+}
+
+/* Media queries */
+
+/* Did not use 768 as the note editor's print button will over-flow to 3rd line on 768px*/
+@media (min-width: 800px) {
+    .plane-info-content {
+        display: grid;
+        grid-template-columns: 55% 45%;
+        grid-template-rows: repeat(2, auto);
+        grid-auto-flow: row;
+        margin-bottom: 8px;
+    }
+    /* Make the image more centered on screen width between 800px and 1023px (inclusive)*/
+    .plane-info-plane-img {
+        margin-top: 15%;
+    }
+
+    .plane-info-data-container {
+        margin-right: 16px;
+    }
+}
+
+@media (min-width: 1024px) {
+    /* Add extra space to the right on wider screens */
+    .plane-info-content {
+        margin-right: 8px;
+    }
+
+    .plane-info-plane-img {
+        margin-top: 5%;
+    }
+}
+
+/* Constraint picture and editor growth on large desktop*/
+@media (min-width: 1440px) {
+    .plane-info-plane-img {
+        width: 60%;
+    }
+    .plane-info-note-editor {
+        width: 80%;
+    }
+}

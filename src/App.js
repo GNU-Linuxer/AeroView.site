@@ -1,5 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import * as d3 from 'd3-fetch';
 
+import React, { useEffect, useState } from 'react';
+import { Progress } from 'reactstrap';
 import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
 
 import Dashboard, { DASHBOARD_VIEWS } from './Dashboard.js';
@@ -7,8 +9,14 @@ import { PlaneInfo } from './PlaneInfo.js';
 import { SiteHeader, PageJumbotron, SiteFooter } from './SiteElements.js';
 import { ComparisonPage } from './ComparisonPage.js';
 import { AccountPage } from './AccountPage.js';
-import { toggleElementInArray } from './util/array.js';
 
+import { toggleElementInArray } from './util/array.js';
+import ScrollToTop from './util/ScrollToTop.js';
+
+// The stylesheet for loading screen shown before airplane data is available
+import './css/loading-screen.css';
+
+// Firebase imports
 import firebase from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/database';
@@ -23,18 +31,88 @@ const firebaseConfig = {
     appId: "1:474928151841:web:8359733a387620c0911260"
 };
 
-// Initialize Firebase
-if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
-} else {
-    firebase.app();
+
+export default function App() {
+    // State variables for updating data after loading completes
+    const [airplaneDisplayMetaName, setAirplaneDisplayMetaName] = useState({});
+    const [airplaneData, setAirplaneData] = useState([]);
+    // The percentage of loading progress; -1 indicates loading completes
+    const [progress, setProgress] =  useState(25);
+
+    useEffect(() => {
+        // Load airplane data, will be in an array of objects, whereas 1 object means 1 airplane
+        // The first object describe how shorthand key correspond to full metadata name, such as {cruise_range: "Cruise Range (N miles)"}
+        d3.csv('/data/airplanes.csv')
+            .then(text => {
+                setProgress(75);
+                setAirplaneDisplayMetaName(text[0]); //{make: "Make", model: "Model", series: "Production Series",...s}
+                setAirplaneData(text.slice(1, text.length)); // 0: {make: "Airbus", model: "A220-300", …} 1: {make: "Airbus", model: "A320neo", …}
+            }).then(() => {
+            // Show 75% for 0.2 second before proceeding for user-friendliness
+            // Reason: loading page can't stay too short for a very fast device (users are curious what's the loading page look like)
+            setTimeout(() => {
+                setProgress(100);
+            }, 200);
+            // Show 100% for 1 second before proceeding for user-friendliness
+            setTimeout(() => {
+                setProgress(-1);
+            }, 1000);
+        });
+        // This 50% will be immediately called after d3 begins processing the csv
+        setProgress(50);
+    }, []);
+
+
+    // Initialize Firebase
+    if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+    } else {
+        firebase.app();
+    }
+
+    // Return loading screen if not finished processing airplane data
+    if (progress !== -1) {
+        return (
+            <LoadingPage progress={progress} />
+        );
+    }
+
+    return (
+        <AppLoaded airplaneDisplayMetaName={airplaneDisplayMetaName}
+                   airplaneData={airplaneData} />
+    );
 }
 
-export function App(props) {
-    /*  airplaneDisplayMetaName: An object that maps the shorthand metadata key to display-friendly full name
-        airplaneData: An array of objects: 1 object represent 1 airplane whose metadata key has the metadata value
-     */
+/*
+ * Returns HTML elements for the loading page while the data is being loaded.
+ *
+ * Props:
+ * - progress: the percentage of loading progress to be shown
+ */
+function LoadingPage(props) {
+    return (
+        <>
+            <SiteHeader appName="AeroView" logo="/img/branding-logo.svg" navLinks={[]} />
+            <PageJumbotron title='Loading airplanes data...' />
+            <main>
+                <Progress className="progress-bar-landing" value={props.progress} />
+            </main>
+            <SiteFooter />
+        </>
+    );
+}
 
+
+/*
+ * Returns an HTML element for the app after the data is loaded.
+ *
+ * Props:
+ * - airplaneDisplayMetaName: an object that maps the shorthand metadata keys
+ *   to display-friendly full names
+ * - airplaneData: an array of objects where each object represents an
+ *   airplane's data
+ */
+function AppLoaded(props) {
     // To preserve dashboard view, it must be an app-level state defined here
     const [dashboardView, setDashboardView] = useState(DASHBOARD_VIEWS.LIST);
 
@@ -84,23 +162,20 @@ export function App(props) {
 
     // Handle change of 1 airplane's star rating
     const [planeRating, setRating] = useState(initialRating);
-    //console.log(initialRating);
     const updatePlaneRating = (icao, rating) => {
         let updatedPlaneRating = { ...planeRating } // object copy
-        //console.log(icao + ' ' + rating);
         // User can remove rating (0 star) by clicking on the same rating star again
         if (rating === updatedPlaneRating[icao]) {
             updatedPlaneRating[icao] = 0;
         } else {
             updatedPlaneRating[icao] = rating;
         }
-        //console.log(updatedPlaneRating);
         setRating(updatedPlaneRating);
-
-
         const usersRef = firebase.database().ref('users/' + user.uid + '/starRatings/');
         usersRef.set(updatedPlaneRating);
     }
+
+    console.log(user);
 
     const [content, setContent] = useState('');
     // Functions that handle note-taking textbox content change
@@ -157,7 +232,7 @@ export function App(props) {
 
     return (
         <BrowserRouter>
-            <div className="react-container">
+            <ScrollToTop>
                 <SiteHeader appName="AeroView"
                     logo="/img/branding-logo.svg"
                     navLinks={routesForNav} />
@@ -165,15 +240,12 @@ export function App(props) {
                     {/* Routes that are target of a navigation link */}
                     {routesForNav.map(route =>
                         <Route key={route.name}
-                            exact={route.exact || false}
-                            path={route.url}>
-                            <div>
-                                <PageJumbotron title={route.title} />
-                                <main className="page-content">
-                                    {route.view}
-                                </main>
-                            </div>
-                        </Route>)}
+                               exact={route.exact || false}
+                               path={route.url}>
+                            <PageJumbotron title={route.title} />
+                            <main className="page-content">{route.view}</main>
+                        </Route>)
+                    }
                     {/* Other routes */}
                     <Route path="/plane/:icao">
                         <PlaneInfo airplaneDisplayMetaName={props.airplaneDisplayMetaName}
@@ -185,10 +257,11 @@ export function App(props) {
                             content={content} handleContentChangeFn={handleContentChange}
                         />
                     </Route>
+                    {/* Redirect to home page for invalid routes */}
                     <Redirect to="/" />
                 </Switch>
                 <SiteFooter />
-            </div>
+            </ScrollToTop>
         </BrowserRouter>
     );
 }
