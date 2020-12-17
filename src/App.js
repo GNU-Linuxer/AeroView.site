@@ -68,11 +68,11 @@ function LoadingPage(props) {
     return (
         <>
             <SiteHeader appName="AeroView" logo="/img/branding-logo.svg" navLinks={[]} />
-            <PageJumbotron title='Loading airplanes data...'/>
+            <PageJumbotron title='Loading airplanes data...' />
             <main>
                 <Progress className="progress-bar-landing" value={props.progress} />
             </main>
-            <SiteFooter/>
+            <SiteFooter />
         </>
     );
 }
@@ -162,7 +162,7 @@ function AppLoaded(props) {
                         <Route key={route.name}
                                exact={route.exact || false}
                                path={route.url}>
-                            <PageJumbotron title={route.title}/>
+                            <PageJumbotron title={route.title} />
                             <main className="page-content">{route.view}</main>
                         </Route>)
                     }
