@@ -22,7 +22,7 @@ import 'firebase/auth';
 import 'firebase/database';
 
 
-const firebaseConfig = {
+const FIREBASE_CONFIG = {
     apiKey: "AIzaSyCufuelOrGrQigpl6vIQsSk7qzzlyCT52E",
     authDomain: "aeroview-info340-au20.firebaseapp.com",
     projectId: "aeroview-info340-au20",
@@ -42,8 +42,6 @@ export default function App() {
     // Firebase specific
     const [user, setUser] = useState(undefined);
     const [isLoggedIn, setIsLoggedIn] =  useState(false);
-    // const [errorMessage, setErrorMessage] = useState(undefined);
-    // const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         // Load airplane data, will be in an array of objects, whereas 1 object means 1 airplane
@@ -57,7 +55,7 @@ export default function App() {
 
         // Initialize Firebase
         if (!firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
+            firebase.initializeApp(FIREBASE_CONFIG);
         } else {
             firebase.app();
         }
@@ -67,14 +65,10 @@ export default function App() {
 
         const authUnregisterFunction = firebase.auth().onAuthStateChanged((firebaseUser) => {
             if (firebaseUser) {
-                console.log("logged in as " + firebaseUser.displayName);
                 setIsLoggedIn(true);
                 setUser(firebaseUser);
-                //setIsLoading(false);
             } else {
-                console.log("logged out!");
                 setUser(null);
-                //setIsLoading(false);
             }
         })
         setProgress(30);
@@ -91,16 +85,14 @@ export default function App() {
     }
 
     if (progress !== 51) {
-        return (
-            <LoadingPage progress={progress} />
-        );
+        return <LoadingPage progress={progress} />;
     }
 
     return (
         <LoadUserData airplaneDisplayMetaName={airplaneDisplayMetaName}
-                   airplaneData={airplaneData}
+                      airplaneData={airplaneData}
                       isLoggedIn={isLoggedIn}
-                    user={user}/>
+                      user={user} />
     );
 }
 
@@ -124,8 +116,6 @@ function LoadingPage(props) {
 }
 
 function LoadUserData(props) {
-    //console.log(props.user);
-    //console.log(props.isLoggedIn);
     const [progress, setProgress] =  useState(50);
     const [starRating, setStarRating] = useState({});
     const [favoriteHeart, setFavoriteHeart] = useState([]);
@@ -135,13 +125,12 @@ function LoadUserData(props) {
         if(!props.isLoggedIn) {
             setProgress(100);
         } else if (props.user === null && props.isLoggedIn) {
-          setErrorMsg(true);
+            setErrorMsg(true);
         } else {
             // Load Star Rating data
             const starRef = firebase.database().ref('users/' + props.user.uid + '/starRatings/');
             starRef.once('value', (snapshot) => {
                 const result = snapshot.val();
-                //console.log(result);
                 // When no rating data present
                 if (result === undefined || result === null) {
                     // Set the initial rating of all plane to 0 (if the value changes, the star-rendering will change)
@@ -161,7 +150,6 @@ function LoadUserData(props) {
             const favoriteHeartRef = firebase.database().ref("users/" + props.user.uid + '/favoritePlanes/');
             favoriteHeartRef.once('value', (snapshot) => {
                 const result = snapshot.val();
-                //console.log(result);
                 // When no rating data present
                 if (!(result === undefined || result === null)) {
                     let hearts = [];
@@ -178,7 +166,6 @@ function LoadUserData(props) {
             const noteRef = firebase.database().ref('users/' + props.user.uid + '/privateNotes/');
             noteRef.once('value', (snapshot) => {
                 const result = snapshot.val();
-                //console.log(result);
                 if (result !== undefined) {
                     setNoteContent(result);
                 }
@@ -186,10 +173,10 @@ function LoadUserData(props) {
                 setProgress(progress=> progress + 18);
             });
         }
-    }, []);
+    }, [props.airplaneData, props.isLoggedIn, props.user]);
 
     if (errorMsg) {
-        return (<AccountErrorElem/>);
+        return <AccountErrorMsgBanner />;
     }
 
     // Show 100% for 0.8 second before proceeding for user-friendliness
@@ -198,9 +185,7 @@ function LoadUserData(props) {
     }
 
     if (progress !== -1) {
-        return (
-            <LoadingPage progress={progress} />
-        );
+        return <LoadingPage progress={progress} />;
     }
 
     return (
@@ -214,14 +199,14 @@ function LoadUserData(props) {
     );
 }
 
-function AccountErrorElem (props){
+function AccountErrorMsgBanner(props){
     return (
         <>
             <SiteHeader appName="AeroView" logo="/img/branding-logo.svg" navLinks={[]} />
             <PageJumbotron title='Account Error' />
             <main>
                 <Alert color="danger">
-                    <div className="alert-heading">Fail to retrieve userdata </div>
+                    <div className="alert-heading">Failed to retrieve userdata</div>
                     <p>You're logged in, but we could not fetch your user data.</p>
                 </Alert>
             </main>
@@ -252,7 +237,6 @@ function AppLoaded(props) {
     const [favoritePlanes, setFavoritePlanes] = useState(props.favoriteHeart);
     const updateFavoritePlane = icao => {
         const newFavoritePlane = toggleElementInArray(icao, favoritePlanes);
-        //console.log(favoritePlanes);
 
         if (props.isLoggedIn) {
             const usersRef = firebase.database().ref("users/" + props.user.uid + '/favoritePlanes/');
@@ -290,7 +274,6 @@ function AppLoaded(props) {
         }
         setNoteContent(updatedContent);
     }
-
 
     let routesForNav = [
         {
