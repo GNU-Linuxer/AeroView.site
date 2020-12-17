@@ -31,7 +31,7 @@
 /* Ensure selector button groups have the same width,
  * so the search bar can be aligned to the center */
 .selector-group {
-    /* flex-basis: 300px; */
+     flex-basis: 330px;
 }
 
 /* Make filter and view option buttons be in the same line */
