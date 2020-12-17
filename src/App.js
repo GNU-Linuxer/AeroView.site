@@ -70,7 +70,7 @@ export function App(props) {
         const newFavoritePlane = toggleElementInArray(icao, favoritePlanes);
         console.log(favoritePlanes);
 
-        const usersRef = firebase.database().ref("users/" + user.uid + "/favoritePlane/");
+        const usersRef = firebase.database().ref("users/" + user.uid + '/favoritePlanes/');
         usersRef.set(newFavoritePlane);
         setFavoritePlanes(newFavoritePlane);
     }
@@ -98,7 +98,7 @@ export function App(props) {
         setRating(updatedPlaneRating);
 
 
-        const usersRef = firebase.database().ref('users/' + user.uid + "/starRating/");
+        const usersRef = firebase.database().ref('users/' + user.uid + '/starRatings/');
         usersRef.set(updatedPlaneRating);
     }
 

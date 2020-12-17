@@ -50,35 +50,31 @@ export function PlaneInfo(props) {
     // Jason: initial content and new content should directly interact with FireBase user database
     console.log(props.favorites);
     console.log(props.ratings);
-
     console.log(props.currentUser);
+
+    let asdf = props.currentUser;
+
+    let number = 1;
 
     const [favPlanes, setFavPlanes] = useState('');
     const [note, setNote] = useState('');
     const [comparisons, setComparisons] = useState('');
-
-    // console.log(favoritePlanes);
-
-    // if (favoritePlanes.length > 0) {
-    //     const newUserFavoriteData = {
-    //         userID: user.uid,
-    //         userName: user.displayName,
-    //         // starRating: planeRating,
-    //         favoritePlanes: favoritePlanes
-    //     }
-
-    //     const usersRef = firebase.database().ref('users/favoritePlanes');
-    //     usersRef.push(newUserFavoriteData);
-    // }
-
 
     // Functions that handle note-taking textbox content change
     // Use the initialState to load user previously-saved data
     const [content, setContent] = useState('');
     const handleContentChange = function (newContent) {
         console.log(newContent);
+        console.log('change detected ');
+        console.log(number);
+
+        console.log(asdf);
+
+        const usersRef = firebase.database().ref('users/' + props.currentUser.uid + '/privateNotes/');
+        usersRef.set(newContent);
         setContent(newContent);
-    };
+    }
+
 
     let planeICAOCode = useParams()["icao"];
     let planeInfo = props.airplaneData.filter(
