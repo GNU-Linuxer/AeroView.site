@@ -207,12 +207,25 @@ function AppLoaded(props) {
             noteRef.once('value', (snapshot) => {
                 const result = snapshot.val();
                 console.log(result);
-                if (result !== undefined) {
+                if (result !== null) {
                     setContent(result);
                 }
             });
+            const favoritesRef = firebase.database().ref("users/" + props.user.uid + '/favoritePlanes/');
+            favoritesRef.once('value', snapshot => {
+                const result = snapshot.val();
+                if (result !== null) {
+                    setFavoritePlanes(result);
+                }
+            });
+            const ratingsRef = firebase.database().ref("users/" + props.user.uid + '/starRatings/');
+            ratingsRef.once('value', snapshot => {
+                const result = snapshot.val();
+                if (result !== null) {
+                    setRating(result);
+                }
+            });
         }
-        //console.log(props.user);
     }, [props.user]);
 
     // Functions that handle note-taking textbox content change
