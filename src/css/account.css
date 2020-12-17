@@ -6,7 +6,7 @@ body > div:nth-child(6) > div > div.modal.fade.show {
   top: 5%;
 }
 
-#root > div > div > main > div > div:nth-child(1) {
+#root > main > div > div:nth-child(1) {
   text-align: center;
 }
 
@@ -14,7 +14,7 @@ button.btn.btn-primary {
   margin-bottom: 1.5rem;
 }
 
-#root > div > div > main > div > div:nth-child(2) {
+#root > main > div > div:nth-child(2) {
   text-align: center;
 }
 
