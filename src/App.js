@@ -207,6 +207,7 @@ function LoadUserData(props) {
         <AppLoaded airplaneDisplayMetaName={props.airplaneDisplayMetaName}
                    airplaneData={props.airplaneData}
                    user={props.user}
+                   isLoggedIn={props.isLoggedIn}
                    favoriteHeart={favoriteHeart}
                    starRating={starRating}
                    noteContent={noteContent}/>
@@ -238,6 +239,7 @@ function AccountErrorElem (props){
  * - airplaneData: an array of objects where each object represents an
  *   airplane's data
  * - user: the Firebase object for a user account
+ * - isLoggedIn: a boolean value that determines whether the user logs in to the site
  * - favoriteHeart: an array that represents favorite
  * - starRating: object of the user's star rating of all airplane
  * - noteContent: the user's note content object
@@ -252,8 +254,10 @@ function AppLoaded(props) {
         const newFavoritePlane = toggleElementInArray(icao, favoritePlanes);
         //console.log(favoritePlanes);
 
-        const usersRef = firebase.database().ref("users/" + props.user.uid + '/favoritePlanes/');
-        usersRef.set(newFavoritePlane);
+        if (props.isLoggedIn) {
+            const usersRef = firebase.database().ref("users/" + props.user.uid + '/favoritePlanes/');
+            usersRef.set(newFavoritePlane);
+        }
         setFavoritePlanes(newFavoritePlane);
     }
 
@@ -268,9 +272,10 @@ function AppLoaded(props) {
             updatedPlaneRating[icao] = rating;
         }
         setRating(updatedPlaneRating);
-
-        const usersRef = firebase.database().ref('users/' + props.user.uid + '/starRatings/');
-        usersRef.set(updatedPlaneRating);
+        if (props.isLoggedIn) {
+            const usersRef = firebase.database().ref('users/' + props.user.uid + '/starRatings/');
+            usersRef.set(updatedPlaneRating);
+        }
     }
 
     // Functions that handle note-taking textbox content change
@@ -279,8 +284,10 @@ function AppLoaded(props) {
         let updatedContent = { ...noteContent } // object copy
         updatedContent[icao] = newContent;
 
-        const usersRef = firebase.database().ref('users/' + props.user.uid + '/privateNotes/');
-        usersRef.set(updatedContent);
+        if (props.isLoggedIn) {
+            const usersRef = firebase.database().ref('users/' + props.user.uid + '/privateNotes/');
+            usersRef.set(updatedContent);
+        }
         setNoteContent(updatedContent);
     }
 
