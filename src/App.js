@@ -37,7 +37,21 @@ export default function App() {
     const [airplaneDisplayMetaName, setAirplaneDisplayMetaName] = useState({});
     const [airplaneData, setAirplaneData] = useState([]);
     // The percentage of loading progress; -1 indicates loading completes
-    const [progress, setProgress] =  useState(25);
+    const [progress, setProgress] =  useState(10);
+
+    // Firebase specific
+    const [user, setUser] = useState(undefined);
+    // const [errorMessage, setErrorMessage] = useState(undefined);
+    // const [isLoading, setIsLoading] = useState(true);
+
+
+    // Initialize Firebase
+    if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+    } else {
+        firebase.app();
+    }
+    setProgress(20);
 
     useEffect(() => {
         // Load airplane data, will be in an array of objects, whereas 1 object means 1 airplane
@@ -59,16 +73,26 @@ export default function App() {
             }, 1000);
         });
         // This 50% will be immediately called after d3 begins processing the csv
+        setProgress(30);
+
+        const authUnregisterFunction = firebase.auth().onAuthStateChanged((firebaseUser) => {
+            if (firebaseUser) {
+                console.log("logged in as " + firebaseUser.displayName);
+                setUser(firebaseUser);
+                //setIsLoading(false);
+            } else {
+                console.log("logged out!");
+                setUser(null);
+                //setIsLoading(false);
+            }
+        })
         setProgress(50);
+
+        return function cleanup() {
+            authUnregisterFunction();
+        }
     }, []);
 
-
-    // Initialize Firebase
-    if (!firebase.apps.length) {
-        firebase.initializeApp(firebaseConfig);
-    } else {
-        firebase.app();
-    }
 
     // Return loading screen if not finished processing airplane data
     if (progress !== -1) {
@@ -79,7 +103,8 @@ export default function App() {
 
     return (
         <AppLoaded airplaneDisplayMetaName={airplaneDisplayMetaName}
-                   airplaneData={airplaneData} />
+                   airplaneData={airplaneData}
+                    user={user}/>
     );
 }
 
@@ -111,34 +136,30 @@ function LoadingPage(props) {
  *   to display-friendly full names
  * - airplaneData: an array of objects where each object represents an
  *   airplane's data
+ * - user: the Firebase object for a user account
  */
 function AppLoaded(props) {
     // To preserve dashboard view, it must be an app-level state defined here
     const [dashboardView, setDashboardView] = useState(DASHBOARD_VIEWS.LIST);
-
-    const [user, setUser] = useState(undefined);
-    const [errorMessage, setErrorMessage] = useState(undefined);
-    const [isLoading, setIsLoading] = useState(true);
-
-    useEffect(() => {
-        const authUnregisterFunction = firebase.auth().onAuthStateChanged((firebaseUser) => {
-
-            if (firebaseUser) {
-                console.log("logged in as " + firebaseUser.displayName);
-                setUser(firebaseUser);
-                setIsLoading(false);
-            } else {
-                console.log("logged out!");
-                setUser(null);
-                setIsLoading(false);
-            }
-        })
-
-        return function cleanup() {
-            authUnregisterFunction();
-        }
-
-    }, []) // only run hook on first load
+    // useEffect(() => {
+    //     const authUnregisterFunction = firebase.auth().onAuthStateChanged((firebaseUser) => {
+    //
+    //         if (firebaseUser) {
+    //             console.log("logged in as " + firebaseUser.displayName);
+    //             setUser(firebaseUser);
+    //             setIsLoading(false);
+    //         } else {
+    //             console.log("logged out!");
+    //             setUser(null);
+    //             setIsLoading(false);
+    //         }
+    //     })
+    //
+    //     return function cleanup() {
+    //         authUnregisterFunction();
+    //     }
+    //
+    // }, []) // only run hook on first load
 
     // Handle change of 1 airplane's favorite toggle (all favorite airplanes' all-lowercase icao code is stored in this array)
     // Temporary: all planes are not favorite
@@ -148,7 +169,7 @@ function AppLoaded(props) {
         const newFavoritePlane = toggleElementInArray(icao, favoritePlanes);
         console.log(favoritePlanes);
 
-        const usersRef = firebase.database().ref("users/" + user.uid + '/favoritePlanes/');
+        const usersRef = firebase.database().ref("users/" + props.user.uid + '/favoritePlanes/');
         usersRef.set(newFavoritePlane);
         setFavoritePlanes(newFavoritePlane);
     }
@@ -171,11 +192,11 @@ function AppLoaded(props) {
             updatedPlaneRating[icao] = rating;
         }
         setRating(updatedPlaneRating);
-        const usersRef = firebase.database().ref('users/' + user.uid + '/starRatings/');
+        const usersRef = firebase.database().ref('users/' + props.user.uid + '/starRatings/');
         usersRef.set(updatedPlaneRating);
     }
 
-    console.log(user);
+    console.log(props.user);
 
     const [content, setContent] = useState('');
     // Functions that handle note-taking textbox content change
@@ -187,7 +208,7 @@ function AppLoaded(props) {
 
         updatedContent[icao] = newContent;
 
-        const usersRef = firebase.database().ref('users/' + user.uid + '/privateNotes/');
+        const usersRef = firebase.database().ref('users/' + props.user.uid + '/privateNotes/');
         usersRef.set(updatedContent);
         setContent(updatedContent);
     }
@@ -226,7 +247,7 @@ function AppLoaded(props) {
         },
         {
             name: "Account", title: "Create an account or log in", url: "/account",
-            view: <AccountPage currentUser={user} />
+            view: <AccountPage currentUser={props.user} />
         }
     ];
 
