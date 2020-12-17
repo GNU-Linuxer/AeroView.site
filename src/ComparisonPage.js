@@ -283,7 +283,7 @@ function OnePlaneCol(props) {
     // Airplane name and star rating
     planeInfoElems.push(
         <div key='name' className="chart-cell name-row">
-            <span>{props.onePlane['make'] + ' ' + props.onePlane['model']}</span>
+            <Link to={'/plane/' + props.onePlane['icao-pic'].toLowerCase()}><span>{props.onePlane['make'] + ' ' + props.onePlane['model']}</span></Link>
             <div className='comparison-page-star'>
                 <StarRating maxStars={5}
                             rating={props.planeRating[props.onePlane['icao-pic'].toLowerCase()]}

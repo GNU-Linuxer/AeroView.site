@@ -465,7 +465,7 @@ function OnePlaneTableRow(props) {
                                 updateFavorCallback={toggleFavorite} />
             </td>
             <td key='name' className="airplane-name">
-                <div>{props.onePlane["make"] + ' ' + props.onePlane["model"]}</div>
+                <div><Link to={'/plane/' + props.onePlane['icao-pic'].toLowerCase()}>{props.onePlane["make"] + ' ' + props.onePlane["model"]}</Link></div>
                 <div>
                     <StarRating maxStars={5}
                                 rating={props.currRating}

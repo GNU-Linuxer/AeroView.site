@@ -353,7 +353,15 @@ export const DashboardModal = () => {
             <Modal isOpen={modal} toggle={toggle} className="is-open">
                 <ModalHeader toggle={toggle}>AeroView Site Features</ModalHeader>
                 <ModalBody>
-                    Welcome to AeroView! This site has many features including: list and grid views of planes, detailed metadata pages for each plane, search and filter plane functionality, and a comparison chart page to compare favorite planes!
+                    <p className='h5'>
+                        Welcome to AeroView!
+                    </p>
+                    <p>
+                        This site has many features including: list and grid views of planes, detailed metadata pages for each plane, search and filter plane functionality, and a comparison chart page to compare favorite planes!
+                    </p>
+                    <p>
+                        Click on an airplane picture to browse detailed spec, take private note, and lot more!
+                    </p>
                 </ModalBody>
                 <ModalFooter>
                     <Button color="primary" onClick={toggle}>Got It!</Button>

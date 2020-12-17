@@ -51,7 +51,7 @@ span {
     background-color: #eee;
 }
 
-.plane-list tbody tr:hover {
+.plane-list tbody tr:hover, .plane-list tbody tr:hover a {
     background-color: hsl(205, 100%, 35%);
     color: white;
 }
@@ -72,4 +72,15 @@ td.airplane-name {
 .favorite-heart-list {
     /* Only set 1px of padding to the left; all other side will be 0*/
     padding: 0 0 0 1px;
+}
+
+/* The text's link styling*/
+
+tbody a {
+    color: #000000;
+    text-decoration: none;
+}
+
+tbody a:visited {
+    color: #000000;
 }
