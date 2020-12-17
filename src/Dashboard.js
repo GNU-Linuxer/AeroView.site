@@ -12,6 +12,8 @@ import { useMobileView } from './util/media-query.js';
 import { toggleElementInArray } from './util/array.js';
 import ListGridView from './ListGridView.js';
 
+import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
+
 /*
  * A read-only object containing constants that represent views supported by
  * the dashboard
@@ -59,7 +61,7 @@ export default function Dashboard(props) {
 
     // Listen for keyboard shortcut for switching view
     window.addEventListener('keydown',
-            event => switchViewIfRequested(event, props.switchViewCallback));
+        event => switchViewIfRequested(event, props.switchViewCallback));
 
     return (
         <div className="dashboard">
@@ -77,6 +79,7 @@ export default function Dashboard(props) {
                 changeFilteredMetaCallback={setSelectedMetadata}
                 searchCallback={setSearchTerm}
             />
+            <DashboardModal />
             <ListGridView
                 activeView={props.activeView}
                 // Continue passing data down to child components
@@ -172,15 +175,15 @@ function ViewSelector(props) {
     return (
         <div className="selector-group view-selector-group">
             <button className={props.activeView === DASHBOARD_VIEWS.LIST ? "selected-view" : ""}
-                    onClick={() => props.switchViewCallback(DASHBOARD_VIEWS.LIST)}
-                    id="list-view-btn" aria-label="switch to list view">
+                onClick={() => props.switchViewCallback(DASHBOARD_VIEWS.LIST)}
+                id="list-view-btn" aria-label="switch to list view">
                 <FontAwesomeIcon icon={faList} />
                 <span className="button-description"><u>L</u>ist</span>
             </button>
             <span aria-hidden="true" className="separator">/</span>
             <button className={props.activeView === DASHBOARD_VIEWS.GRID ? "selected-view" : ""}
-                    onClick={() => props.switchViewCallback(DASHBOARD_VIEWS.GRID)}
-                    id="grid-view-btn" aria-label="switch to grid view">
+                onClick={() => props.switchViewCallback(DASHBOARD_VIEWS.GRID)}
+                id="grid-view-btn" aria-label="switch to grid view">
                 <FontAwesomeIcon icon={faTh} />
                 <span className="button-description"><u>G</u>rid</span>
             </button>
@@ -205,7 +208,7 @@ function FilterSelector(props) {
 
     return (
         <ButtonDropdown isOpen={buttonActivated} direction='down'
-                        toggle={() => setButtonActivated(!buttonActivated)}>
+            toggle={() => setButtonActivated(!buttonActivated)}>
             <DropdownToggle tag="button">
                 <FontAwesomeIcon icon={faFilter} />
                 <span className="button-description">Filter</span>
@@ -242,7 +245,7 @@ function MetadataSelector(props) {
 
     return (
         <ButtonDropdown isOpen={buttonActivated} direction='down'
-                        toggle={() => setButtonActivated(!buttonActivated)}>
+            toggle={() => setButtonActivated(!buttonActivated)}>
             <DropdownToggle tag="button">
                 <FontAwesomeIcon icon={faEllipsisV} />
                 <span className="button-description">Options</span>
@@ -282,8 +285,8 @@ function MenuEntry(props) {
     return (
         <li onClick={toggleSelection}>
             <input type="checkbox"
-                   checked={props.selectedKeys.indexOf(props.entryKey) !== -1}
-                   onChange={toggleSelection} />
+                checked={props.selectedKeys.indexOf(props.entryKey) !== -1}
+                onChange={toggleSelection} />
             <label>{props.entryName}</label>
         </li>
     );
@@ -298,13 +301,13 @@ function MenuEntry(props) {
 function SearchBar(props) {
     return (
         <form role="search"
-              onSubmit={event => event.preventDefault()}>
+            onSubmit={event => event.preventDefault()}>
             <div className="search-bar-container">
                 <div className="search-textbox-container">
                     <input className="search-textbox" id="search-textbox"
-                           required type="text"
-                           value={props.searchTerm}
-                           onChange={event => props.searchCallback(event.target.value)} />
+                        required type="text"
+                        value={props.searchTerm}
+                        onChange={event => props.searchCallback(event.target.value)} />
                     <label aria-hidden="true" htmlFor="search-textbox">
                         <FontAwesomeIcon icon={faSearch} /> Type to search</label>
                 </div>
@@ -332,4 +335,25 @@ function switchViewIfRequested(event, switchViewCallback) {
             switchViewCallback(DASHBOARD_VIEWS.GRID);
         }
     }
+}
+
+export const DashboardModal = () => {
+    const [modal, setModal] = useState(false);
+
+    const toggle = () => setModal(!modal);
+
+    return (
+        <div className="d-flex flex-row-reverse">
+            <Button color="primary" className='p-2' onClick={toggle}>Site Features</Button>
+            <Modal isOpen={modal} toggle={toggle} className="is-open">
+                <ModalHeader toggle={toggle}>AeroView Site Features</ModalHeader>
+                <ModalBody>
+                    Welcome to AeroView! This site has many features including: list and grid views of planes, detailed metadata pages for each plane, search and filter plane functionality, and a comparison chart page to compare favorite planes!
+                </ModalBody>
+                <ModalFooter>
+                    <Button color="primary" onClick={toggle}>Got It!</Button>
+                </ModalFooter>
+            </Modal>
+        </div>
+    );
 }
