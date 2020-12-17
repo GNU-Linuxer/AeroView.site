@@ -3,7 +3,7 @@
  * information.
  */
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 
 // import './css/site-elements.css';
@@ -16,7 +16,7 @@ import {PageJumbotron} from "./SiteElements";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Alert } from 'reactstrap';
 
-//SunEditor
+// SunEditor
 import SunEditor from 'suneditor-react';
 import 'suneditor/dist/css/suneditor.min.css';
 
@@ -47,11 +47,6 @@ const HIDDEN_METADATA = ["make", "model", "icao-pic"];
  * - handleContentChangeFn: the callback function that handles content change
  */
 export function PlaneInfo(props) {
-    const [favPlanes, setFavPlanes] = useState('');
-    const [note, setNote] = useState('');
-    const [comparisons, setComparisons] = useState('');
-
-
     let planeICAOCode = useParams()["icao"];
     let planeInfo = props.airplaneData.filter(
         plane => plane["icao"] === planeICAOCode.toUpperCase())[0];
@@ -204,36 +199,28 @@ function NoteEditor(props) {
         handleContentChangeFn: the callback function that handles content change
         planeName: airplane's full name (example: Boeing 737-800)
      */
-    //console.log(props.content);
     const editorRef = useRef();
     let initialEditorContent = '';
     if (props.content[props.icao] !== undefined) {
         if (props.content[props.icao].length >0) {
             initialEditorContent = props.content[props.icao];
-            //console.log(initialEditorContent);
         }
     }
 
     const [editorContent, setEditorContent] = useState(initialEditorContent);
     const updateEditorContent = function(newContent) {
-        //console.log(props.icao);
         props.handleContentChangeFn(props.icao, newContent);
         setEditorContent(newContent);
     }
 
     const options = {
         height: 200,
-        //Available parameter can be found at https://github.com/JiHong88/SunEditor/blob/master/README.md#2-load-all-plugins
+        // Available parameters can be found at https://github.com/JiHong88/SunEditor/blob/master/README.md#2-load-all-plugins
         buttonList: [['undo', 'redo'], ['formatBlock', 'font', 'fontSize'], ['bold', 'underline', 'italic', 'strike', 'link', 'removeFormat'], ['align', 'list'], ['outdent', 'indent'], ['print']],
         stickyToolbar: false
     }
 
-    useEffect(() => {
-        // Get underlining core object here
-        // Notice that useEffect is been used because you have to make sure the editor is rendered.
-        //console.log(editorRef.current.editor.core);
-    }, []);
-    /*Note: the SunEditor will call onChange 1 seconds after user stops typing*/
+    /* Note: the SunEditor will call onChange 1 seconds after user stops typing */
     return (
         <div className='plane-info-note-editor'>
             <SunEditor ref={editorRef}
