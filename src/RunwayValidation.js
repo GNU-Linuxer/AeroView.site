@@ -113,11 +113,7 @@ function ContentContainer(props) {
                                        key='comparison result'/>);
     }
 
-    return (
-        <>
-            {returnElem}
-        </>
-    );
+    return returnElem;
 }
 
 
