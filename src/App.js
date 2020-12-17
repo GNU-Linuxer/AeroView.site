@@ -171,7 +171,8 @@ function LoadUserData(props) {
                 setProgress(progress=> progress + 18);
             });
         }
-    }, [props.airplaneData, props.isLoggedIn, props.user]);
+        // eslint-disable-next-line
+    }, []);
 
     if (errorMsg) {
         return <AccountErrorMsgBanner />;
