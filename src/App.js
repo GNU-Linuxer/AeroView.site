@@ -307,7 +307,7 @@ function AppLoaded(props) {
                 updateFavoriteFn={updateFavoritePlane} />
         },
         {
-            name: "Account", title: "Create an account or log in", url: "/account",
+            name: "Account", title: "User Account", url: "/account",
             view: <AccountPage currentUser={props.user} />
         }
     ];
