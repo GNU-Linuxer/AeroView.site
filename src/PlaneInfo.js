@@ -206,7 +206,17 @@ function NoteEditor(props) {
         planeName: airplane's full name (example: Boeing 737-800)
      */
     const editorRef = useRef();
-    console.log(props.icao);
+    let initialEditorContent = '';
+    if (props.content.length >=  0) {
+        initialEditorContent = props.content;
+    }
+
+    const [editorContent, setEditorContent] = useState(initialEditorContent);
+    const updateEditorContent = function(newContent) {
+        //console.log(props.icao);
+        props.handleContentChangeFn(props.icao, newContent);
+        setEditorContent(newContent);
+    }
 
     const options = {
         height: 200,
@@ -224,12 +234,12 @@ function NoteEditor(props) {
     return (
         <div className='plane-info-note-editor'>
             <SunEditor ref={editorRef}
-                setContents={<p>dafxcesdcfsdxc</p>}
+                setContents={editorContent}
                 setOptions={options}
                 placeholder={"Take a note on " + props.planeName}
                 setDefaultStyle="font-family: sans-serif; font-size: 16px;"
 
-                onChange={(content) => props.handleContentChangeFn(props.icao, content)} />
+                onChange={updateEditorContent} />
         </div>
     );
 }
