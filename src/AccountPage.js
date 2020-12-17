@@ -68,7 +68,7 @@ export const AccountModal = () => {
       <Modal isOpen={modal} toggle={toggle} className="is-open">
         <ModalHeader toggle={toggle}>Account Features</ModalHeader>
         <ModalBody>
-          By creating an account on AeroView, you'll be able to save your plane filter options, favorite airplanes and star ratings, private notes for each airplane, and your comparison table columns!
+          By creating an account on AeroView, you'll be able to save your favorite airplanes, star ratings, private notes for each airplane, and your comparison table columns!
           To create an account, just input your email in the sign-in form below
         </ModalBody>
         <ModalFooter>
