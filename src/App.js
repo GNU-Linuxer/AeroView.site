@@ -45,14 +45,6 @@ export default function App() {
     // const [isLoading, setIsLoading] = useState(true);
 
 
-    // Initialize Firebase
-    if (!firebase.apps.length) {
-        firebase.initializeApp(firebaseConfig);
-    } else {
-        firebase.app();
-    }
-    setProgress(20);
-
     useEffect(() => {
         // Load airplane data, will be in an array of objects, whereas 1 object means 1 airplane
         // The first object describe how shorthand key correspond to full metadata name, such as {cruise_range: "Cruise Range (N miles)"}
@@ -72,6 +64,15 @@ export default function App() {
                 setProgress(-1);
             }, 1000);
         });
+
+        // Initialize Firebase
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        } else {
+            firebase.app();
+        }
+        setProgress(20);
+
         // This 50% will be immediately called after d3 begins processing the csv
         setProgress(30);
 
@@ -196,15 +197,17 @@ function AppLoaded(props) {
         usersRef.set(updatedPlaneRating);
     }
 
-    console.log(props.user);
+    //console.log(props.user);
 
     const [content, setContent] = useState('');
     // Functions that handle note-taking textbox content change
     // Use the initialState to load user previously-saved data
     const handleContentChange = (icao, newContent) => {
         let updatedContent = { ...content } // object copy
-        console.log(newContent);
-        console.log('change detected ');
+        //console.log(newContent);
+        //console.log('change detected ');
+
+        console.log(icao);
 
         updatedContent[icao] = newContent;
 

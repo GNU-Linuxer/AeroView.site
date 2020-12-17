@@ -90,7 +90,7 @@ export function PlaneInfo(props) {
                 </div>
 
                 <div className='note-editor-parent-container'>
-                    <NoteEditor content={props.content} handleContentChangeFn={props.handleContentChangeFn} planeName={planeName}/>
+                    <NoteEditor icao={lowerCaseICAO} content={props.content} handleContentChangeFn={props.handleContentChangeFn} planeName={planeName}/>
                 </div>
 
                 <div className='runway-validation-parent-container'>
@@ -99,7 +99,7 @@ export function PlaneInfo(props) {
             </main>
         </div>
     );
-};
+}
 
 
 /*
@@ -206,7 +206,7 @@ function NoteEditor(props) {
         planeName: airplane's full name (example: Boeing 737-800)
      */
     const editorRef = useRef();
-
+    console.log(props.icao);
 
     const options = {
         height: 200,
@@ -224,7 +224,7 @@ function NoteEditor(props) {
     return (
         <div className='plane-info-note-editor'>
             <SunEditor ref={editorRef}
-                setContents={props.content}
+                setContents={<p>dafxcesdcfsdxc</p>}
                 setOptions={options}
                 placeholder={"Take a note on " + props.planeName}
                 setDefaultStyle="font-family: sans-serif; font-size: 16px;"
