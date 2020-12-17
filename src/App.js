@@ -39,6 +39,7 @@ export function App(props) {
     const [dashboardView, setDashboardView] = useState(DASHBOARD_VIEWS.LIST);
 
     const [user, setUser] = useState(undefined);
+    const [content, setContent] = useState('');
     const [errorMessage, setErrorMessage] = useState(undefined);
     const [isLoading, setIsLoading] = useState(true);
 
@@ -101,6 +102,18 @@ export function App(props) {
         const usersRef = firebase.database().ref('users/' + user.uid + '/starRatings/');
         usersRef.set(updatedPlaneRating);
     }
+
+    // Functions that handle note-taking textbox content change
+    // Use the initialState to load user previously-saved data
+    const handleContentChange = function (newContent) {
+        console.log(newContent);
+        console.log('change detected ');
+
+        const usersRef = firebase.database().ref('users/' + props.currentUser.uid + '/privateNotes/');
+        usersRef.set(newContent);
+        setContent(newContent);
+    }
+
 
     let routesForNav = [
         {
