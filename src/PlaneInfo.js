@@ -83,7 +83,7 @@ export function PlaneInfo(props) {
                 <span className="plane-info-left-column">
                     <PlaneImage planeInfo={planeInfo} planeName={planeName} />
                     <span className='d-none d-lg-block' >
-                        <NoteEditor content={content} handleContentChangeFn={handleContentChange} planeName={planeName} />
+                        <NoteEditor content={props.content[lowerCaseICAO]} handleContentChangeFn={props.handleContentChangeFn} planeName={planeName} />
                     </span>
                 </span>
 
@@ -100,7 +100,7 @@ export function PlaneInfo(props) {
                     </span>
                 </div>
                 <span className='d-lg-none'>
-                    <NoteEditor icao={lowerCaseICAO} content={props.content} handleContentChangeFn={props.handleContentChange} planeName={planeName} />
+                    <NoteEditor icao={lowerCaseICAO} content={props.content} handleContentChangeFn={props.handleContentChangeFn} planeName={planeName} />
                     <RunwayValidation icao={lowerCaseICAO} airplaneData={props.airplaneData} />
                 </span>
             </main>
