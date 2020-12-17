@@ -44,18 +44,10 @@ const HIDDEN_METADATA = ["make", "model", "icao-pic"];
  * - updateFavoritesCallback: the callback function on favorite change event,
  *     which takes a single argument for the ICAO code of the plane whose
  *     favorite status is changed
+ * - content: the content that should pass to editor's textbox
+ * - handleContentChangeFn: the callback function that handles content change
  */
 export function PlaneInfo(props) {
-
-    // Jason: initial content and new content should directly interact with FireBase user database
-    console.log(props.favorites);
-    console.log(props.ratings);
-    console.log(props.currentUser);
-
-    let asdf = props.currentUser;
-
-    let number = 1;
-
     const [favPlanes, setFavPlanes] = useState('');
     const [note, setNote] = useState('');
     const [comparisons, setComparisons] = useState('');
@@ -108,7 +100,7 @@ export function PlaneInfo(props) {
                     </span>
                 </div>
                 <span className='d-lg-none'>
-                    <NoteEditor content={content} handleContentChangeFn={handleContentChange} planeName={planeName} />
+                    <NoteEditor icao={lowerCaseICAO} content={props.content} handleContentChangeFn={props.handleContentChange} planeName={planeName} />
                     <RunwayValidation icao={lowerCaseICAO} airplaneData={props.airplaneData} />
                 </span>
             </main>
@@ -236,6 +228,7 @@ function getPlaneImagePath(planeInfo) {
 
 function NoteEditor(props) {
     /* props:
+        icao: all-lowercase icao code for the current airplane
         content: the content that should pass to editor's textbox
         handleContentChangeFn: the callback function that handles content change
         planeName: airplane's full name (example: Boeing 737-800)
@@ -264,7 +257,7 @@ function NoteEditor(props) {
                 placeholder={"Take a note on " + props.planeName}
                 setDefaultStyle="font-family: sans-serif; font-size: 16px;"
 
-                onChange={props.handleContentChangeFn} />
+                onChange={(content) => props.handleContentChangeFn(props.icao, content)} />
         </div>
     );
 }
