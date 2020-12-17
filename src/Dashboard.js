@@ -6,7 +6,7 @@ import React, { useState } from 'react';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { ButtonDropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
-import { faList, faTh, faFilter, faEllipsisV, faSearch } from '@fortawesome/free-solid-svg-icons'
+import { faList, faTh, faFilter, faEllipsisV, faSearch, faQuestion } from '@fortawesome/free-solid-svg-icons'
 
 import { useMobileView } from './util/media-query.js';
 import { toggleElementInArray } from './util/array.js';
@@ -79,7 +79,7 @@ export default function Dashboard(props) {
                 changeFilteredMetaCallback={setSelectedMetadata}
                 searchCallback={setSearchTerm}
             />
-            <DashboardModal />
+
             <ListGridView
                 activeView={props.activeView}
                 // Continue passing data down to child components
@@ -146,6 +146,7 @@ function Widgets(props) {
                 />}
 
                 <div className="selector-group content-selector-group">
+                    <DashboardModal />
                     <FilterSelector
                         airplaneData={props.airplaneData}
                         brandsToDisplay={props.brandsToDisplay}
@@ -343,8 +344,12 @@ export const DashboardModal = () => {
     const toggle = () => setModal(!modal);
 
     return (
-        <div className="d-flex flex-row-reverse">
-            <Button color="primary" className='p-2' onClick={toggle}>Site Features</Button>
+        <>
+            <button aria-haspopup="true" aria-expanded={modal}
+                onClick={() => setModal(!modal)}>
+                <FontAwesomeIcon icon={faQuestion} />
+                <span className="button-description">Help</span>
+            </button>
             <Modal isOpen={modal} toggle={toggle} className="is-open">
                 <ModalHeader toggle={toggle}>AeroView Site Features</ModalHeader>
                 <ModalBody>
@@ -354,6 +359,6 @@ export const DashboardModal = () => {
                     <Button color="primary" onClick={toggle}>Got It!</Button>
                 </ModalFooter>
             </Modal>
-        </div>
+        </>
     );
 }
