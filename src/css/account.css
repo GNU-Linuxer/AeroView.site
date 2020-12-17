@@ -1,23 +1,16 @@
-#firebaseui_container {
+.firebase-container {
   margin-bottom: 1rem;
 }
 
-body > div:nth-child(6) > div > div.modal.fade.show {
-  top: 5%;
+/* Move down the modal dialog box */
+div.modal.fade.show {
+  top: 15%;
 }
 
-#root > main > div > div:nth-child(1) {
+.acct-page-button-container {
   text-align: center;
 }
 
-button.btn.btn-primary {
-  margin-bottom: 1.5rem;
-}
-
-#root > main > div > div:nth-child(2) {
-  text-align: center;
-}
-
-button.btn.btn-warning {
+.acct-page-button-container button {
   margin-bottom: 1.5rem;
 }

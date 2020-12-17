@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
-import { PlaneInfo } from './PlaneInfo';
 
 import './css/account.css'
 
@@ -8,7 +7,7 @@ import firebase from 'firebase/app';
 import 'firebase/auth';
 import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
 
-const uiConfig = {
+const UI_CONFIG = {
   signInOptions: [
     {
       provider: firebase.auth.EmailAuthProvider.PROVIDER_ID,
@@ -25,32 +24,31 @@ const uiConfig = {
 };
 
 export function AccountPage(props) {
-  const [errorMessage, setErrorMessage] = useState(undefined);
-
   const handleSignOut = () => {
-    setErrorMessage(null);
     firebase.auth().signOut();
   }
 
-  let accountPageContent = null;
-
-  console.log(props.currentUser);
+  let accountPageContent;
 
   if (!props.currentUser) {
-    accountPageContent = (
-      <StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={firebase.auth()} />
-    )
+    // Render sign in/sign up tool
+    accountPageContent = <StyledFirebaseAuth className="firebase-container"
+                                             uiConfig={UI_CONFIG}
+                                             firebaseAuth={firebase.auth()} />;
   } else {
     // Render sign out button
     accountPageContent = (
-      <div>
-        <button className="btn btn-warning" onClick={handleSignOut}>Log Out {props.currentUser.displayName}</button>
+      <div className="acct-page-button-container">
+        <button className="btn btn-warning acct-page-button"
+                onClick={handleSignOut}>
+          Log Out {props.currentUser.displayName}
+        </button>
       </div>
-    )
+    );
   }
 
   return (
-    <div>
+    <div className="acct-page-container">
       <AccountModal />
       {accountPageContent}
     </div>
@@ -63,13 +61,13 @@ export const AccountModal = () => {
   const toggle = () => setModal(!modal);
 
   return (
-    <div>
-      <Button color="primary" onClick={toggle}>Account Features</Button>
+    <div className="acct-page-button-container">
+      <Button color="primary" onClick={toggle}>Account Benefits</Button>
       <Modal isOpen={modal} toggle={toggle} className="is-open">
-        <ModalHeader toggle={toggle}>Account Features</ModalHeader>
+        <ModalHeader toggle={toggle}>Account Benefits</ModalHeader>
         <ModalBody>
           By creating an account on AeroView, you'll be able to save your favorite airplanes, star ratings, private notes for each airplane, and your comparison table columns!
-          To create an account, just input your email in the sign-in form below
+          To create an account, just input your email in the sign-in form on this page.
         </ModalBody>
         <ModalFooter>
           <Button color="primary" onClick={toggle}>Sounds Good!</Button>
