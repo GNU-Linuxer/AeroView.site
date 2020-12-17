@@ -104,7 +104,7 @@ export default function App() {
     return (
         <AppLoaded airplaneDisplayMetaName={airplaneDisplayMetaName}
                    airplaneData={airplaneData}
-                    user={user}/>
+                   user={user}/>
     );
 }
 
@@ -201,16 +201,19 @@ function AppLoaded(props) {
     const [content, setContent] = useState('');
 
     useEffect(() => {
+        if (props.user !== null) {
+            // The user is logged in
+            const noteRef = firebase.database().ref('users/' + props.user.uid + '/privateNotes/');
+            noteRef.once('value', (snapshot) => {
+                const result = snapshot.val();
+                console.log(result);
+                if (result !== undefined) {
+                    setContent(result);
+                }
+            });
+        }
         //console.log(props.user);
-        const noteRef = firebase.database().ref('users/' + props.user.uid + '/privateNotes/');
-        noteRef.once('value', (snapshot) => {
-            const result = snapshot.val();
-            console.log(result);
-            if (result !== undefined) {
-                setContent(result);
-            }
-        });
-    }, []);
+    }, [props.user]);
 
     // Functions that handle note-taking textbox content change
     // Use the initialState to load user previously-saved data
