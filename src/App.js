@@ -122,10 +122,8 @@ function LoadUserData(props) {
     const [noteContent, setNoteContent] = useState({});
     const [errorMsg, setErrorMsg] = useState(false);
     useEffect(()=> {
-        if(!props.isLoggedIn) {
+        if((!props.isLoggedIn) || props.user === null) {
             setProgress(100);
-        } else if (props.user === null && props.isLoggedIn) {
-            setErrorMsg(true);
         } else {
             // Load Star Rating data
             const starRef = firebase.database().ref('users/' + props.user.uid + '/starRatings/');
