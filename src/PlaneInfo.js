@@ -4,7 +4,6 @@
  */
 
 import React, { useState, useRef, useEffect } from 'react';
-import firebase from 'firebase/app';
 import { useParams } from 'react-router-dom';
 
 // import './css/site-elements.css';
@@ -205,11 +204,14 @@ function NoteEditor(props) {
         handleContentChangeFn: the callback function that handles content change
         planeName: airplane's full name (example: Boeing 737-800)
      */
-    console.log(props.content);
+    //console.log(props.content);
     const editorRef = useRef();
     let initialEditorContent = '';
-    if (props.content['icao'] !== undefined) {
-        initialEditorContent = props.content['icao'];
+    if (props.content[props.icao] !== undefined) {
+        if (props.content[props.icao].length >0) {
+            initialEditorContent = props.content[props.icao];
+            //console.log(initialEditorContent);
+        }
     }
 
     const [editorContent, setEditorContent] = useState(initialEditorContent);

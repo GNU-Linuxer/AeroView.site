@@ -1,7 +1,7 @@
 import * as d3 from 'd3-fetch';
 
 import React, { useEffect, useState } from 'react';
-import { Progress } from 'reactstrap';
+import {Alert, Progress} from 'reactstrap';
 import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
 
 import Dashboard, { DASHBOARD_VIEWS } from './Dashboard.js';
@@ -41,6 +41,7 @@ export default function App() {
 
     // Firebase specific
     const [user, setUser] = useState(undefined);
+    const [isLoggedIn, setIsLoggedIn] =  useState(false);
     // const [errorMessage, setErrorMessage] = useState(undefined);
     // const [isLoading, setIsLoading] = useState(true);
 
@@ -49,20 +50,10 @@ export default function App() {
         // The first object describe how shorthand key correspond to full metadata name, such as {cruise_range: "Cruise Range (N miles)"}
         d3.csv('/data/airplanes.csv')
             .then(text => {
-                setProgress(75);
+                setProgress(50);
                 setAirplaneDisplayMetaName(text[0]); //{make: "Make", model: "Model", series: "Production Series",...s}
                 setAirplaneData(text.slice(1, text.length)); // 0: {make: "Airbus", model: "A220-300", …} 1: {make: "Airbus", model: "A320neo", …}
-            }).then(() => {
-            // Show 75% for 0.2 second before proceeding for user-friendliness
-            // Reason: loading page can't stay too short for a very fast device (users are curious what's the loading page look like)
-            setTimeout(() => {
-                setProgress(100);
-            }, 200);
-            // Show 100% for 1 second before proceeding for user-friendliness
-            setTimeout(() => {
-                setProgress(-1);
-            }, 1000);
-        });
+            });
 
         // Initialize Firebase
         if (!firebase.apps.length) {
@@ -70,14 +61,14 @@ export default function App() {
         } else {
             firebase.app();
         }
-        setProgress(20);
 
-        // This 50% will be immediately called after d3 begins processing the csv
-        setProgress(30);
+        // This 20% will be immediately called after d3 begins processing the csv
+        setProgress(20);
 
         const authUnregisterFunction = firebase.auth().onAuthStateChanged((firebaseUser) => {
             if (firebaseUser) {
                 console.log("logged in as " + firebaseUser.displayName);
+                setIsLoggedIn(true);
                 setUser(firebaseUser);
                 //setIsLoading(false);
             } else {
@@ -86,7 +77,7 @@ export default function App() {
                 //setIsLoading(false);
             }
         })
-        setProgress(50);
+        setProgress(30);
 
         return function cleanup() {
             authUnregisterFunction();
@@ -94,16 +85,21 @@ export default function App() {
     }, []);
 
 
-    // Return loading screen if not finished processing airplane data
-    if (progress !== -1) {
+    // Show 50% for 0.5 second before proceeding for user-friendliness
+    if (progress === 50) {
+        setTimeout(() => {setProgress(51);}, 500);
+    }
+
+    if (progress !== 51) {
         return (
             <LoadingPage progress={progress} />
         );
     }
 
     return (
-        <AppLoaded airplaneDisplayMetaName={airplaneDisplayMetaName}
+        <LoadUserData airplaneDisplayMetaName={airplaneDisplayMetaName}
                    airplaneData={airplaneData}
+                      isLoggedIn={isLoggedIn}
                     user={user}/>
     );
 }
@@ -127,6 +123,111 @@ function LoadingPage(props) {
     );
 }
 
+function LoadUserData(props) {
+    //console.log(props.user);
+    //console.log(props.isLoggedIn);
+    const [progress, setProgress] =  useState(50);
+    const [starRating, setStarRating] = useState({});
+    const [favoriteHeart, setFavoriteHeart] = useState([]);
+    const [noteContent, setNoteContent] = useState({});
+    const [errorMsg, setErrorMsg] = useState(false);
+    useEffect(()=> {
+        if(!props.isLoggedIn) {
+            setProgress(100);
+        } else if (props.user === null && props.isLoggedIn) {
+          setErrorMsg(true);
+        } else {
+            // Load Star Rating data
+            const starRef = firebase.database().ref('users/' + props.user.uid + '/starRatings/');
+            starRef.once('value', (snapshot) => {
+                const result = snapshot.val();
+                //console.log(result);
+                // When no rating data present
+                if (result === undefined || result === null) {
+                    // Set the initial rating of all plane to 0 (if the value changes, the star-rendering will change)
+                    let initialRating = {};
+                    for (let onePlane of props.airplaneData) {
+                        initialRating[onePlane["icao-pic"].toLowerCase()] = 0;
+                    }
+                    setStarRating(initialRating);
+                } else {
+                    setStarRating(result);
+                }
+            }).then(()=> {
+                setProgress(progress=> progress + 16);
+            });
+
+            // Load Favorite Plane Heart data
+            const favoriteHeartRef = firebase.database().ref("users/" + props.user.uid + '/favoritePlanes/');
+            favoriteHeartRef.once('value', (snapshot) => {
+                const result = snapshot.val();
+                //console.log(result);
+                // When no rating data present
+                if (!(result === undefined || result === null)) {
+                    let hearts = [];
+                    for (let oneKey of Object.keys(result)) {
+                        hearts.push(result[oneKey]);
+                    }
+                    setFavoriteHeart(hearts);
+                }
+            }).then(()=> {
+                setProgress(progress=> progress + 16);
+            });
+
+            // Load Note data
+            const noteRef = firebase.database().ref('users/' + props.user.uid + '/privateNotes/');
+            noteRef.once('value', (snapshot) => {
+                const result = snapshot.val();
+                //console.log(result);
+                if (result !== undefined) {
+                    setNoteContent(result);
+                }
+            }).then(()=> {
+                setProgress(progress=> progress + 18);
+            });
+        }
+    }, []);
+
+    if (errorMsg) {
+        return (<AccountErrorElem/>);
+    }
+
+    // Show 100% for 0.8 second before proceeding for user-friendliness
+    if (progress === 100) {
+        setTimeout(() => {setProgress(-1);}, 800);
+    }
+
+    if (progress !== -1) {
+        return (
+            <LoadingPage progress={progress} />
+        );
+    }
+
+    return (
+        <AppLoaded airplaneDisplayMetaName={props.airplaneDisplayMetaName}
+                   airplaneData={props.airplaneData}
+                   user={props.user}
+                   favoriteHeart={favoriteHeart}
+                   starRating={starRating}
+                   noteContent={noteContent}/>
+    );
+}
+
+function AccountErrorElem (props){
+    return (
+        <>
+            <SiteHeader appName="AeroView" logo="/img/branding-logo.svg" navLinks={[]} />
+            <PageJumbotron title='Account Error' />
+            <main>
+                <Alert color="danger">
+                    <div className="alert-heading">Fail to retrieve userdata </div>
+                    <p>You're logged in, but we could not fetch your user data.</p>
+                </Alert>
+            </main>
+            <SiteFooter />
+        </>
+    );
+}
 
 /*
  * Returns an HTML element for the app after the data is loaded.
@@ -137,52 +238,27 @@ function LoadingPage(props) {
  * - airplaneData: an array of objects where each object represents an
  *   airplane's data
  * - user: the Firebase object for a user account
+ * - favoriteHeart: an array that represents favorite
+ * - starRating: object of the user's star rating of all airplane
+ * - noteContent: the user's note content object
  */
 function AppLoaded(props) {
     // To preserve dashboard view, it must be an app-level state defined here
     const [dashboardView, setDashboardView] = useState(DASHBOARD_VIEWS.LIST);
-    // useEffect(() => {
-    //     const authUnregisterFunction = firebase.auth().onAuthStateChanged((firebaseUser) => {
-    //
-    //         if (firebaseUser) {
-    //             console.log("logged in as " + firebaseUser.displayName);
-    //             setUser(firebaseUser);
-    //             setIsLoading(false);
-    //         } else {
-    //             console.log("logged out!");
-    //             setUser(null);
-    //             setIsLoading(false);
-    //         }
-    //     })
-    //
-    //     return function cleanup() {
-    //         authUnregisterFunction();
-    //     }
-    //
-    // }, []) // only run hook on first load
 
     // Handle change of 1 airplane's favorite toggle (all favorite airplanes' all-lowercase icao code is stored in this array)
-    // Temporary: all planes are not favorite
-    // This should read from user data to re-load previously saved rating
-    const [favoritePlanes, setFavoritePlanes] = useState([]);
+    const [favoritePlanes, setFavoritePlanes] = useState(props.favoriteHeart);
     const updateFavoritePlane = icao => {
         const newFavoritePlane = toggleElementInArray(icao, favoritePlanes);
-        console.log(favoritePlanes);
+        //console.log(favoritePlanes);
 
         const usersRef = firebase.database().ref("users/" + props.user.uid + '/favoritePlanes/');
         usersRef.set(newFavoritePlane);
         setFavoritePlanes(newFavoritePlane);
     }
 
-    // Temporary: set the initial rating of all plane to 0 (if the value changes, the star-rendering will change)
-    // This should read from user data to re-load previously saved rating
-    let initialRating = {};
-    for (let onePlane of props.airplaneData) {
-        initialRating[onePlane["icao-pic"].toLowerCase()] = 0;
-    }
-
     // Handle change of 1 airplane's star rating
-    const [planeRating, setRating] = useState(initialRating);
+    const [planeRating, setRating] = useState(props.starRating);
     const updatePlaneRating = (icao, rating) => {
         let updatedPlaneRating = { ...planeRating } // object copy
         // User can remove rating (0 star) by clicking on the same rating star again
@@ -192,40 +268,20 @@ function AppLoaded(props) {
             updatedPlaneRating[icao] = rating;
         }
         setRating(updatedPlaneRating);
+
         const usersRef = firebase.database().ref('users/' + props.user.uid + '/starRatings/');
         usersRef.set(updatedPlaneRating);
     }
 
-
-
-    const [content, setContent] = useState('');
-
-    useEffect(() => {
-        //console.log(props.user);
-        const noteRef = firebase.database().ref('users/' + props.user.uid + '/privateNotes/');
-        noteRef.once('value', (snapshot) => {
-            const result = snapshot.val();
-            console.log(result);
-            if (result !== undefined) {
-                setContent(result);
-            }
-        });
-    }, []);
-
     // Functions that handle note-taking textbox content change
-    // Use the initialState to load user previously-saved data
+    const [noteContent, setNoteContent] = useState(props.noteContent);
     const handleContentChange = (icao, newContent) => {
-        let updatedContent = { ...content } // object copy
-        //console.log(newContent);
-        //console.log('change detected ');
-
-        //console.log(icao);
-
+        let updatedContent = { ...noteContent } // object copy
         updatedContent[icao] = newContent;
 
         const usersRef = firebase.database().ref('users/' + props.user.uid + '/privateNotes/');
         usersRef.set(updatedContent);
-        setContent(updatedContent);
+        setNoteContent(updatedContent);
     }
 
 
@@ -290,7 +346,7 @@ function AppLoaded(props) {
                             updateRatingsCallback={updatePlaneRating}
                             favorites={favoritePlanes}
                             updateFavoritesCallback={updateFavoritePlane}
-                            content={content} handleContentChangeFn={handleContentChange}
+                            content={noteContent} handleContentChangeFn={handleContentChange}
                         />
                     </Route>
                     {/* Redirect to home page for invalid routes */}
