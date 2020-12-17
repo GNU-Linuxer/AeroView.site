@@ -142,6 +142,8 @@ function LoadUserData(props) {
                 }
             }).then(()=> {
                 setProgress(progress=> progress + 16);
+            }).catch(()=>{
+                setErrorMsg(true);
             });
 
             // Load Favorite Plane Heart data
@@ -158,6 +160,8 @@ function LoadUserData(props) {
                 }
             }).then(()=> {
                 setProgress(progress=> progress + 16);
+            }).catch(()=>{
+                setErrorMsg(true);
             });
 
             // Load Note data
@@ -169,6 +173,8 @@ function LoadUserData(props) {
                 }
             }).then(()=> {
                 setProgress(progress=> progress + 18);
+            }).catch(()=>{
+                setErrorMsg(true);
             });
         }
         // eslint-disable-next-line

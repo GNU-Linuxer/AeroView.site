@@ -77,10 +77,5 @@ td.airplane-name {
 /* The text's link styling*/
 
 tbody a {
-    color: #000000;
-    text-decoration: none;
-}
-
-tbody a:visited {
-    color: #000000;
+    text-decoration: underline;
 }
