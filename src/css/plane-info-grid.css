@@ -96,6 +96,11 @@
 }
 
 @media (min-width: 1024px) {
+    /* Add extra space to the right on wider screens */
+    .plane-info-content {
+        margin-right: 8px;
+    }
+
     .plane-info-plane-img {
         margin-top: 5%;
     }
