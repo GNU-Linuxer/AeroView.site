@@ -45,6 +45,7 @@ export function SiteHeader(props) {
  * Props:
  * - title: the title of page shown on the jumbotron
  * - image: a String of relative path to image file (if specified, otherwise default to /img/main-photo.jpg)
+ * - showImage: a boolean value that defines whether we show the jumbotron image (default to true if not specified)
  */
 export function PageJumbotron(props) {
     const mobileView = useMobileView();
@@ -52,11 +53,19 @@ export function PageJumbotron(props) {
     if (props.image !== undefined) {
         backgroundImage = "url("+ props.image + ")";
     }
-    let style = mobileView ? {} : {
-        backgroundImage: "linear-gradient(hsla(205, 100%, 25%, 0.8)," +
-            "hsla(205, 100%, 25%, 0.8))," +
-            backgroundImage
-    };
+    let style
+    if (props.showImage === false) {
+        style = mobileView ? {} : {
+            backgroundImage: "linear-gradient(hsla(205, 100%, 25%, 0.8)," +
+                "hsla(205, 100%, 25%, 0.8)),"
+        };
+    } else {
+        style = mobileView ? {} : {
+            backgroundImage: "linear-gradient(hsla(205, 100%, 25%, 0.8)," +
+                "hsla(205, 100%, 25%, 0.8))," +
+                backgroundImage
+        };
+    }
     return (
         <div className="page-title" style={style}>{props.title}</div>
     );

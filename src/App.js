@@ -44,11 +44,11 @@ export default function App() {
     const [isLoggedIn, setIsLoggedIn] =  useState(false);
 
     useEffect(() => {
+        setProgress(10);
         // Load airplane data, will be in an array of objects, whereas 1 object means 1 airplane
         // The first object describe how shorthand key correspond to full metadata name, such as {cruise_range: "Cruise Range (N miles)"}
         d3.csv('/data/airplanes.csv')
             .then(text => {
-                setProgress(50);
                 setAirplaneDisplayMetaName(text[0]); //{make: "Make", model: "Model", series: "Production Series",...s}
                 setAirplaneData(text.slice(1, text.length)); // 0: {make: "Airbus", model: "A220-300", …} 1: {make: "Airbus", model: "A320neo", …}
             }).then (function() {
@@ -83,7 +83,7 @@ export default function App() {
 
 
     // Show 50% for 0.5 second before proceeding for user-friendliness
-    if (progress === 50) {
+    if (progress >= 50) {
         setTimeout(() => {setProgress(51);}, 500);
     }
 
@@ -109,7 +109,7 @@ function LoadingPage(props) {
     return (
         <>
             <SiteHeader appName="AeroView" logo="/img/branding-logo.svg" navLinks={[]} />
-            <PageJumbotron title='Loading airplanes data...' />
+            <PageJumbotron title='Loading airplanes data...' showImage={false} />
             <main>
                 <Progress className="progress-bar-landing" value={props.progress} />
             </main>
@@ -119,12 +119,13 @@ function LoadingPage(props) {
 }
 
 function LoadUserData(props) {
-    const [progress, setProgress] =  useState(50);
+    const [progress, setProgress] =  useState(51);
     const [starRating, setStarRating] = useState({});
     const [favoriteHeart, setFavoriteHeart] = useState([]);
     const [noteContent, setNoteContent] = useState({});
     const [errorMsg, setErrorMsg] = useState(false);
     useEffect(()=> {
+        setProgress(51);
         if((!props.isLoggedIn)) {
             setProgress(100);
         } else if (props.user === null) {
@@ -177,7 +178,7 @@ function LoadUserData(props) {
                     setNoteContent(result);
                 }
             }).then(()=> {
-                setProgress(progress=> progress + 18);
+                setProgress(progress=> progress + 17);
             }).catch(()=>{
                 setErrorMsg(true);
             });
@@ -190,7 +191,7 @@ function LoadUserData(props) {
     }
 
     // Show 100% for 0.8 second before proceeding for user-friendliness
-    if (progress === 100) {
+    if (progress >= 100) {
         setTimeout(() => {setProgress(-1);}, 800);
     }
 

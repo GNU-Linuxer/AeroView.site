@@ -51,7 +51,7 @@ export function AccountPage(props) {
     <div className="acct-page-container">
       <AccountModal />
       {accountPageContent}
-      <p className='acct-page-button-container'> Once signed-in or signed-out, please <strong> refresh the page </strong> to load user content. Happy browsing!</p>
+      <p className='acct-page-button-container'> Happy browsing! </p>
     </div>
   )
 }
