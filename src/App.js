@@ -51,7 +51,9 @@ export default function App() {
                 setProgress(50);
                 setAirplaneDisplayMetaName(text[0]); //{make: "Make", model: "Model", series: "Production Series",...s}
                 setAirplaneData(text.slice(1, text.length)); // 0: {make: "Airbus", model: "A220-300", …} 1: {make: "Airbus", model: "A320neo", …}
-            });
+            }).then (function() {
+            setProgress(progress=> progress + 20);
+        });
 
         // Initialize Firebase
         if (!firebase.apps.length) {
@@ -60,23 +62,24 @@ export default function App() {
             firebase.app();
         }
 
-        // This 20% will be immediately called after d3 begins processing the csv
-        setProgress(20);
-
         const authUnregisterFunction = firebase.auth().onAuthStateChanged((firebaseUser) => {
             if (firebaseUser) {
                 setIsLoggedIn(true);
                 setUser(firebaseUser);
             } else {
+                // only change isLoggedIn when it's true
+                if (isLoggedIn) {
+                    setIsLoggedIn(false);
+                }
                 setUser(null);
             }
         })
-        setProgress(30);
+        setProgress(progress=> progress + 20);
 
         return function cleanup() {
             authUnregisterFunction();
         }
-    }, []);
+    }, [isLoggedIn]);
 
 
     // Show 50% for 0.5 second before proceeding for user-friendliness
@@ -122,8 +125,10 @@ function LoadUserData(props) {
     const [noteContent, setNoteContent] = useState({});
     const [errorMsg, setErrorMsg] = useState(false);
     useEffect(()=> {
-        if((!props.isLoggedIn) || props.user === null) {
+        if((!props.isLoggedIn)) {
             setProgress(100);
+        } else if (props.user === null) {
+            setErrorMsg(true);
         } else {
             // Load Star Rating data
             const starRef = firebase.database().ref('users/' + props.user.uid + '/starRatings/');
