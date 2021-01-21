@@ -1,0 +1,4 @@
+TO-DO list:
+• Use TinyMCE instead of SunEditor (TinyMCE is better-maintained)
+• Add contact form to contact our developer
+• For all user data, directly fetch from Firebase on call, rather than fetching everything on load, so it can scale better
